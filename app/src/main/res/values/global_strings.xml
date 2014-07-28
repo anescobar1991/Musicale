@@ -1,0 +1,7 @@
+<resources>
+    <!-- Strings related to login screen -->
+    <string name="app_name">Musicale</string>
+
+    <string name="error_generic">Oops! This one is on us, we\'re having issues communicating with our server. Try again later.</string>
+    <string name="error_no_network_connectivity">No internet connection found. Are you connected to a network?</string>
+</resources>
