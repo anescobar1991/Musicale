@@ -5,19 +5,17 @@ import android.app.Activity;
 import android.app.ActionBar;
 import android.app.FragmentManager;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.support.v4.widget.DrawerLayout;
+import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import com.anescobar.musicale.R;
+import com.anescobar.musicale.fragments.EventsListViewFragment;
 import com.anescobar.musicale.fragments.EventsMapViewFragment;
 import com.anescobar.musicale.fragments.NavigationDrawerFragment;
-import com.anescobar.musicale.fragments.ProfileViewFragment;
 import com.anescobar.musicale.fragments.SocializeViewFragment;
 import com.anescobar.musicale.fragments.TrendsViewFragment;
 import com.anescobar.musicale.utilsHelpers.SessionManager;
@@ -28,8 +26,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 
 public class HomeActivity extends Activity
-        implements NavigationDrawerFragment.NavigationDrawerCallbacks, EventsMapViewFragment.OnEventMapViewFragmentInteractionListener,
-        TrendsViewFragment.OnTrendsViewFragmentInteractionListener, ProfileViewFragment.OnProfileViewFragmentInteractionListener,
+        implements NavigationDrawerFragment.NavigationDrawerCallbacks, EventsMapViewFragment.OnEventsMapViewFragmentInteractionListener,
+        TrendsViewFragment.OnTrendsViewFragmentInteractionListener, EventsListViewFragment.OnEventsListViewFragmentInteractionListener,
         SocializeViewFragment.OnSocializeViewFragmentInteractionListener, GooglePlayServicesClient.ConnectionCallbacks,
         GooglePlayServicesClient.OnConnectionFailedListener, ActionBar.OnNavigationListener{
 
@@ -37,9 +35,10 @@ public class HomeActivity extends Activity
     private CharSequence mTitle; //Used to store the last screen title. For use in {@link #restoreActionBar()}.
     private SessionManager mSessionManager = new SessionManager();
     private String mSessionString; //Needs to be be deserialized using GSON into a last FM Session object
-    private String mUserLocationString;
+    private String mUserLocationString; //Needs to be be deserialized using GSON into a LatLng object
     private LocationClient mLocationClient;
-
+    private boolean mIsEventsViewDisplayed;
+    private MenuItem mEventSearchIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,9 +99,8 @@ public class HomeActivity extends Activity
                         .commit();
                 break;
             case 1:
-                fragmentManager.beginTransaction()
-                        .replace(R.id.container, EventsMapViewFragment.newInstance(mSessionString, mUserLocationString))
-                        .commit();
+                mEventSearchIcon.setVisible(true);
+                displayEventsViewSpinner(); //spinner will by default take care of instantiating fragment
                 break;
             case 2:
                 fragmentManager.beginTransaction()
@@ -110,11 +108,7 @@ public class HomeActivity extends Activity
                         .commit();
                 break;
             case 3:
-                fragmentManager.beginTransaction()
-                        .replace(R.id.container, ProfileViewFragment.newInstance("example"))
-                        .commit();
-                break;
-            case 4:
+                //discards session and logs out
                 mSessionManager.discardSession(this);
                 Intent loginActivityIntent = new Intent(this, LoginActivity.class);
                 startActivity(loginActivityIntent);
@@ -125,33 +119,36 @@ public class HomeActivity extends Activity
 
 
     public void restoreActionBar() {
-        ActionBar actionBar = getActionBar();
-        actionBar.setDisplayShowTitleEnabled(true);
-        actionBar.setTitle(mTitle);
+        if (mIsEventsViewDisplayed && !mNavigationDrawerFragment.isDrawerOpen()) {
+            displayEventsViewSpinner();
+        } else {
+            mEventSearchIcon.setVisible(false);
+//            restores actionBar to its original state
+            ActionBar bar = getActionBar();
+            bar.setTitle(mTitle);
+            bar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+        }
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (!mNavigationDrawerFragment.isDrawerOpen()) {
-            // Only show items in the action bar relevant to this screen
-            // if the drawer is not showing. Otherwise, let the drawer
-            // decide what to show in the action bar.
-            getMenuInflater().inflate(R.menu.home, menu);
-            restoreActionBar();
-            return true;
-        }
+        getMenuInflater().inflate(R.menu.home, menu);
+        mEventSearchIcon = menu.findItem(R.id.action_search);
+        restoreActionBar(); //sets title to that of appropriate fragment
         return super.onCreateOptionsMenu(menu);
     }
 
-    //TODO make it so that this method is called when events fragment is initialized
-    private void setEventsViewSpinner(ActionBar bar){
+    /**
+     * displays eventsViewSpinner
+     * Should only be displayed when either one of home view screens are visible
+     */
+    private void displayEventsViewSpinner() {
+        ActionBar bar = getActionBar();
         ArrayAdapter adapter = ArrayAdapter.createFromResource(this, R.array.events_view_options, R.layout.actionbar_spinner_item);
+
         bar.setDisplayShowTitleEnabled(false);
         bar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-//        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
-//                getBaseContext(),
-//                android.R.layout.simple_spinner_dropdown_item, actions);
         bar.setListNavigationCallbacks(adapter, this);
 
     }
@@ -178,14 +175,31 @@ public class HomeActivity extends Activity
             case 2:
                 mTitle = getString(R.string.title_socialize_section);
                 break;
-            case 3:
-                mTitle = getString(R.string.title_my_profile_section);
-                break;
         }
     }
 
     @Override
-    public boolean onNavigationItemSelected(int i, long l) {
+    public void onEventsViewAttached(boolean isAttached) {
+        mIsEventsViewDisplayed = isAttached;
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(int itemPosition, long l) {
+        FragmentManager fragmentManager = getFragmentManager();
+        switch (itemPosition) {
+            case 0:
+                System.out.println("list view selected");
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, EventsListViewFragment.newInstance(mSessionString, mUserLocationString))
+                        .commit();
+                break;
+            case 1:
+                System.out.println("map view selected");
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, EventsMapViewFragment.newInstance(mSessionString, mUserLocationString))
+                        .commit();
+                break;
+        }
         return false;
     }
 }

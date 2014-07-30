@@ -13,7 +13,7 @@ import com.anescobar.musicale.R;
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
  * {@link TrendsViewFragment.OnTrendsViewFragmentInteractionListener} interface
- * to handle interaction events.
+ * to handle interaction home.
  * Use the {@link TrendsViewFragment#newInstance} factory method to
  * create an instance of this fragment.
  *

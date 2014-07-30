@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,8 +23,8 @@ import de.umass.lastfm.Session;
 /**
 * A simple {@link Fragment} subclass.
 * Activities that contain this fragment must implement the
-* {@link EventsMapViewFragment.OnEventMapViewFragmentInteractionListener} interface
-* to handle interaction events.
+* {@link EventsMapViewFragment.OnEventsMapViewFragmentInteractionListener} interface
+* to handle interaction home.
 * Use the {@link EventsMapViewFragment#newInstance} factory method to
 * create an instance of this fragment.
 *
@@ -36,7 +37,7 @@ public class EventsMapViewFragment extends Fragment {
     private MapFragment mMapFragment;
     private GoogleMap mMap;
     private LatLng mUserLocation;
-    private OnEventMapViewFragmentInteractionListener mListener;
+    private OnEventsMapViewFragmentInteractionListener mListener;
 
     /**
      * Use this factory method to create a new instance of
@@ -105,8 +106,9 @@ public class EventsMapViewFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mListener = (OnEventMapViewFragmentInteractionListener) activity;
+            mListener = (OnEventsMapViewFragmentInteractionListener) activity;
             mListener.onAttachDisplayTitle(SECTION_INDEX); //sets title, index tells activity to display correct title
+            mListener.onEventsViewAttached(true);
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnEventMapViewFragmentInteractionListener");
@@ -116,6 +118,7 @@ public class EventsMapViewFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
+        mListener.onEventsViewAttached(false);
         mListener = null;
     }
 
@@ -125,8 +128,9 @@ public class EventsMapViewFragment extends Fragment {
      * to the activity and potentially other fragments contained in that
      * activity.
      */
-    public interface OnEventMapViewFragmentInteractionListener {
+    public interface OnEventsMapViewFragmentInteractionListener {
         public void onAttachDisplayTitle(int sectionIndex);
+        public void onEventsViewAttached(boolean isAttached);
     }
 
     private void setUpMapIfNeeded(LatLng userLocation, Session session) {
@@ -142,11 +146,11 @@ public class EventsMapViewFragment extends Fragment {
     }
 
     /**
-     * This is where map is setup with events and with current or searched location as center
+     * This is where map is setup with home and with current or searched location as center
      * This should only be called once and when we are sure that {@link #mMap} is not null.
      */
     private void setUpMap(LatLng userLocation, Session session) {
-        //TODO set up events here
+        //TODO set up home here
         mMap.setBuildingsEnabled(true);
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 15));
     }

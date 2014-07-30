@@ -5,6 +5,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -14,7 +16,7 @@ import com.anescobar.musicale.R;
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
  * {@link SocializeViewFragment.OnSocializeViewFragmentInteractionListener} interface
- * to handle interaction events.
+ * to handle interaction home.
  * Use the {@link SocializeViewFragment#newInstance} factory method to
  * create an instance of this fragment.
  *
@@ -48,9 +50,17 @@ public class SocializeViewFragment extends Fragment {
     }
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.socialize, menu);
+
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
+            setHasOptionsMenu(true); //sets actionbar to display this fragment's specific actionbar
             mListener = (OnSocializeViewFragmentInteractionListener) activity;
             mListener.onAttachDisplayTitle(SECTION_INDEX); //tells activity to display correct title
         } catch (ClassCastException e) {
