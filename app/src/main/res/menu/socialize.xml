@@ -8,4 +8,10 @@
         android:showAsAction="always"
         android:title="@string/action_social_search" />
 
+    <item android:id="@+id/action_refresh_social"
+        android:title="@string/action_refresh_social"
+        android:icon="@drawable/ic_action_refresh"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom" />
+
 </menu>

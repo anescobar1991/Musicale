@@ -2,7 +2,10 @@
 <resources>
     <string-array
         name="events_view_options">
-        <item>Events List View</item>
-        <item>Events Map View</item>
+
+        <item>Events List</item>
+
+        <item>Events Map</item>
+
     </string-array>
 </resources>

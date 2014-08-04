@@ -38,7 +38,9 @@ public class HomeActivity extends Activity
     private String mUserLocationString; //Needs to be be deserialized using GSON into a LatLng object
     private LocationClient mLocationClient;
     private boolean mIsEventsViewDisplayed;
+    private boolean isMapViewDisplayed;
     private MenuItem mEventSearchIcon;
+    private MenuItem mEventsRefreshIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,15 +96,22 @@ public class HomeActivity extends Activity
         FragmentManager fragmentManager = getFragmentManager();
         switch (position) {
             case 0:
+                isMapViewDisplayed = false;
+                mIsEventsViewDisplayed = false;
                 fragmentManager.beginTransaction()
                         .replace(R.id.container, TrendsViewFragment.newInstance("example"))
                         .commit();
                 break;
             case 1:
+                //set flags which will tell menu to display events spinner
+                //spinner will be selected and thus load events view screen on its own
+                mIsEventsViewDisplayed = true;
                 mEventSearchIcon.setVisible(true);
-                displayEventsViewSpinner(); //spinner will by default take care of instantiating fragment
+                mEventsRefreshIcon.setVisible(true);
                 break;
             case 2:
+                isMapViewDisplayed = false;
+                mIsEventsViewDisplayed = false;
                 fragmentManager.beginTransaction()
                         .replace(R.id.container, SocializeViewFragment.newInstance("example"))
                         .commit();
@@ -117,40 +126,44 @@ public class HomeActivity extends Activity
         }
     }
 
-
     public void restoreActionBar() {
         if (mIsEventsViewDisplayed && !mNavigationDrawerFragment.isDrawerOpen()) {
             displayEventsViewSpinner();
         } else {
+
+            //restores actionBar to its original state
             mEventSearchIcon.setVisible(false);
-//            restores actionBar to its original state
+            mEventsRefreshIcon.setVisible(false);
             ActionBar bar = getActionBar();
             bar.setTitle(mTitle);
             bar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         }
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.home, menu);
-        mEventSearchIcon = menu.findItem(R.id.action_search);
-        restoreActionBar(); //sets title to that of appropriate fragment
+        mEventSearchIcon = menu.findItem(R.id.action_search_events);
+        mEventsRefreshIcon = menu.findItem(R.id.action_refresh_events);
+        restoreActionBar();
         return super.onCreateOptionsMenu(menu);
     }
 
     /**
      * displays eventsViewSpinner
-     * Should only be displayed when either one of home view screens are visible
+     * Should only be displayed when either one of events view screens are visible
      */
     private void displayEventsViewSpinner() {
-        ActionBar bar = getActionBar();
+        ActionBar actionBar = getActionBar();
         ArrayAdapter adapter = ArrayAdapter.createFromResource(this, R.array.events_view_options, R.layout.actionbar_spinner_item);
+        adapter.setDropDownViewResource(R.layout.actionbar_spinner_dropdown_item);
+        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
 
-        bar.setDisplayShowTitleEnabled(false);
-        bar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-        bar.setListNavigationCallbacks(adapter, this);
-
+        actionBar.setListNavigationCallbacks(adapter, this);
+        if (isMapViewDisplayed) {
+            actionBar.setSelectedNavigationItem(1);
+        }
     }
 
     /**
@@ -179,22 +192,17 @@ public class HomeActivity extends Activity
     }
 
     @Override
-    public void onEventsViewAttached(boolean isAttached) {
-        mIsEventsViewDisplayed = isAttached;
-    }
-
-    @Override
     public boolean onNavigationItemSelected(int itemPosition, long l) {
         FragmentManager fragmentManager = getFragmentManager();
         switch (itemPosition) {
             case 0:
-                System.out.println("list view selected");
+                isMapViewDisplayed = false;
                 fragmentManager.beginTransaction()
                         .replace(R.id.container, EventsListViewFragment.newInstance(mSessionString, mUserLocationString))
                         .commit();
                 break;
             case 1:
-                System.out.println("map view selected");
+                isMapViewDisplayed = true;
                 fragmentManager.beginTransaction()
                         .replace(R.id.container, EventsMapViewFragment.newInstance(mSessionString, mUserLocationString))
                         .commit();

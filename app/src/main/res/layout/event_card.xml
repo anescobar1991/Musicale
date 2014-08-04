@@ -1,0 +1,103 @@
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/eventCard_cardView_eventCard"
+    android:layout_gravity="center"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="8dp"
+    card_view:cardCornerRadius="4dp">
+
+    <RelativeLayout
+        android:id="@+id/eventCard_relativeLayout_eventCard"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/eventCard_imageView_eventImage"
+            android:layout_width="wrap_content"
+            android:maxWidth="100dp"
+            android:paddingTop="8dp"
+            android:adjustViewBounds="true"
+            android:src="@drawable/blink_182"
+            android:layout_height="match_parent" />
+
+        <TextView
+            android:id="@+id/eventCard_textView_eventTitle"
+            android:layout_width="wrap_content"
+            android:layout_alignTop="@+id/eventCard_imageView_eventImage"
+            android:paddingLeft="8dp"
+            android:layout_toRightOf="@+id/eventCard_imageView_eventImage"
+            android:text="Blink 182"
+            android:textSize="20sp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/accent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/eventCard_textView_eventDate"
+            android:layout_width="wrap_content"
+            android:paddingLeft="8dp"
+            android:layout_below="@+id/eventCard_textView_eventTitle"
+            android:layout_toRightOf="@+id/eventCard_imageView_eventImage"
+            android:text="August 24, 2014"
+            android:textSize="14sp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/eventCard_textView_venueName"
+            android:paddingLeft="8dp"
+            android:layout_below="@+id/eventCard_textView_eventDate"
+            android:layout_toRightOf="@+id/eventCard_imageView_eventImage"
+            android:textSize="14sp"
+            android:layout_width="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="Cynthia Woods Mitchell Pavilion"
+            android:layout_height="wrap_content" />
+
+        <ImageView
+            android:id="@+id/eventCard_imageView_mapPin"
+            android:layout_width="wrap_content"
+            android:adjustViewBounds="true"
+            android:maxHeight="20dp"
+            android:layout_toRightOf="@+id/eventCard_textView_venueName"
+            android:layout_alignTop="@+id/eventCard_textView_venueName"
+            android:src="@drawable/ic_action_place"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/eventCard_textView_cityStatePostalCountry"
+            android:layout_toRightOf="@+id/eventCard_imageView_eventImage"
+            android:paddingLeft="8dp"
+            android:textSize="14sp"
+            android:layout_below="@+id/eventCard_textView_venueName"
+            android:layout_width="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="The Woodlands, TX USA"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/eventsCard_button_buzz"
+            android:paddingLeft="8dp"
+            style="@android:style/Widget.Holo.Light.Button.Borderless"
+            android:layout_below="@+id/eventCard_textView_cityStatePostalCountry"
+            android:layout_toRightOf="@+id/eventCard_imageView_eventImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Buzz about this event"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:minHeight="0dp"
+            android:minWidth="0dp"
+            android:textColor="@color/accent"
+            android:textSize="14sp" />
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>
+
+

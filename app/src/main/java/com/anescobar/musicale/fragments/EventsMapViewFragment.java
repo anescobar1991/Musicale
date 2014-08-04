@@ -5,9 +5,6 @@ import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -108,7 +105,6 @@ public class EventsMapViewFragment extends Fragment {
         try {
             mListener = (OnEventsMapViewFragmentInteractionListener) activity;
             mListener.onAttachDisplayTitle(SECTION_INDEX); //sets title, index tells activity to display correct title
-            mListener.onEventsViewAttached(true);
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnEventMapViewFragmentInteractionListener");
@@ -118,7 +114,6 @@ public class EventsMapViewFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener.onEventsViewAttached(false);
         mListener = null;
     }
 
@@ -130,7 +125,6 @@ public class EventsMapViewFragment extends Fragment {
      */
     public interface OnEventsMapViewFragmentInteractionListener {
         public void onAttachDisplayTitle(int sectionIndex);
-        public void onEventsViewAttached(boolean isAttached);
     }
 
     private void setUpMapIfNeeded(LatLng userLocation, Session session) {
@@ -138,9 +132,6 @@ public class EventsMapViewFragment extends Fragment {
         if (mMap == null) {
             mMap = mMapFragment.getMap();
             // Check if we were successful in obtaining the map.
-            if (mMap != null) {
-                // The Map is verified. It is now safe to manipulate the map.
-            }
         }
         setUpMap(userLocation, session);
     }
@@ -152,6 +143,7 @@ public class EventsMapViewFragment extends Fragment {
     private void setUpMap(LatLng userLocation, Session session) {
         //TODO set up home here
         mMap.setBuildingsEnabled(true);
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 15));
+        mMap.setMyLocationEnabled(true);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 15));
     }
 }

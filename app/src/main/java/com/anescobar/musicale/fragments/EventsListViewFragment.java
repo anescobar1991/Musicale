@@ -3,6 +3,8 @@ package com.anescobar.musicale.fragments;
 import android.app.Activity;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -10,8 +12,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.anescobar.musicale.R;
+import com.anescobar.musicale.adapters.EventListAdapter;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
+
+import java.util.ArrayList;
 
 import de.umass.lastfm.Session;
 
@@ -68,8 +73,25 @@ public class EventsListViewFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_events_list_view, container, false);
+
+        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.fragment_eventsListView_recyclerView_eventCardListHolder);
+
+        // use a linear layout manager
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
+        recyclerView.setLayoutManager(mLayoutManager);
+
+        // Data set used by the adapter. This data will be displayed.
+        ArrayList<String> myDataset = new ArrayList<String>();
+        for (int i= 0; i < 70; i++){
+            myDataset.add("Event " + i);
+        }
+
+        // Create the adapter
+        RecyclerView.Adapter adapter = new EventListAdapter(getActivity().getApplicationContext(), myDataset);
+        recyclerView.setAdapter(adapter);
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_events_list_view, container, false);
+        return view;
     }
 
 
@@ -79,7 +101,6 @@ public class EventsListViewFragment extends Fragment {
         try {
             mListener = (OnEventsListViewFragmentInteractionListener) activity;
             mListener.onAttachDisplayTitle(SECTION_INDEX); //sets title, index tells activity to display correct title
-            mListener.onEventsViewAttached(true);
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -89,7 +110,6 @@ public class EventsListViewFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener.onEventsViewAttached(false);
         mListener = null;
     }
 
@@ -102,7 +122,6 @@ public class EventsListViewFragment extends Fragment {
      */
     public interface OnEventsListViewFragmentInteractionListener {
         public void onAttachDisplayTitle(int sectionIndex);
-        public void onEventsViewAttached(boolean isAttached);
     }
 
 }

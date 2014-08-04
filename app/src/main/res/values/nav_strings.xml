@@ -9,5 +9,7 @@
     <string name="action_about_app">About Musicale</string>
     <string name="action_events_search">Search for events</string>
     <string name="action_social_search">Search for other users like you</string>
+    <string name="action_refresh_events">Refresh events</string>
+    <string name="action_refresh_social">Refresh</string>
 
 </resources>

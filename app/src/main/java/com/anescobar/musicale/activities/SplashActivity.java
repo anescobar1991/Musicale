@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.anescobar.musicale.R;
+import com.anescobar.musicale.utilsHelpers.EventsFinder;
 import com.anescobar.musicale.utilsHelpers.SessionManager;
 import com.anescobar.musicale.utilsHelpers.NetworkUtil;
 import com.google.gson.Gson;
@@ -16,7 +17,6 @@ import de.umass.lastfm.Event;
 import de.umass.lastfm.PaginatedResult;
 import de.umass.lastfm.Result;
 import de.umass.lastfm.Session;
-import de.umass.lastfm.User;
 
 /**
  * Splash activity
@@ -26,7 +26,6 @@ import de.umass.lastfm.User;
  * @version 7/15/14
  */
 public class SplashActivity extends Activity {
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +47,33 @@ public class SplashActivity extends Activity {
         } else { //no network connection so go to login screen
             startLoginActivity();
         }
+    }
 
+    //async task that performs heartbeat check for session using getRecommendedEvents method
+    //that way is users stored session is invalid for some reason then user has chance to login before entering app
+    private class ValidateSessionTask extends AsyncTask<Session, Void, PaginatedResult<Event>> {
+        private Session session;
+
+        public ValidateSessionTask(Session session) {
+            this.session = session;
+        }
+
+        @Override
+        protected PaginatedResult<Event> doInBackground(Session... sessions) {
+            Caller.getInstance().setCache(null);
+            //calls a generic last fm method simply to find out if session is valid from response
+            return new EventsFinder(sessions[0]).getRecommendedEvents(1, 1, 0.00, 0.00);
+        }
+
+        protected void onPostExecute(PaginatedResult<Event> events) {
+            Result response = Caller.getInstance().getLastResult();
+            Log.w("session_getter_error", response.toString());
+            if (response.isSuccessful()) {
+                startHomeActivity(session);
+            } else {
+                startLoginActivity();
+            }
+        }
     }
 
     /**
@@ -71,32 +96,6 @@ public class SplashActivity extends Activity {
         intent.putExtra("com.anescobar.musicale.activities.HomeActivity.session", sessionString); //Puts session object to to Home Activity Intent
         startActivity(intent);
         finish();
-    }
-
-    //async task that performs heartbeat check for session using getRecommendedEvents method
-    private class ValidateSessionTask extends AsyncTask<Session, Void, PaginatedResult<Event>> {
-        private Session session;
-
-        public ValidateSessionTask(Session session) {
-            this.session = session;
-        }
-
-        @Override
-        protected PaginatedResult<Event> doInBackground(Session... sessions) {
-            Caller.getInstance().setCache(null);
-
-            return User.getRecommendedEvents(sessions[0]);
-        }
-
-        protected void onPostExecute(PaginatedResult<Event> events) {
-            Result response = Caller.getInstance().getLastResult();
-            Log.w("session_getter_error", response.toString());
-            if (events.isEmpty()) {
-                startLoginActivity();
-            } else {
-                startHomeActivity(session);
-            }
-        }
     }
 
 }
