@@ -19,26 +19,28 @@
             android:paddingTop="8dp"
             android:adjustViewBounds="true"
             android:src="@drawable/blink_182"
-            android:layout_height="match_parent" />
-
-        <TextView
-            android:id="@+id/eventCard_textView_eventTitle"
-            android:layout_width="wrap_content"
-            android:layout_alignTop="@+id/eventCard_imageView_eventImage"
+            android:layout_height="match_parent"
+            android:contentDescription="@null" />
+        <Button
+            android:id="@+id/eventCard_button_eventTitle"
             android:paddingLeft="8dp"
+            style="@android:style/Widget.Holo.Light.Button.Borderless"
             android:layout_toRightOf="@+id/eventCard_imageView_eventImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="Blink 182"
-            android:textSize="20sp"
             android:ellipsize="end"
             android:maxLines="1"
+            android:minHeight="0dp"
+            android:minWidth="0dp"
             android:textColor="@color/accent"
-            android:layout_height="wrap_content" />
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/eventCard_textView_eventDate"
             android:layout_width="wrap_content"
             android:paddingLeft="8dp"
-            android:layout_below="@+id/eventCard_textView_eventTitle"
+            android:layout_below="@+id/eventCard_button_eventTitle"
             android:layout_toRightOf="@+id/eventCard_imageView_eventImage"
             android:text="August 24, 2014"
             android:textSize="14sp"
@@ -53,8 +55,7 @@
             android:layout_toRightOf="@+id/eventCard_imageView_eventImage"
             android:textSize="14sp"
             android:layout_width="wrap_content"
-            android:ellipsize="end"
-            android:maxLines="1"
+            android:maxLength="33"
             android:text="Cynthia Woods Mitchell Pavilion"
             android:layout_height="wrap_content" />
 
@@ -66,10 +67,11 @@
             android:layout_toRightOf="@+id/eventCard_textView_venueName"
             android:layout_alignTop="@+id/eventCard_textView_venueName"
             android:src="@drawable/ic_action_place"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/event_card_open_map_accessibility_label" />
 
         <TextView
-            android:id="@+id/eventCard_textView_cityStatePostalCountry"
+            android:id="@+id/eventCard_textView_venueLocation"
             android:layout_toRightOf="@+id/eventCard_imageView_eventImage"
             android:paddingLeft="8dp"
             android:textSize="14sp"
@@ -77,18 +79,18 @@
             android:layout_width="wrap_content"
             android:ellipsize="end"
             android:maxLines="1"
-            android:text="The Woodlands, TX USA"
+            android:text="The Woodlands United States"
             android:layout_height="wrap_content" />
 
         <Button
-            android:id="@+id/eventsCard_button_buzz"
+            android:id="@+id/eventsCard_button_eventBuzz"
             android:paddingLeft="8dp"
             style="@android:style/Widget.Holo.Light.Button.Borderless"
-            android:layout_below="@+id/eventCard_textView_cityStatePostalCountry"
+            android:layout_below="@+id/eventCard_textView_venueLocation"
             android:layout_toRightOf="@+id/eventCard_imageView_eventImage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Buzz about this event"
+            android:text="@string/event_buzz_button_text"
             android:ellipsize="end"
             android:maxLines="1"
             android:minHeight="0dp"

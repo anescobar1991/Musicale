@@ -29,7 +29,6 @@ import de.umass.lastfm.Session;
 public class EventsMapViewFragment extends Fragment {
     private static final String ARG_SESSION_STRING = "com.anescobar.musicale.fragments.EventsMapViewFragment.session";
     private static final String ARG_USER_LOCATION_STRING = "com.anescobar.musicale.fragments.EventsMapViewFragment.userLocation";
-    private static final int SECTION_INDEX = 1; //index that identifies fragment for activity to display correct title
     private Session mSession;
     private MapFragment mMapFragment;
     private GoogleMap mMap;
@@ -104,7 +103,6 @@ public class EventsMapViewFragment extends Fragment {
         super.onAttach(activity);
         try {
             mListener = (OnEventsMapViewFragmentInteractionListener) activity;
-            mListener.onAttachDisplayTitle(SECTION_INDEX); //sets title, index tells activity to display correct title
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnEventMapViewFragmentInteractionListener");
@@ -141,7 +139,7 @@ public class EventsMapViewFragment extends Fragment {
      * This should only be called once and when we are sure that {@link #mMap} is not null.
      */
     private void setUpMap(LatLng userLocation, Session session) {
-        //TODO set up home here
+        //TODO set up map here
         mMap.setBuildingsEnabled(true);
         mMap.setMyLocationEnabled(true);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 15));

@@ -32,7 +32,6 @@ import de.umass.lastfm.Session;
 
 /**
  * This activity is used to display login screen and holds all UI logic for screen
- * Also handles getSession logic as a session can only be created from this screen
  *
  * @author Andres Escobar
  * @version 7/14/14

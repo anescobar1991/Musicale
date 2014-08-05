@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="event_card_open_map_accessibility_label">View venue in map</string>
+    <string name="event_buzz_button_text">Buzz about this event</string>
+
+</resources>
