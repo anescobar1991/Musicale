@@ -14,8 +14,6 @@ import android.widget.Toast;
 
 import com.anescobar.musicale.R;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 
 /**

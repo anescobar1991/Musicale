@@ -2,6 +2,8 @@
 <resources>
 
     <string name="event_card_open_map_accessibility_label">View venue in map</string>
-    <string name="event_buzz_button_text">Buzz about this event</string>
+    <string name="event_card_buzz_button_text">Buzz about this event</string>
+    <string name="event_list_view_load_more_button_text">Load more events</string>
+    <string name="event_list_view_no_more_events_text">No more events....</string>
 
 </resources>
