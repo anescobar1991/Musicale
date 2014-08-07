@@ -41,13 +41,13 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.View
 
         // Set the view to the ViewHolder
         ViewHolder holder = new ViewHolder(v);
-        holder.mEventTitleButton.setOnClickListener(EventListAdapter.this);
         holder.mMapPinImage.setOnClickListener(EventListAdapter.this);
         holder.mEventBuzzButton.setOnClickListener(EventListAdapter.this);
+        holder.mMoreEventDetailsButton.setOnClickListener(EventListAdapter.this);
 
         holder.mEventBuzzButton.setTag(holder);
         holder.mMapPinImage.setTag(holder);
-        holder.mEventTitleButton.setTag(holder);
+        holder.mMoreEventDetailsButton.setTag(holder);
 
         return holder;
     }
@@ -57,7 +57,7 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.View
     public void onBindViewHolder(ViewHolder holder, int position) {
         //TODO populate events here
         // Get element from your dataset at this position and set the text for the specified element
-        holder.mEventTitleButton.setText(mDataset.get(position));
+        holder.mEventTitleTextView.setText(mDataset.get(position));
 
     }
 
@@ -70,8 +70,8 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.View
     @Override
     public void onClick(View view) {
         ViewHolder holder = (ViewHolder) view.getTag();
-        if (view.getId() == holder.mEventTitleButton.getId()) {
-            Toast.makeText(mContext, holder.mEventTitleButton.getText(), Toast.LENGTH_SHORT).show();
+        if (view.getId() == holder.mMoreEventDetailsButton.getId()) {
+            Toast.makeText(mContext, holder.mMoreEventDetailsButton.getText(), Toast.LENGTH_SHORT).show();
             //TODO hardcoded for now
         } else if (view.getId() == holder.mMapPinImage.getId()) {
             showMap(Uri.parse("geo:0,0?q=34.99,-106.61(Cynthia Woods Mitchell Pavilion)"));
@@ -83,12 +83,13 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.View
     // Create the ViewHolder class to keep references to your views
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public ImageView mEventImage;
-        public Button mEventTitleButton;
+        public TextView mEventTitleTextView;
         public TextView mEventDateTextView;
         public TextView mEventVenueNameTextView;
         public ImageView mMapPinImage;
         public TextView mVenueLocationTextView;
         public Button mEventBuzzButton;
+        public TextView mMoreEventDetailsButton;
 
         /**
          * Constructor
@@ -97,12 +98,13 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.View
         public ViewHolder(View view) {
             super(view);
             mEventImage = (ImageView) view.findViewById(R.id.eventCard_imageView_eventImage);
-            mEventTitleButton = (Button) view.findViewById(R.id.eventCard_button_eventTitle);
+            mEventTitleTextView = (TextView) view.findViewById(R.id.eventCard_textView_eventTitle);
             mEventDateTextView = (TextView) view.findViewById(R.id.eventCard_textView_eventDate);
             mEventVenueNameTextView = (TextView) view.findViewById(R.id.eventCard_textView_venueName);
             mMapPinImage = (ImageView) view.findViewById(R.id.eventCard_imageView_mapPin);
             mVenueLocationTextView = (TextView) view.findViewById(R.id.eventCard_textView_venueLocation);
             mEventBuzzButton = (Button) view.findViewById(R.id.eventsCard_button_eventBuzz);
+            mMoreEventDetailsButton = (Button) view.findViewById(R.id.eventsCard_button_moreDetails);
         }
     }
 

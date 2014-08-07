@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/light_background"
     android:weightSum="24"
     tools:context=".fragments.EventsListViewFragment">
 
@@ -16,6 +17,7 @@
 
     <Button
         android:id="@+id/fragment_eventsListView_button_load_more_button"
+        style="@android:style/Widget.Material.Light.Button"
         android:layout_width="match_parent"
         android:visibility="gone"
         android:layout_height="wrap_content"

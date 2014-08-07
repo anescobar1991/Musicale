@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import com.anescobar.musicale.R;
 import com.anescobar.musicale.adapters.EventListAdapter;
@@ -52,6 +53,16 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
     private Session mSession;
 
     /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     */
+    public interface OnEventsListViewFragmentInteractionListener {
+        public void onAttachDisplayTitle(int sectionIndex);
+    }
+
+    /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
@@ -67,6 +78,7 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
         fragment.setArguments(args);
         return fragment;
     }
+
     public EventsListViewFragment() {
         // Required empty public constructor
     }
@@ -94,12 +106,12 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
         mRecyclerView = (RecyclerView) view.findViewById(R.id.fragment_eventsListView_recyclerView_eventCardListHolder);
 
         // loads events to view
-        addEventsToView(1);
+        addEventsToList(1);
 
         mLoadMoreEventsButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                toggleLoadMoreEventsButtonVisibility(false); //display load more events button
-                addEventsToView(mNumberOfPagesLoaded + 1);
+                displayLoadMoreEventsButton(false); //hide load more events button
+                addEventsToList(mNumberOfPagesLoaded + 1);
             }
         });
 
@@ -126,14 +138,15 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
 
     @Override
     public void onScrollStateChanged(int state) {
-        if (state == 0) {
+        //if scroll state is settled or settling
+        if (state == 2 || state == 0 ) {
             int itemCount = mAdapter.getItemCount() - 1;
-            //if user has stopped scrolling and is at bottom of recycle view
+            //if user has scrolled to bottom of recycle view
             if (mLayoutManager.findLastCompletelyVisibleItemPosition() == itemCount) {
                 mRecyclerView.scrollToPosition(itemCount);
-                toggleLoadMoreEventsButtonVisibility(true); //display load more events Button
+                displayLoadMoreEventsButton(true); //display load more events Button
             } else if (mLayoutManager.findFirstCompletelyVisibleItemPosition() != itemCount) {
-                toggleLoadMoreEventsButtonVisibility(false); //hide load more events button
+                displayLoadMoreEventsButton(false); //hide load more events button
             }
         }
     }
@@ -142,23 +155,13 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
     public void onScrolled(int i, int i2) {
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     */
-    public interface OnEventsListViewFragmentInteractionListener {
-        public void onAttachDisplayTitle(int sectionIndex);
-    }
-
-    private void addEventsToView(Integer pageNumber) {
+    private void addEventsToList(Integer pageNumber) {
         mNumberOfPagesLoaded ++;
 
         //TODO use real data for this
         // Data set used by the adapter. This data will be displayed.
         ArrayList<String> eventsList = new ArrayList<String>();
-        for (int i= 0; i < pageNumber * 25; i++) {
+        for (int i= 0; i < pageNumber * 20; i++) {
             eventsList.add("Event " + i);
         }
         // use a linear layout manager
@@ -178,7 +181,7 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
 
         @Override
         protected Void doInBackground(Integer... pageNumbers) {
-            addEventsToView(pageNumbers[0]);
+            addEventsToList(pageNumbers[0]);
 
             return null;
         }
@@ -190,7 +193,7 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
         }
     }
 
-    private void toggleLoadMoreEventsButtonVisibility(boolean display) {
+    private void displayLoadMoreEventsButton(boolean display) {
         if (display) {
             mViewContainer.setWeightSum(25); // weightSum is changed to account for removal of button from view
             mLoadMoreEventsButton.setVisibility(View.VISIBLE);
