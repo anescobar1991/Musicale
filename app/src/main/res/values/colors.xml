@@ -4,5 +4,9 @@
     <color name="primary_dark">#e64a19</color>
     <color name="flat_button_disabled">#ffbbbbbb</color>
     <color name="accent">#1a237e</color>
-    <color name="light_background">#fff3f3f3</color>
+    <color name="light_background">#ffd5d5d5</color>
+
+    <color name="raised_button_disabled">#ccc</color>
+    <color name="raised_button_default">#1a237e</color>
+    <color name="raised_button_pressed">#ff1a1d69</color>
 </resources>

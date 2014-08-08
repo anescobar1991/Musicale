@@ -29,6 +29,10 @@
     <style name="actionBarSpinnerStyle" parent="android:style/Widget.ListView.DropDown">
         <item name="android:divider">#ffe4e4e4</item>
         <item name="android:dividerHeight">.25dp</item>
+        <item name="android:paddingLeft">8dp</item>
+        <item name="android:width">168dp</item>
+        <item name="android:background">#FFFFFF</item>
+        <item name="android:textColor">@drawable/events_view_selector</item>
     </style>
 
 </resources>

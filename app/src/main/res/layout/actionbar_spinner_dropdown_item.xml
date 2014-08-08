@@ -3,8 +3,6 @@
     android:singleLine="true"
     android:textSize="16sp"
     style="?android:attr/dropDownListViewStyle"
-    android:background="#FFFFFF"
-    android:gravity="center"
+    android:gravity="left|center_vertical"
     android:layout_width="match_parent"
-    android:layout_height="48dp"
-    android:textColor="#fff9f9f9"/>
+    android:layout_height="48dp" />

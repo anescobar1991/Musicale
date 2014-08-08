@@ -50,6 +50,7 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
     private RecyclerView.Adapter mAdapter;
     private RecyclerView mRecyclerView;
     private int mNumberOfPagesLoaded = 0; //keeps track of how many pages are loaded
+    private ArrayList<Event> mEvents = new ArrayList<Event>();
     private LatLng mUserLocation;
     private Session mSession;
 
@@ -106,8 +107,21 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
         mLoadMoreEventsButton = (Button) view.findViewById(R.id.fragment_events_list_view_load_more_button);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.fragment_events_listView_event_cards_holder);
 
+        //TODO if there is an arrayList already(in savedInstanceState) then use it to build cards
+        //TODO else fetch events to build cards with
         // loads events to view
         addEventsToList(1);
+//        Gson gson = new Gson();
+//        mEvents = gson.fromJson(savedInstanceState.getString("events"), ArrayList<Event.class>.getClass());
+//
+//        new buildCardsFromEventsTask().execute()
+//        if (savedInstanceState != null) {
+//            buildCardsFromEvents(savedInstanceState.contents);
+//        } else {
+//            events = getEvents(1);
+//        }
+        //TODO method: getEvents(page) (actually makes call to backend, return arrayList of events)
+        //TODO method: buildCardsFromEvents(adds events Arraylist to adapter)
 
         mLoadMoreEventsButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -130,6 +144,24 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
                     + " must implement OnFragmentInteractionListener");
         }
     }
+
+//    @Override
+//    public void onSaveInstanceState(Bundle outState) {
+//        super.onSaveInstanceState(outState);
+//        if (!mEvents.isEmpty()) {
+//            Gson gson = new Gson();
+//            ArrayList<String> serializedEvents = new ArrayList<String>();
+//            int eventCount = mEvents.size();
+//
+//            for(int i=0; i<eventCount; i++){
+//                serializedEvents.add(gson.toJson(mEvents.get(i)));
+//                System.out.println("Count is: " + i);
+//            }
+//        }
+
+//        String serializedEvents = gson.toJson(mEvents); //serialized Events arraylist
+//        outState.putStringArrayList("events", serializedEvents);
+//    }
 
     @Override
     public void onDetach() {
