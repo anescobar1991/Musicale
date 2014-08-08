@@ -5,13 +5,13 @@
     tools:context="com.anescobar.musicale.activities.LoginActivity">
 
     <LinearLayout
-        android:id="@+id/activityLogin_linearLayout_header"
+        android:id="@+id/activity_login_header"
         android:layout_width="match_parent"
         android:background="@color/primary"
         android:layout_height="48dp">
 
         <TextView
-            android:id="@+id/activityLogin_textView_appName"
+            android:id="@+id/activity_login_app_name_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/app_name"
@@ -22,7 +22,7 @@
             android:textSize="24sp"/>
 
         <TextView
-            android:id="@+id/activityLogin_textView_poweredByInfo"
+            android:id="@+id/activity_login_powered_by_text"
             android:layout_width="wrap_content"
             android:paddingLeft="@dimen/spacing_between_element"
             android:layout_height="wrap_content"
@@ -33,7 +33,7 @@
             android:text="@string/info_powered_by"/>
 
         <ImageButton
-            android:id="@+id/activityLogin_imageButton_lastFmLogo"
+            android:id="@+id/activity_login_last_fm_logo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -43,9 +43,9 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/activityLogin_textView_loginInfo"
+        android:id="@+id/activity_login_login_info_text"
         android:background="@color/accent"
-        android:layout_below="@+id/activityLogin_linearLayout_header"
+        android:layout_below="@+id/activity_login_header"
         android:textColor="#FFFFFF"
         android:paddingRight="@dimen/spacing_between_element"
         android:paddingLeft="@dimen/spacing_between_element"
@@ -57,18 +57,18 @@
         android:layout_height="wrap_content" />
 
     <LinearLayout
-        android:id="@+id/activityLogin_linearLayout_usernameField"
+        android:id="@+id/activity_login_username_field"
         android:layout_width="match_parent"
         android:orientation="horizontal"
         android:weightSum="10"
         android:layout_marginTop="@dimen/spacing_between_element"
         android:layout_marginRight="@dimen/activity_vertical_margin"
         android:layout_marginLeft="@dimen/activity_vertical_margin"
-        android:layout_below="@+id/activityLogin_textView_loginInfo"
+        android:layout_below="@+id/activity_login_login_info_text"
         android:layout_height="wrap_content">
 
         <ImageView
-            android:id="@+id/activityLogin_imageView_usernameIcon"
+            android:id="@+id/activity_login_username_icon"
             android:layout_width="wrap_content"
             android:layout_weight="1"
             android:layout_gravity="center"
@@ -77,7 +77,7 @@
             android:contentDescription="@string/accessibility_usernameIcon" />
 
         <EditText
-            android:id="@+id/activityLogin_editText_userId"
+            android:id="@+id/activity_login_username_textfield"
             android:layout_weight="9"
             android:singleLine="true"
             android:imeOptions="actionNext"
@@ -88,18 +88,18 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/activityLogin_linearLayout_passwordField"
+        android:id="@+id/activity_login_password_field"
         android:layout_width="match_parent"
         android:orientation="horizontal"
         android:weightSum="10"
         android:layout_marginTop="@dimen/spacing_between_element"
         android:layout_marginRight="@dimen/activity_vertical_margin"
         android:layout_marginLeft="@dimen/activity_vertical_margin"
-        android:layout_below="@+id/activityLogin_linearLayout_usernameField"
+        android:layout_below="@+id/activity_login_username_field"
         android:layout_height="wrap_content">
 
         <ImageView
-            android:id="@+id/activityLogin_imageView_passwordIcon"
+            android:id="@+id/activity_login_password_icon"
             android:layout_width="wrap_content"
             android:layout_weight="1"
             android:layout_gravity="center"
@@ -108,7 +108,7 @@
             android:contentDescription="@string/accessibility_passwordIcon" />
 
         <EditText
-            android:id="@+id/activityLogin_editText_password"
+            android:id="@+id/activity_login_password_textfield"
             android:hint="@string/prompt_password"
             android:layout_weight="9"
             android:imeOptions="actionGo"
@@ -120,20 +120,20 @@
     </LinearLayout>
 
     <FrameLayout
-        android:id="@+id/activityLogin_framelayout_login_button"
+        android:id="@+id/activity_login_login_button_layout"
         android:layout_width="match_parent"
-        android:layout_below="@+id/activityLogin_linearLayout_passwordField"
+        android:layout_below="@+id/activity_login_password_field"
         android:layout_height="wrap_content">
 
         <ProgressBar
-            android:id="@+id/activityLogin_progressBar_loginProgressBar"
+            android:id="@+id/activity_login_login_progressbar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
             android:layout_gravity="center_horizontal|center_vertical" />
 
         <Button
-            android:id="@+id/activityLogin_button_login"
+            android:id="@+id/activity_login_login_button"
             android:layout_marginLeft="24dp"
             android:layout_marginRight="24dp"
             style="@android:style/Widget.Holo.Light.Button.Borderless"
@@ -149,12 +149,12 @@
     </FrameLayout>
 
     <Button
-        android:id="@+id/activityLogin_button_sign_up"
+        android:id="@+id/activity_login_sign_up_button"
         android:layout_marginLeft="24dp"
         style="@android:style/Widget.Holo.Light.Button.Borderless.Small"
         android:layout_marginRight="24dp"
         android:layout_marginTop="@dimen/spacing_between_element"
-        android:layout_below="@+id/activityLogin_framelayout_login_button"
+        android:layout_below="@+id/activity_login_login_button_layout"
         android:text="@string/action_sign_up"
         android:textStyle="bold"
         android:onClick="navToLastFmSignUpPage"
@@ -162,8 +162,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <View android:id="@+id/activityLogin_view_separator"
-        android:layout_above="@+id/activityLogin_textView_copyrightInfo"
+    <View android:id="@+id/activity_login_footer_separator"
+        android:layout_above="@+id/activity_login_copyright_info_text"
         android:layout_width = "match_parent"
         android:layout_marginLeft="@dimen/activity_vertical_margin"
         android:layout_marginRight="@dimen/activity_vertical_margin"
@@ -171,7 +171,7 @@
         android:background="#52aaaaaa" />
 
     <TextView
-        android:id="@+id/activityLogin_textView_copyrightInfo"
+        android:id="@+id/activity_login_copyright_info_text"
         android:layout_alignParentBottom="true"
         android:paddingBottom="@dimen/spacing_between_element"
         android:paddingTop="@dimen/spacing_between_element"

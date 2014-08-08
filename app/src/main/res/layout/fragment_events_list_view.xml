@@ -1,6 +1,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/fragment_eventsListView_linearLayout_view_container"
+    android:id="@+id/fragment_events_list_view_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -9,14 +9,14 @@
     tools:context=".fragments.EventsListViewFragment">
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/fragment_eventsListView_recyclerView_eventCardListHolder"
+        android:id="@+id/fragment_events_listView_event_cards_holder"
         android:scrollbars="vertical"
         android:layout_weight="24"
         android:layout_width="match_parent"
         android:layout_height="0dp"/>
 
     <Button
-        android:id="@+id/fragment_eventsListView_button_load_more_button"
+        android:id="@+id/fragment_events_list_view_load_more_button"
         style="@android:style/Widget.Material.Light.Button"
         android:layout_width="match_parent"
         android:visibility="gone"
@@ -29,3 +29,4 @@
         android:textSize="14sp" />
 
 </LinearLayout>
+

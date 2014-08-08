@@ -13,7 +13,9 @@
     <RelativeLayout
         android:id="@+id/eventCard_relativeLayout_eventCard"
         android:layout_width="match_parent"
-        android:padding="8dp"
+        android:paddingLeft="8dp"
+        android:paddingTop="8dp"
+        android:paddingRight="8dp"
         android:layout_height="match_parent">
 
         <ImageView
@@ -94,14 +96,14 @@
             android:gravity="left|center_vertical"
             android:layout_height="wrap_content"
             android:text="@string/event_card_buzz_button_text"
-            android:minHeight="0dp"
+            android:minHeight="40dp"
             android:minWidth="0dp"
             android:textColor="@color/accent"
-            android:textSize="15sp" />
+            android:textSize="16sp" />
 
         <Button
             android:id="@+id/eventsCard_button_moreDetails"
-            android:layout_marginLeft="16dp"
+            android:layout_marginLeft="8dp"
             android:layout_marginTop="16dp"
             style="@android:style/Widget.Holo.Light.Button.Borderless"
             android:layout_below="@+id/eventCard_textView_venueLocation"
@@ -109,10 +111,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/event_card_more_details_button_text"
-            android:minHeight="0dp"
+            android:minHeight="40dp"
             android:minWidth="0dp"
             android:textColor="@color/primary_dark"
-            android:textSize="15sp" />
+            android:textSize="16sp" />
 
     </RelativeLayout>
 

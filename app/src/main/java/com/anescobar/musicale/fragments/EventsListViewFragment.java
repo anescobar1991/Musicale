@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -101,9 +102,9 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_events_list_view, container, false);
 
-        mViewContainer = (LinearLayout) view.findViewById(R.id.fragment_eventsListView_linearLayout_view_container);
-        mLoadMoreEventsButton = (Button) view.findViewById(R.id.fragment_eventsListView_button_load_more_button);
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.fragment_eventsListView_recyclerView_eventCardListHolder);
+        mViewContainer = (LinearLayout) view.findViewById(R.id.fragment_events_list_view_container);
+        mLoadMoreEventsButton = (Button) view.findViewById(R.id.fragment_events_list_view_load_more_button);
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.fragment_events_listView_event_cards_holder);
 
         // loads events to view
         addEventsToList(1);

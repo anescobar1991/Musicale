@@ -49,9 +49,9 @@ public class LoginActivity extends Activity {
         setContentView(R.layout.activity_login);
 
         //initializes UI elements to be manipulated later
-        mUserNameEditText = (EditText) findViewById(R.id.activityLogin_editText_userId);
-        mPasswordEditText = (EditText) findViewById(R.id.activityLogin_editText_password);
-        mLoginButton = (Button) findViewById(R.id.activityLogin_button_login);
+        mUserNameEditText = (EditText) findViewById(R.id.activity_login_username_textfield);
+        mPasswordEditText = (EditText) findViewById(R.id.activity_login_password_textfield);
+        mLoginButton = (Button) findViewById(R.id.activity_login_login_button);
 
         //sets editText listeners
         mPasswordEditText.addTextChangedListener(textWatcher);
@@ -180,7 +180,7 @@ public class LoginActivity extends Activity {
     private class GetSessionTask extends AsyncTask<UserCredentials, Void, Session> {
         private String lastFmApiKey = getString(R.string.lastFm_api_key);
         private String lastFmSecret = getString(R.string.lastFm_secret);
-        private ProgressBar loginProgressBar = (ProgressBar) findViewById(R.id.activityLogin_progressBar_loginProgressBar);
+        private ProgressBar loginProgressBar = (ProgressBar) findViewById(R.id.activity_login_login_progressbar);
 
 
         @Override
