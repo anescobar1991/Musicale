@@ -10,7 +10,6 @@ import com.anescobar.musicale.R;
 import com.anescobar.musicale.utilsHelpers.EventsFinder;
 import com.anescobar.musicale.utilsHelpers.SessionManager;
 import com.anescobar.musicale.utilsHelpers.NetworkUtil;
-import com.google.gson.Gson;
 
 import de.umass.lastfm.Caller;
 import de.umass.lastfm.Event;
@@ -40,7 +39,7 @@ public class SplashActivity extends Activity {
         if (networkUtil.isNetworkAvailable(this)) {
             Session session = sessionManager.getSession(this);
             if (session != null) { // if session exists then need to check for its validity
-                new ValidateSessionTask(session).execute(session); //calls async task that checks for session validity and acts on results
+                new ValidateSessionTask().execute(session); //calls async task that checks for session validity and acts on results
             } else {
                 startLoginActivity(); //session is null so go to login screen
             }
@@ -52,11 +51,6 @@ public class SplashActivity extends Activity {
     //async task that performs heartbeat check for session using getRecommendedEvents method
     //that way is users stored session is invalid for some reason then user has chance to login before entering app
     private class ValidateSessionTask extends AsyncTask<Session, Void, PaginatedResult<Event>> {
-        private Session session;
-
-        public ValidateSessionTask(Session session) {
-            this.session = session;
-        }
 
         @Override
         protected PaginatedResult<Event> doInBackground(Session... sessions) {
@@ -69,7 +63,7 @@ public class SplashActivity extends Activity {
             Result response = Caller.getInstance().getLastResult();
             Log.w("session_getter_error", response.toString());
             if (response.isSuccessful()) {
-                startHomeActivity(session);
+                startHomeActivity();
             } else {
                 startLoginActivity();
             }
@@ -87,13 +81,9 @@ public class SplashActivity extends Activity {
 
     /**
      * sends intent to start home activity
-     * sends session object to home activity in bundle
      */
-    private void startHomeActivity(Session session) {
-        Gson gson = new Gson();
-        String sessionString = gson.toJson(session); //serialized session object
+    private void startHomeActivity() {
         Intent intent = new Intent(this, HomeActivity.class);
-        intent.putExtra("com.anescobar.musicale.activities.HomeActivity.session", sessionString); //Puts session object to to Home Activity Intent
         startActivity(intent);
         finish();
     }

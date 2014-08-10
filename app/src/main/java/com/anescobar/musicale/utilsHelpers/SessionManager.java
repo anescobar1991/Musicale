@@ -12,10 +12,10 @@ import de.umass.lastfm.Session;
  * Class to manage user's session
  */
 public class SessionManager {
+    private static final String SESSION_SHARED_PREFS_NAME = "SessionPrefs";
 
     /**
      * Caches session to sharedPreferences where it is persisted even when app is out of memory
-     * else user is taken to login screen
      * @param  session session to be cached
      * @param context activity context
      */
@@ -23,23 +23,21 @@ public class SessionManager {
         Gson gson = new Gson();
         String sessionString = gson.toJson(session);
 
-        SharedPreferences sharedPreferences = context.getSharedPreferences("userSession", 0);
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SESSION_SHARED_PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor sharedPreferencesEditor = sharedPreferences.edit();
-        sharedPreferencesEditor.remove("session");
-        sharedPreferencesEditor.putString("session", sessionString);
+        sharedPreferencesEditor.putString("userSession", sessionString);
         sharedPreferencesEditor.apply();
     }
 
     /**
      * gets session from sharedPreferences
-     * else user is taken to login screen
      * @param context activity context
      * @return session - Will be null if no session exists yet.
      */
     public Session getSession(Context context) {
         Session session = null;
-        SharedPreferences sp = context.getSharedPreferences("userSession", 0);
-        String sessionString = sp.getString("session", null);
+        SharedPreferences sp = context.getSharedPreferences(SESSION_SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+        String sessionString = sp.getString("userSession", null);
         if (sessionString != null) {
             Gson gson = new Gson();
             session = gson.fromJson(sessionString, Session.class);
@@ -53,11 +51,10 @@ public class SessionManager {
      * @param context  activity context
      */
     public void discardSession(Context context) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences("userSession", 0);
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SESSION_SHARED_PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor sharedPreferencesEditor = sharedPreferences.edit();
         sharedPreferencesEditor.clear();
         sharedPreferencesEditor.apply();
     }
-
 
 }

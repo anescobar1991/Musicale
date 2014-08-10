@@ -216,10 +216,10 @@ public class LoginActivity extends Activity {
             } else { //valid session was retrieved from last.Fm service
                 //caches session to sharedPreferences so that it persists even when app is out of memory
                 mSessionManager.cacheSession(session,getApplicationContext());
-                Gson gson = new Gson();
-                String sessionString = gson.toJson(session); //serialized session object
+//                Gson gson = new Gson();
+//                String sessionString = gson.toJson(session); //serialized session object
                 Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
-                intent.putExtra("com.anescobar.musicale.activities.HomeActivity.session", sessionString); //Puts session object to to Home Activity Intent
+//                intent.putExtra("com.anescobar.musicale.activities.HomeActivity.session", sessionString); //Puts session object to to Home Activity Intent
                 startActivity(intent);
                 finish();
             }

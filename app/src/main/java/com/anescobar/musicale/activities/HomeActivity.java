@@ -5,12 +5,12 @@ import android.app.Activity;
 import android.app.ActionBar;
 import android.app.FragmentManager;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.support.v4.widget.DrawerLayout;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
-import android.widget.Toast;
 
 import com.anescobar.musicale.R;
 import com.anescobar.musicale.fragments.EventsListViewFragment;
@@ -33,9 +33,7 @@ public class HomeActivity extends Activity
 
     private NavigationDrawerFragment mNavigationDrawerFragment; //Fragment managing the behaviors, interactions and presentation of the navigation drawer.
     private CharSequence mTitle; //Used to store the last screen title. For use in {@link #restoreActionBar()}.
-    private SessionManager mSessionManager = new SessionManager();
-    private String mSessionString; //Needs to be be deserialized using GSON into a last FM Session object
-    private String mUserLocationString; //Needs to be be deserialized using GSON into a LatLng object
+    private static final String LOCATION_SHARED_PREFS_NAME = "LocationPrefs";
     private LocationClient mLocationClient;
     private boolean mIsEventsViewDisplayed;
     private boolean isMapViewDisplayed;
@@ -48,8 +46,8 @@ public class HomeActivity extends Activity
         setContentView(R.layout.activity_home);
         //gets Strings passed from splash screen activity
         //sets variables with these strings for later use
-        Intent intent = getIntent();
-        mSessionString = intent.getStringExtra("com.anescobar.musicale.activities.HomeActivity.session");
+//        Intent intent = getIntent();
+//        mSessionString = intent.getStringExtra("com.anescobar.musicale.activities.HomeActivity.session");
         mLocationClient = new LocationClient(this, this, this);
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getFragmentManager().findFragmentById(R.id.navigation_drawer);
@@ -63,10 +61,18 @@ public class HomeActivity extends Activity
 
     @Override
     public void onConnected(Bundle bundle) {
+        // stores user's current location in sharedPreferences
+        // that way it persists throughout app even when app is not in memory
         Gson gson = new Gson();
-        mUserLocationString = gson.toJson(new LatLng(
+        String serializedCurrentUserLocation = gson.toJson(new LatLng(
                 mLocationClient.getLastLocation().getLatitude(),mLocationClient.getLastLocation().getLongitude()
         ));
+
+        SharedPreferences sharedPreferences = getSharedPreferences(LOCATION_SHARED_PREFS_NAME, MODE_PRIVATE);
+
+        SharedPreferences.Editor sharedPreferencesEditor = sharedPreferences.edit();
+        sharedPreferencesEditor.putString("userCurrentLatLng", serializedCurrentUserLocation);
+        sharedPreferencesEditor.apply();
     }
 
     @Override
@@ -117,8 +123,13 @@ public class HomeActivity extends Activity
                         .commit();
                 break;
             case 3:
+                //instantiates new SessionManager
+                SessionManager sessionManager = new SessionManager();
+
                 //discards session and logs out
-                mSessionManager.discardSession(this);
+                sessionManager.discardSession(this);
+
+                //user is taken to login screen after logout
                 Intent loginActivityIntent = new Intent(this, LoginActivity.class);
                 startActivity(loginActivityIntent);
                 finish();
@@ -166,16 +177,6 @@ public class HomeActivity extends Activity
         }
     }
 
-    /**
-     * displays toast on bottom of screen
-     * @param message String to be displayed on toast
-     * @param toastLength enum to indicate how long toast should remain on screen, either Toast.LENGTH_SHORT, or Toast.LENGTH_LONG
-     */
-    private void displayToastMessage(String message, int toastLength) {
-        Toast toast = Toast.makeText(this, message, toastLength);
-        toast.show();
-    }
-
     @Override
     public void onAttachDisplayTitle(int sectionIndex) {
         switch (sectionIndex) {
@@ -198,13 +199,13 @@ public class HomeActivity extends Activity
             case 0:
                 isMapViewDisplayed = false;
                 fragmentManager.beginTransaction()
-                        .replace(R.id.container, EventsListViewFragment.newInstance(mSessionString, mUserLocationString))
+                        .replace(R.id.container, new EventsListViewFragment())
                         .commit();
                 break;
             case 1:
                 isMapViewDisplayed = true;
                 fragmentManager.beginTransaction()
-                        .replace(R.id.container, EventsMapViewFragment.newInstance(mSessionString, mUserLocationString))
+                        .replace(R.id.container, new EventsMapViewFragment())
                         .commit();
                 break;
         }

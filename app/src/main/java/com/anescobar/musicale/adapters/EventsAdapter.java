@@ -14,36 +14,39 @@ import android.widget.Toast;
 
 import com.anescobar.musicale.R;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collection;
+
+import de.umass.lastfm.Event;
 
 /**
  * Created by Andres Escobar on 8/3/14.
  * Adapter for EventList view. Gets arrayList of events and populates recycleView with them
  * Also handles view logic for event cards
  */
-public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.ViewHolder> implements View.OnClickListener {
-
-    private ArrayList<String> mDataset;
+public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder> implements View.OnClickListener {
+    private ArrayList<Event> mEvents;
     private static Context mContext;
 
     // Adapter's Constructor
-    public EventListAdapter(Context context, ArrayList<String> myDataset) {
-        mDataset = myDataset;
+    public EventsAdapter(Context context, ArrayList<Event> events) {
+        mEvents = events;
         mContext = context;
     }
 
     // Create new views. This is invoked by the layout manager.
     @Override
-    public EventListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
+    public EventsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
                                                          int viewType) {
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.event_card, parent, false);
 
         // Set the view to the ViewHolder
         ViewHolder holder = new ViewHolder(v);
-        holder.mMapPinImage.setOnClickListener(EventListAdapter.this);
-        holder.mEventBuzzButton.setOnClickListener(EventListAdapter.this);
-        holder.mMoreEventDetailsButton.setOnClickListener(EventListAdapter.this);
+        holder.mMapPinImage.setOnClickListener(EventsAdapter.this);
+        holder.mEventBuzzButton.setOnClickListener(EventsAdapter.this);
+        holder.mMoreEventDetailsButton.setOnClickListener(EventsAdapter.this);
 
         holder.mEventBuzzButton.setTag(holder);
         holder.mMapPinImage.setTag(holder);
@@ -55,16 +58,17 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.View
     // Replace the contents of a view. This is invoked by the layout manager.
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        //TODO populate events here
+        //TODO populate events cards here
+
         // Get element from your dataset at this position and set the text for the specified element
-        holder.mEventTitleTextView.setText(mDataset.get(position));
+        holder.mEventTitleTextView.setText(mEvents.get(position).getTitle());
 
     }
 
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return mDataset.size();
+        return mEvents.size();
     }
 
     @Override

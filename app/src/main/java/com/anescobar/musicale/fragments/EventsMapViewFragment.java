@@ -43,14 +43,14 @@ public class EventsMapViewFragment extends Fragment {
      * @param userLocationString userLocationString to be converted to a LatLng object using GSON
      * @return A new instance of fragment EventsMapViewFragment.
      */
-    public static EventsMapViewFragment newInstance(String sessionString, String userLocationString) {
-        EventsMapViewFragment fragment = new EventsMapViewFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_SESSION_STRING, sessionString);
-        args.putString(ARG_USER_LOCATION_STRING, userLocationString);
-        fragment.setArguments(args);
-        return fragment;
-    }
+//    public static EventsMapViewFragment newInstance(String sessionString, String userLocationString) {
+//        EventsMapViewFragment fragment = new EventsMapViewFragment();
+//        Bundle args = new Bundle();
+//        args.putString(ARG_SESSION_STRING, sessionString);
+//        args.putString(ARG_USER_LOCATION_STRING, userLocationString);
+//        fragment.setArguments(args);
+//        return fragment;
+//    }
 
     public EventsMapViewFragment() {
         // Required empty public constructor
