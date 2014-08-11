@@ -8,12 +8,26 @@
     android:weightSum="24"
     tools:context=".fragments.EventsListViewFragment">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/fragment_events_listView_event_cards_holder"
-        android:scrollbars="vertical"
-        android:layout_weight="24"
+    <FrameLayout
+        android:id="@+id/fragment_events_list_view_list_container"
         android:layout_width="match_parent"
-        android:layout_height="0dp"/>
+        android:layout_height="0dp"
+        android:layout_weight="24">
+
+        <ProgressBar
+            android:id="@+id/fragment_events_list_view_loading"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            android:layout_height="wrap_content" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/fragment_events_listView_event_cards_holder"
+            android:scrollbars="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </FrameLayout>
 
     <Button
         android:id="@+id/fragment_events_list_view_load_more_button"

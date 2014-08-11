@@ -2,6 +2,8 @@ package com.anescobar.musicale.fragments;
 
 import android.app.Activity;
 import android.app.FragmentTransaction;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
@@ -9,12 +11,19 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.anescobar.musicale.R;
+import com.anescobar.musicale.activities.HomeActivity;
+import com.anescobar.musicale.utilsHelpers.SessionManager;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+
+import de.umass.lastfm.Event;
 import de.umass.lastfm.Session;
 
 /**
@@ -22,35 +31,15 @@ import de.umass.lastfm.Session;
 * Activities that contain this fragment must implement the
 * {@link EventsMapViewFragment.OnEventsMapViewFragmentInteractionListener} interface
 * to handle interaction home.
-* Use the {@link EventsMapViewFragment#newInstance} factory method to
-* create an instance of this fragment.
 *
 */
 public class EventsMapViewFragment extends Fragment {
-    private static final String ARG_SESSION_STRING = "com.anescobar.musicale.fragments.EventsMapViewFragment.session";
-    private static final String ARG_USER_LOCATION_STRING = "com.anescobar.musicale.fragments.EventsMapViewFragment.userLocation";
     private Session mSession;
     private MapFragment mMapFragment;
+    private ArrayList<Event> mEvents = new ArrayList<Event>();
     private GoogleMap mMap;
-    private LatLng mUserLocation;
+    private LatLng mUserLatLng;
     private OnEventsMapViewFragmentInteractionListener mListener;
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param sessionString sessionString to be converted to a session object using GSON
-     * @param userLocationString userLocationString to be converted to a LatLng object using GSON
-     * @return A new instance of fragment EventsMapViewFragment.
-     */
-//    public static EventsMapViewFragment newInstance(String sessionString, String userLocationString) {
-//        EventsMapViewFragment fragment = new EventsMapViewFragment();
-//        Bundle args = new Bundle();
-//        args.putString(ARG_SESSION_STRING, sessionString);
-//        args.putString(ARG_USER_LOCATION_STRING, userLocationString);
-//        fragment.setArguments(args);
-//        return fragment;
-//    }
 
     public EventsMapViewFragment() {
         // Required empty public constructor
@@ -59,13 +48,35 @@ public class EventsMapViewFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //gets arguments and deserializes them
-        if (getArguments() != null) {
-            String sessionString = getArguments().getString(ARG_SESSION_STRING);
-            String userLocationString = getArguments().getString(ARG_USER_LOCATION_STRING);
-            Gson gson = new Gson();
-            mSession = gson.fromJson(sessionString, Session.class);
-            mUserLocation = gson.fromJson(userLocationString, LatLng.class);
+
+        Gson gson = new Gson();
+
+        // Gets session from sharedPreferences
+        SharedPreferences sessionPreferences = getActivity().getSharedPreferences(SessionManager.SESSION_SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+        String serializedSession = sessionPreferences.getString("userSession", null);
+        if (serializedSession != null) {
+            mSession = gson.fromJson(serializedSession, Session.class);
+        } //TODO here is where we check for and act on errors
+
+        //Gets user's location(LatLng serialized into string) from sharedPreferences
+        SharedPreferences userLocationPreferences = getActivity().getSharedPreferences(HomeActivity.LOCATION_SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+        String serializedLatLng = userLocationPreferences.getString("userCurrentLatLng", null);
+        if (serializedLatLng != null) {
+            //deserializes userLatLng string into LatLng object
+            mUserLatLng = gson.fromJson(serializedLatLng, LatLng.class);
+        } //TODO here is where we check for and act on errors
+
+        //Gets Events data from sharedPreferences
+        SharedPreferences eventsPreferences = getActivity().getSharedPreferences(HomeActivity.EVENTS_SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+        //
+
+        String serializedEvents = eventsPreferences.getString("events", null);
+
+        //deserializes events if there are any
+        if (serializedEvents != null) {
+            Type listOfEvents = new TypeToken<ArrayList<Event>>(){}.getType();
+            mEvents = gson.fromJson(serializedEvents, listOfEvents);
+
         }
     }
 
@@ -85,7 +96,7 @@ public class EventsMapViewFragment extends Fragment {
     @Override
     public void onStart(){
         super.onStart();
-        setUpMapIfNeeded(mUserLocation, mSession);
+        setUpMapIfNeeded(mUserLatLng, mSession);
         // Apply any required UI change now that the Fragment is visible.
     }
 
@@ -93,7 +104,7 @@ public class EventsMapViewFragment extends Fragment {
     @Override
     public void onResume(){
         super.onResume();
-        setUpMapIfNeeded(mUserLocation, mSession);
+        setUpMapIfNeeded(mUserLatLng, mSession);
         // Resume any paused UI updates, threads, or processes required
         // by the Fragment but suspended when it became inactive.
     }

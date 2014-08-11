@@ -12,7 +12,7 @@ import de.umass.lastfm.Session;
  * Class to manage user's session
  */
 public class SessionManager {
-    private static final String SESSION_SHARED_PREFS_NAME = "SessionPrefs";
+    public static final String SESSION_SHARED_PREFS_NAME = "SessionPrefs";
 
     /**
      * Caches session to sharedPreferences where it is persisted even when app is out of memory

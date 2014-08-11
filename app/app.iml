@@ -68,6 +68,7 @@
     <orderEntry type="library" exported="" name="support-v4-21.0.0-rc1" level="project" />
     <orderEntry type="library" exported="" name="cardview-v7-21.0.0-rc1" level="project" />
     <orderEntry type="library" exported="" name="lastfm-java-0.1.2" level="project" />
+    <orderEntry type="library" exported="" name="picasso-2.3.3" level="project" />
   </component>
 </module>
 

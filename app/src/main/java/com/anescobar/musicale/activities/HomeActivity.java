@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.support.v4.widget.DrawerLayout;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
 import com.anescobar.musicale.R;
 import com.anescobar.musicale.fragments.EventsListViewFragment;
@@ -33,7 +34,8 @@ public class HomeActivity extends Activity
 
     private NavigationDrawerFragment mNavigationDrawerFragment; //Fragment managing the behaviors, interactions and presentation of the navigation drawer.
     private CharSequence mTitle; //Used to store the last screen title. For use in {@link #restoreActionBar()}.
-    private static final String LOCATION_SHARED_PREFS_NAME = "LocationPrefs";
+    public static final String LOCATION_SHARED_PREFS_NAME = "LocationPrefs";
+    public static final String EVENTS_SHARED_PREFS_NAME = "EventsPrefs";
     private LocationClient mLocationClient;
     private boolean mIsEventsViewDisplayed;
     private boolean isMapViewDisplayed;
@@ -44,10 +46,7 @@ public class HomeActivity extends Activity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        //gets Strings passed from splash screen activity
-        //sets variables with these strings for later use
-//        Intent intent = getIntent();
-//        mSessionString = intent.getStringExtra("com.anescobar.musicale.activities.HomeActivity.session");
+
         mLocationClient = new LocationClient(this, this, this);
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getFragmentManager().findFragmentById(R.id.navigation_drawer);
@@ -210,5 +209,15 @@ public class HomeActivity extends Activity
                 break;
         }
         return false;
+    }
+
+    /**
+     * displays toast on bottom of screen
+     * @param message String to be displayed on toast
+     * @param toastLength enum to indicate how long toast should remain on screen, either Toast.LENGTH_SHORT, or Toast.LENGTH_LONG
+     */
+    public void displayToastMessage(String message, int toastLength) {
+        Toast toast = Toast.makeText(this, message, toastLength);
+        toast.show();
     }
 }

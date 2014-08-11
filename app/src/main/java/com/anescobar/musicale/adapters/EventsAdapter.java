@@ -13,19 +13,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.anescobar.musicale.R;
+import com.squareup.picasso.Picasso;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Collection;
 
 import de.umass.lastfm.Event;
+import de.umass.lastfm.ImageSize;
 
 /**
  * Created by Andres Escobar on 8/3/14.
  * Adapter for EventList view. Gets arrayList of events and populates recycleView with them
  * Also handles view logic for event cards
  */
-public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder> implements View.OnClickListener {
+public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder> {
     private ArrayList<Event> mEvents;
     private static Context mContext;
 
@@ -39,30 +39,24 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
     @Override
     public EventsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
                                                          int viewType) {
-        View v = LayoutInflater.from(parent.getContext())
+        View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.event_card, parent, false);
 
-        // Set the view to the ViewHolder
-        ViewHolder holder = new ViewHolder(v);
-        holder.mMapPinImage.setOnClickListener(EventsAdapter.this);
-        holder.mEventBuzzButton.setOnClickListener(EventsAdapter.this);
-        holder.mMoreEventDetailsButton.setOnClickListener(EventsAdapter.this);
-
-        holder.mEventBuzzButton.setTag(holder);
-        holder.mMapPinImage.setTag(holder);
-        holder.mMoreEventDetailsButton.setTag(holder);
-
-        return holder;
+        return new ViewHolder(view, mEvents);
     }
 
     // Replace the contents of a view. This is invoked by the layout manager.
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        //TODO populate events cards here
-
-        // Get element from your dataset at this position and set the text for the specified element
+        //sets event card details
         holder.mEventTitleTextView.setText(mEvents.get(position).getTitle());
-
+        holder.mEventDateTextView.setText(mEvents.get(position).getStartDate().toLocaleString().substring(0, 12));
+        holder.mEventVenueNameTextView.setText(mEvents.get(position).getVenue().getName());
+        holder.mVenueLocationTextView.setText(mEvents.get(position).getVenue().getCity() + " " + mEvents.get(position).getVenue().getCountry());
+        String eventUrl = mEvents.get(position).getImageURL(ImageSize.EXTRALARGE);
+        if (eventUrl.length() != 0) {
+            Picasso.with(mContext).load(eventUrl).into(holder.mEventImage);
+        }
     }
 
     // Return the size of your dataset (invoked by the layout manager)
@@ -71,21 +65,9 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         return mEvents.size();
     }
 
-    @Override
-    public void onClick(View view) {
-        ViewHolder holder = (ViewHolder) view.getTag();
-        if (view.getId() == holder.mMoreEventDetailsButton.getId()) {
-            Toast.makeText(mContext, holder.mMoreEventDetailsButton.getText(), Toast.LENGTH_SHORT).show();
-            //TODO hardcoded for now
-        } else if (view.getId() == holder.mMapPinImage.getId()) {
-            showMap(Uri.parse("geo:0,0?q=34.99,-106.61(Cynthia Woods Mitchell Pavilion)"));
-        } else if (view.getId() == holder.mEventBuzzButton.getId()) {
-            Toast.makeText(mContext, "Buzz about this event button tapped", Toast.LENGTH_SHORT).show();
-        }
-    }
-
     // Create the ViewHolder class to keep references to your views
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        private ArrayList<Event> mEvents;
         public ImageView mEventImage;
         public TextView mEventTitleTextView;
         public TextView mEventDateTextView;
@@ -99,8 +81,10 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
          * Constructor
          * @param view The container view which holds the elements from the row item xml
          */
-        public ViewHolder(View view) {
+        public ViewHolder(View view, ArrayList<Event> events) {
             super(view);
+            this.mEvents = events;
+
             mEventImage = (ImageView) view.findViewById(R.id.eventCard_imageView_eventImage);
             mEventTitleTextView = (TextView) view.findViewById(R.id.eventCard_textView_eventTitle);
             mEventDateTextView = (TextView) view.findViewById(R.id.eventCard_textView_eventDate);
@@ -109,10 +93,32 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
             mVenueLocationTextView = (TextView) view.findViewById(R.id.eventCard_textView_venueLocation);
             mEventBuzzButton = (Button) view.findViewById(R.id.eventsCard_button_eventBuzz);
             mMoreEventDetailsButton = (Button) view.findViewById(R.id.eventsCard_button_moreDetails);
+
+            mMapPinImage.setOnClickListener(this);
+            mMoreEventDetailsButton.setOnClickListener(this);
+            mEventBuzzButton.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            if (view.getId() == mMoreEventDetailsButton.getId()) {
+                //opens event url in browser
+                String eventUrl = mEvents.get(getPosition()).getUrl();
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(eventUrl));
+                mContext.startActivity(browserIntent);
+            } else if (view.getId() == mMapPinImage.getId()) {
+                //shows venue location in maps app
+                Float venueLat = mEvents.get(getPosition()).getVenue().getLatitude();
+                Float venueLng = mEvents.get(getPosition()).getVenue().getLongitude();
+                String venueName = mEvents.get(getPosition()).getVenue().getName();
+                showMap(Uri.parse("geo:0,0?q=" + venueLat +"," + venueLng + "(" + venueName + ")"));
+            } else if (view.getId() == mEventBuzzButton.getId()) {
+                Toast.makeText(mContext, "Buzz about this event button tapped", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
-    private void showMap(Uri geoLocation) {
+    private static void showMap(Uri geoLocation) {
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(geoLocation);
         if (intent.resolveActivity(mContext.getPackageManager()) != null) {

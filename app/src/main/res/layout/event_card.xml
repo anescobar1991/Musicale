@@ -22,10 +22,9 @@
         <ImageView
             android:id="@+id/eventCard_imageView_eventImage"
             android:layout_width="wrap_content"
-            android:maxWidth="100dp"
+            android:maxHeight="100dp"
             android:paddingTop="8dp"
             android:adjustViewBounds="true"
-            android:src="@drawable/blink_182"
             android:layout_height="match_parent"
             android:contentDescription="@null" />
 
@@ -35,8 +34,7 @@
             android:paddingLeft="8dp"
             android:layout_toRightOf="@+id/eventCard_imageView_eventImage"
             android:textSize="20sp"
-            android:text="Blink 182"
-            android:textColor="@color/accent"
+            android:textColor="#ff2f2f2f"
             android:ellipsize="end"
             android:maxLines="1"
             android:layout_height="wrap_content" />
@@ -47,7 +45,6 @@
             android:paddingLeft="8dp"
             android:layout_below="@+id/eventCard_textView_eventTitle"
             android:layout_toRightOf="@+id/eventCard_imageView_eventImage"
-            android:text="August 24, 2014"
             android:textSize="14sp"
             android:ellipsize="end"
             android:maxLines="1"
@@ -61,7 +58,6 @@
             android:textSize="14sp"
             android:layout_width="wrap_content"
             android:maxLength="33"
-            android:text="Cynthia Woods Mitchell Pavilion"
             android:layout_height="wrap_content" />
 
         <ImageView
@@ -84,7 +80,6 @@
             android:layout_width="wrap_content"
             android:ellipsize="end"
             android:maxLines="1"
-            android:text="The Woodlands United States"
             android:layout_height="wrap_content" />
 
         <Button
