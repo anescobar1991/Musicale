@@ -3,7 +3,6 @@ package com.anescobar.musicale.fragments;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,6 +18,7 @@ import android.widget.Toast;
 import com.anescobar.musicale.R;
 import com.anescobar.musicale.activities.HomeActivity;
 import com.anescobar.musicale.adapters.EventsAdapter;
+import com.anescobar.musicale.interfaces.OnEventsFetcherTaskCompleted;
 import com.anescobar.musicale.utilsHelpers.EventsFinder;
 import com.anescobar.musicale.utilsHelpers.NetworkUtil;
 import com.anescobar.musicale.utilsHelpers.SessionManager;
@@ -40,7 +40,9 @@ import de.umass.lastfm.Session;
  * to handle interaction home.
  *
  */
-public class EventsListViewFragment extends Fragment implements RecyclerView.OnScrollListener{
+public class EventsListViewFragment extends Fragment implements RecyclerView.OnScrollListener,
+        OnEventsFetcherTaskCompleted {
+
     private OnEventsListViewFragmentInteractionListener mListener;
     private LinearLayoutManager mLayoutManager;
     private Button mLoadMoreEventsButton;
@@ -74,37 +76,12 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         //initializes networkUtil class
         mNetworkUtil = new NetworkUtil();
-        Gson gson = new Gson();
 
-        // Gets session from sharedPreferences
-        SharedPreferences sessionPreferences = getActivity().getSharedPreferences(SessionManager.SESSION_SHARED_PREFS_NAME, Context.MODE_PRIVATE);
-        String serializedSession = sessionPreferences.getString("userSession", null);
-        if (serializedSession != null) {
-            mSession = gson.fromJson(serializedSession, Session.class);
-        } //TODO here is where we check for and act on errors
-
-        //Gets user's location(LatLng serialized into string) from sharedPreferences
-        SharedPreferences userLocationPreferences = getActivity().getSharedPreferences(HomeActivity.LOCATION_SHARED_PREFS_NAME, Context.MODE_PRIVATE);
-        String serializedLatLng = userLocationPreferences.getString("userCurrentLatLng", null);
-        if (serializedLatLng != null) {
-            //deserializes userLatLng string into LatLng object
-            mUserLatLng = gson.fromJson(serializedLatLng, LatLng.class);
-        } //TODO here is where we check for and act on errors
-
-        //Gets Events data from sharedPreferences
-        SharedPreferences eventsPreferences = getActivity().getSharedPreferences(HomeActivity.EVENTS_SHARED_PREFS_NAME, Context.MODE_PRIVATE);
-        //
-        mNumberOfPagesLoaded = eventsPreferences.getInt("numberOfPagesLoaded", 0);
-        mTotalNumberOfPages = eventsPreferences.getInt("totalNumberOfPages", 0);
-        String serializedEvents = eventsPreferences.getString("events", null);
-
-        //deserializes events if there are any
-        if (serializedEvents != null) {
-            Type listOfEvents = new TypeToken<ArrayList<Event>>(){}.getType();
-            mEvents = gson.fromJson(serializedEvents, listOfEvents);
-        }
+        //gets all sharedPreferences and stores them locally
+        setCachedSettings();
     }
 
     @Override
@@ -133,7 +110,7 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
         if (mEvents.isEmpty()) {
             getEvents(1, mSession, mUserLatLng);
         } else {
-            setEventsAdapter(mEvents);
+            setEventsAdapter();
         }
 
         // Inflate the layout for this fragment
@@ -187,7 +164,7 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
     public void onScrolled(int i, int i2) {
     }
 
-    private void setEventsAdapter(ArrayList<Event> events) {
+    private void setEventsAdapter() {
         // only sets up adapter if it hasnt been setup already
         if (!mAdapterSet) {
             // Create the adapter
@@ -202,55 +179,28 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
             mAdapterSet = true;
         } else {
             //simply adds the events to already existing adapter
-            mAdapter.addEvents(events);
+            mAdapter.addEvents();
         }
+    }
+
+    public void refreshEvents() {
+        //forces fragment from getting cached settings
+        setCachedSettings();
+
+        //with this flag set to false adapter will set itself up again
+        mAdapterSet = false;
+
+        //sets adapter with cached settings
+        setEventsAdapter();
     }
 
     //gets events from backend, keeps track of how many pages are already loaded and cached
     private void getEvents(Integer pageNumber, Session session, LatLng userLocation) {
         mNumberOfPagesLoaded ++;
         if (mNetworkUtil.isNetworkAvailable(getActivity())) {
-            new EventsFetcherTask(session, userLocation).execute(pageNumber);
+            new EventsFinder(session, this, userLocation).getEvents(pageNumber);
         } else {
             mListener.displayToastMessage(getString(R.string.error_no_network_connectivity), Toast.LENGTH_SHORT);
-        }
-    }
-
-    private class EventsFetcherTask extends AsyncTask<Integer, Void, ArrayList<Event>> {
-        private Session session;
-        private LatLng userLocation;
-
-        public EventsFetcherTask(Session session, LatLng userLocation) {
-            this.session = session;
-            this.userLocation = userLocation;
-        }
-
-        @Override
-        protected ArrayList<Event> doInBackground(Integer... pageNumbers) {
-            ArrayList<Event> events = new ArrayList<Event>();
-
-            //send server request to get events nearby
-            PaginatedResult<Event> rawEventsNearby = new EventsFinder(session)
-                    .getEvents(userLocation.latitude, userLocation.longitude, "30", pageNumbers[0], 20, null);
-
-            //add eventsNearby to arrayList
-            events.addAll(rawEventsNearby.getPageResults());
-
-            mTotalNumberOfPages = rawEventsNearby.getTotalPages();
-
-            return events;
-        }
-        @Override
-        protected void onPreExecute() {
-            mEventsLoading.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected void onPostExecute(ArrayList<Event> events) {
-            //adds new events to mEvents
-            mEvents.addAll(events);
-            setEventsAdapter(events);
-            mEventsLoading.setVisibility(View.GONE);
         }
     }
 
@@ -263,6 +213,62 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
         } else {
             viewContainer.setWeightSum(24); // weightSum is changed to account for removal of button from view
             mLoadMoreEventsButton.setVisibility(View.GONE);
+        }
+    }
+
+    //called onPreExecute of eventsFetcherTask
+    @Override
+    public void onTaskAboutToStart() {
+        //display loading progressbar
+        mEventsLoading.setVisibility(View.VISIBLE);
+    }
+
+    //called onPostExecute of eventsFetcherTask
+    @Override
+    public void onTaskCompleted(PaginatedResult<Event> eventsNearby) {
+        ArrayList<Event> events= new ArrayList<Event>(eventsNearby.getPageResults());
+
+        //add events to mEvents
+        mEvents.addAll(events);
+
+        mTotalNumberOfPages = eventsNearby.getTotalPages();
+
+        //set events adapter with new events
+        setEventsAdapter();
+
+        //hide loading progressbar
+        mEventsLoading.setVisibility(View.GONE);
+    }
+
+    private void setCachedSettings() {
+        Gson gson = new Gson();
+
+        // Gets session from sharedPreferences
+        SharedPreferences sessionPreferences = getActivity().getSharedPreferences(SessionManager.SESSION_SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+        String serializedSession = sessionPreferences.getString("userSession", null);
+        if (serializedSession != null) {
+            mSession = gson.fromJson(serializedSession, Session.class);
+        } //TODO here is where we check for and act on errors
+
+        //Gets user's location(LatLng serialized into string) from sharedPreferences
+        SharedPreferences userLocationPreferences = getActivity().getSharedPreferences(HomeActivity.LOCATION_SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+        String serializedLatLng = userLocationPreferences.getString("userCurrentLatLng", null);
+        if (serializedLatLng != null) {
+            //deserializes userLatLng string into LatLng object
+            mUserLatLng = gson.fromJson(serializedLatLng, LatLng.class);
+        } //TODO here is where we check for and act on errors
+
+        //Gets Events data from sharedPreferences
+        SharedPreferences eventsPreferences = getActivity().getSharedPreferences(HomeActivity.EVENTS_SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+
+        mNumberOfPagesLoaded = eventsPreferences.getInt("numberOfPagesLoaded", 0);
+        mTotalNumberOfPages = eventsPreferences.getInt("totalNumberOfPages", 0);
+        String serializedEvents = eventsPreferences.getString("events", null);
+
+        //deserializes events if there are any
+        if (serializedEvents != null) {
+            Type listOfEvents = new TypeToken<ArrayList<Event>>(){}.getType();
+            mEvents = gson.fromJson(serializedEvents, listOfEvents);
         }
     }
 

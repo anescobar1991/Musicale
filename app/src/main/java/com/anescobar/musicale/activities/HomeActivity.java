@@ -3,16 +3,15 @@ package com.anescobar.musicale.activities;
 import android.app.Activity;
 
 import android.app.ActionBar;
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.support.v4.widget.DrawerLayout;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
@@ -24,6 +23,7 @@ import com.anescobar.musicale.fragments.SocializeViewFragment;
 import com.anescobar.musicale.fragments.TrendsViewFragment;
 import com.anescobar.musicale.interfaces.OnEventsFetcherTaskCompleted;
 import com.anescobar.musicale.utilsHelpers.EventsFinder;
+import com.anescobar.musicale.utilsHelpers.NetworkUtil;
 import com.anescobar.musicale.utilsHelpers.SessionManager;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
@@ -49,22 +49,31 @@ public class HomeActivity extends Activity
     private CharSequence mTitle; //Used to store the last screen title. For use in {@link #restoreActionBar()}.
     public static final String LOCATION_SHARED_PREFS_NAME = "LocationPrefs";
     public static final String EVENTS_SHARED_PREFS_NAME = "EventsPrefs";
+    private static final String EVENTS_LIST_VIEW_FRAGMENT_TAG = "eventsListViewFragment";
+    private static final String EVENTS_MAP_VIEW_FRAGMENT_TAG = "eventsMapViewFragment";
     private LocationClient mLocationClient;
+    private FragmentManager mFragmentManager;
     private boolean mIsEventsViewDisplayed;
     private boolean isMapViewDisplayed;
     private MenuItem mEventSearchIcon;
     private MenuItem mEventsRefreshIcon;
+    private NetworkUtil mNetworkUtil;
 
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //gets fragmentManager
+        mFragmentManager = getFragmentManager();
+
         setContentView(R.layout.activity_home);
 
+        //instantiates new instance of NetworkUtil
+        mNetworkUtil = new NetworkUtil();
         mLocationClient = new LocationClient(this, this, this);
         mNavigationDrawerFragment = (NavigationDrawerFragment)
-                getFragmentManager().findFragmentById(R.id.navigation_drawer);
+                mFragmentManager.findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
 
         // Set up the drawer.
@@ -107,12 +116,11 @@ public class HomeActivity extends Activity
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
-        FragmentManager fragmentManager = getFragmentManager();
         switch (position) {
             case 0:
                 isMapViewDisplayed = false;
                 mIsEventsViewDisplayed = false;
-                fragmentManager.beginTransaction()
+                mFragmentManager.beginTransaction()
                         .replace(R.id.container, TrendsViewFragment.newInstance("example"))
                         .commit();
                 break;
@@ -127,7 +135,7 @@ public class HomeActivity extends Activity
             case 2:
                 isMapViewDisplayed = false;
                 mIsEventsViewDisplayed = false;
-                fragmentManager.beginTransaction()
+                mFragmentManager.beginTransaction()
                         .replace(R.id.container, SocializeViewFragment.newInstance("example"))
                         .commit();
                 break;
@@ -203,18 +211,17 @@ public class HomeActivity extends Activity
 
     @Override
     public boolean onNavigationItemSelected(int itemPosition, long l) {
-        FragmentManager fragmentManager = getFragmentManager();
         switch (itemPosition) {
             case 0:
                 isMapViewDisplayed = false;
-                fragmentManager.beginTransaction()
-                        .replace(R.id.container, new EventsListViewFragment())
+                mFragmentManager.beginTransaction()
+                        .replace(R.id.container, new EventsListViewFragment(), EVENTS_LIST_VIEW_FRAGMENT_TAG)
                         .commit();
                 break;
             case 1:
                 isMapViewDisplayed = true;
-                fragmentManager.beginTransaction()
-                        .replace(R.id.container, new EventsMapViewFragment())
+                mFragmentManager.beginTransaction()
+                        .replace(R.id.container, new EventsMapViewFragment(), EVENTS_MAP_VIEW_FRAGMENT_TAG)
                         .commit();
                 break;
         }
@@ -242,8 +249,8 @@ public class HomeActivity extends Activity
         toast.show();
     }
 
-    //    //caches events to sharedPreferences
-    public void cacheEvents(int numberOfPagesLoaded, int totalNumberOfPages,ArrayList<Event> events) {
+    //caches events to sharedPreferences
+    public void cacheEvents(int numberOfPagesLoaded, int totalNumberOfPages, ArrayList<Event> events) {
         // stores events arrayList
         if (!events.isEmpty()) {
             Gson gson = new Gson();
@@ -253,8 +260,7 @@ public class HomeActivity extends Activity
             SharedPreferences.Editor editor = eventsPreferences.edit();
 
             //serialize events ArrayList
-            Type listOfEvents = new TypeToken<ArrayList<Event>>() {
-            }.getType();
+            Type listOfEvents = new TypeToken<ArrayList<Event>>() {}.getType();
             String serializedEvents = gson.toJson(events, listOfEvents);
 
             //puts serialized Events list in bundle for retrieval upon fragment creation
@@ -288,6 +294,7 @@ public class HomeActivity extends Activity
     }
 
     private void refreshEvents() {
+        Gson gson = new Gson();
         //gets currentLocation
         LatLng currentLocation = new LatLng(mLocationClient.getLastLocation().getLatitude(),
                 mLocationClient.getLastLocation().getLongitude());
@@ -295,63 +302,46 @@ public class HomeActivity extends Activity
         //caches currentlocation in sharedPreferences
         cacheUserLatLng(currentLocation);
 
+        //gets session from sharedPreferences
+        SharedPreferences sessionPreferences = getSharedPreferences(SessionManager.SESSION_SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+        String serializedSession = sessionPreferences.getString("userSession", null);
+        if (serializedSession != null) {
+            Session session = gson.fromJson(serializedSession, Session.class);
+
+            //performs events search if network is available
+            if (mNetworkUtil.isNetworkAvailable(this)) {
+                new EventsFinder(session, this, currentLocation).getEvents(1);
+            }
+        } else {
+            //TODO error scenario
+        }
     }
 
     @Override
-    public void onTaskAboutToStart() {
-
-    }
+    public void onTaskAboutToStart() {}
 
     //this is called on onPostExecute of eventsFetcher asyncTask
     @Override
-    public void onTaskCompleted() {
-        //creates new fragmentManager
-        FragmentManager fragmentManager = getFragmentManager();
+    public void onTaskCompleted(PaginatedResult<Event> events) {
+        ArrayList<Event> eventsNearby = new ArrayList<Event>(events.getPageResults());
+
+        //caches results in sharedPreferences
+        cacheEvents(1, events.getTotalPages(), eventsNearby);
+
         //will refresh
         if (isMapViewDisplayed) {
             //TODO do whatever is necessary for refreshing map
         } else {
-            //instantiates new instance of EventsMapViewFragment
-            //will load with refreshed events
-            fragmentManager.beginTransaction()
-                    .replace(R.id.container, new EventsMapViewFragment())
-                    .commit();
+            EventsListViewFragment eventListViewFragment = (EventsListViewFragment) mFragmentManager.findFragmentByTag(EVENTS_LIST_VIEW_FRAGMENT_TAG);
 
+            //calls method that refreshed events to those from
+            eventListViewFragment.refreshEvents();
+//            //instantiates new instance of EventsMapViewFragment
+//            //will load with refreshed events
+//            mFragmentManager.beginTransaction()
+//                    .replace(R.id.container, new EventsListViewFragment())
+//                    .commit();
         }
     }
-
-//    private class EventsFetcherTask extends AsyncTask<Integer, Void, ArrayList<Event>> {
-//        private Session session;
-//        private LatLng userLocation;
-//
-//        public EventsFetcherTask(Session session, LatLng userLocation) {
-//            this.session = session;
-//            this.userLocation = userLocation;
-//        }
-
-//        @Override
-//        protected ArrayList<Event> doInBackground(Integer... pageNumbers) {
-//            ArrayList<Event> events = new ArrayList<Event>();
-//
-//            //send server request to get events nearby
-//            PaginatedResult<Event> rawEventsNearby = new EventsFinder(session)
-//                    .getEvents(userLocation.latitude, userLocation.longitude, "30", pageNumbers[0], 20, null);
-//
-//            //add eventsNearby to arrayList
-//            events.addAll(rawEventsNearby.getPageResults());
-//
-//            mTotalNumberOfPages = rawEventsNearby.getTotalPages();
-//
-//            return events;
-//        }
-//
-//        @Override
-//        protected void onPostExecute(ArrayList<Event> events) {
-//            //adds new events to mEvents
-//            mEvents.addAll(events);
-//            setEventsAdapter(events);
-//            mEventsLoading.setVisibility(View.GONE);
-//        }
-//    }
 
 }

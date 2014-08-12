@@ -2,10 +2,18 @@ package com.anescobar.musicale.utilsHelpers;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
+import android.util.Log;
 
+import com.anescobar.musicale.interfaces.OnSessionHeartbeatCheckCompleted;
 import com.google.gson.Gson;
 
+import de.umass.lastfm.Caller;
+import de.umass.lastfm.Event;
+import de.umass.lastfm.PaginatedResult;
+import de.umass.lastfm.Result;
 import de.umass.lastfm.Session;
+import de.umass.lastfm.User;
 
 /**
  * Created by Andres Escobar on 7/14/14.
@@ -13,6 +21,11 @@ import de.umass.lastfm.Session;
  */
 public class SessionManager {
     public static final String SESSION_SHARED_PREFS_NAME = "SessionPrefs";
+
+    //validates if session is valid, callback method will return boolean isSessionValid to calling activity
+    public void validateSession(Session session, OnSessionHeartbeatCheckCompleted listener) {
+        new ValidateSessionTask(listener).execute(session);
+    }
 
     /**
      * Caches session to sharedPreferences where it is persisted even when app is out of memory
@@ -55,6 +68,32 @@ public class SessionManager {
         SharedPreferences.Editor sharedPreferencesEditor = sharedPreferences.edit();
         sharedPreferencesEditor.clear();
         sharedPreferencesEditor.apply();
+    }
+
+    //async task that performs heartbeat check for session using getRecommendedEvents method
+    private class ValidateSessionTask extends AsyncTask<Session, Void, PaginatedResult<Event>> {
+        private OnSessionHeartbeatCheckCompleted mListener;
+
+        public ValidateSessionTask(OnSessionHeartbeatCheckCompleted listener) {
+            this.mListener = listener;
+        }
+
+        @Override
+        protected PaginatedResult<Event> doInBackground(Session... sessions) {
+            Caller.getInstance().setCache(null);
+
+            //calls a generic last fm method simply to find out if session is valid from response
+            return User.getRecommendedEvents(1, sessions[0]);
+        }
+        @Override
+        protected void onPostExecute(PaginatedResult<Event> events) {
+            //gets result object for last call
+            Result response = Caller.getInstance().getLastResult();
+            Log.w("session_getter_error", response.toString());
+
+            //informs callback method of whether last call with session given to validate was successful
+            mListener.onHeartbeatCheckTaskCompleted(response.isSuccessful());
+        }
     }
 
 }

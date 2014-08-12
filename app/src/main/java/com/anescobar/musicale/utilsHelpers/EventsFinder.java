@@ -1,5 +1,10 @@
 package com.anescobar.musicale.utilsHelpers;
 
+import android.os.AsyncTask;
+
+import com.anescobar.musicale.interfaces.OnEventsFetcherTaskCompleted;
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,12 +22,22 @@ import de.umass.util.MapUtilities;
  */
 public class EventsFinder {
     private Session mSession;
+    private OnEventsFetcherTaskCompleted mListener;
+    private LatLng mLocation;
 
-    public EventsFinder(Session session) {
+    public EventsFinder(Session session, OnEventsFetcherTaskCompleted listener, LatLng location) {
         this.mSession = session;
+        this.mListener = listener;
+        this.mLocation = location;
     }
 
-    public PaginatedResult<Event> getRecommendedEvents(int page, int limit,
+    //publicly accessible method which is called to getEvents back from backend
+    public void getEvents(Integer pageNumber) {
+        new EventsFetcherTask(mSession, mLocation, mListener).execute(pageNumber);
+    }
+
+
+    private PaginatedResult<Event> getRecommendedEvents(int page, int limit,
                                                               double lat, double lng) {
         Result result = Caller.getInstance().call("user.getRecommendedEvents", mSession, "page", String.valueOf(page),
                 "user", mSession.getUsername(), "latitude", String.valueOf(lat), "longitude", String.valueOf(lng),
@@ -42,7 +57,7 @@ public class EventsFinder {
      * @param tag search tag
      * @return a {@link PaginatedResult} containing a list of events
      */
-    public PaginatedResult<Event> getEvents(double latitude, double longitude, String distance,
+    private PaginatedResult<Event> getEventsQuery(double latitude, double longitude, String distance,
                                              int page, int limit, String tag) {
         Map<String, String> params = new HashMap<String, String>();
         params.put("lat", String.valueOf(latitude));
@@ -54,6 +69,37 @@ public class EventsFinder {
         Result result = Caller.getInstance().call("geo.getEvents", mSession.getApiKey(), params);
 
         return ResponseBuilder.buildPaginatedResult(result, Event.class);
+    }
+
+    private class EventsFetcherTask extends AsyncTask<Integer, Void, PaginatedResult<Event>> {
+        private Session mSession;
+        private LatLng mUserLocation;
+        private OnEventsFetcherTaskCompleted mListener;
+
+        public EventsFetcherTask(Session session, LatLng userLocation, OnEventsFetcherTaskCompleted listener) {
+            this.mSession = session;
+            this.mUserLocation = userLocation;
+            this.mListener = listener;
+        }
+
+        @Override
+        protected PaginatedResult<Event> doInBackground(Integer... pageNumbers) {
+            //send server request to get events nearby
+            return getEventsQuery(
+                    mUserLocation.latitude, mUserLocation.longitude, "30", pageNumbers[0], 20, null
+            );
+        }
+
+        @Override
+        protected void onPreExecute() {
+            mListener.onTaskAboutToStart();
+
+        }
+
+        @Override
+        protected void onPostExecute(PaginatedResult<Event> events) {
+            mListener.onTaskCompleted(events);
+        }
     }
 
 }
