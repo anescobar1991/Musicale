@@ -44,11 +44,12 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
     private OnEventsListViewFragmentInteractionListener mListener;
     private LinearLayoutManager mLayoutManager;
     private Button mLoadMoreEventsButton;
-    private RecyclerView.Adapter mAdapter;
+    private EventsAdapter mAdapter;
     private RecyclerView mRecyclerView;
     private ProgressBar mEventsLoading;
     private NetworkUtil mNetworkUtil;
 
+    private boolean mAdapterSet = false;
     private int mTotalNumberOfPages = 0; // stores how many total pages of events there are
     private int mNumberOfPagesLoaded = 0; //keeps track of how many pages are loaded
     private ArrayList<Event> mEvents = new ArrayList<Event>();
@@ -63,6 +64,7 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
      */
     public interface OnEventsListViewFragmentInteractionListener {
         public void displayToastMessage(String message, int toastLength);
+        public void cacheEvents(int numberOfPagesLoaded, int totalNumberOfPages,ArrayList<Event> events);
     }
 
     public EventsListViewFragment() {
@@ -152,7 +154,7 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
     @Override
     public void onPause() {
         //caches all events data to sharedPreferences
-        cacheEvents(mNumberOfPagesLoaded, mTotalNumberOfPages,mEvents);
+        mListener.cacheEvents(mNumberOfPagesLoaded, mTotalNumberOfPages,mEvents);
         super.onPause();
     }
 
@@ -166,9 +168,9 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
     //and when there are more pages left of events
     @Override
     public void onScrollStateChanged(int state) {
-        //if scroll state is settled or settling
+        //if scroll state is settled or settling then check if load more button should be displayed
         //checking both for better responsiveness
-        if (state == 2 || state == 0 ) {
+        if (state == RecyclerView.SCROLL_STATE_SETTLING || state == RecyclerView.SCROLL_STATE_IDLE ) {
             int itemCount = mAdapter.getItemCount() - 1;
 
             //if user has scrolled to bottom of recycle view and there are still pages of events left
@@ -186,20 +188,25 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
     }
 
     private void setEventsAdapter(ArrayList<Event> events) {
-        mEventsLoading.setVisibility(View.VISIBLE);
+        // only sets up adapter if it hasnt been setup already
+        if (!mAdapterSet) {
+            // Create the adapter
+            mAdapter = new EventsAdapter(getActivity(), mEvents);
 
-        // Create the adapter
-        mAdapter = new EventsAdapter(getActivity(), mEvents);
+            //set recycler view with adapter
+            mRecyclerView.setAdapter(mAdapter);
 
-        //set recycler view with adapter
-        mRecyclerView.setAdapter(mAdapter);
+            //sets the onScrollListener that will inform us of when user has scrolled to bottom of recycleView
+            mRecyclerView.setOnScrollListener(this);
 
-        //sets the onScrollListener that will inform us of when user has scrolled to bottom of recycleView
-        mRecyclerView.setOnScrollListener(this);
-
-        mEventsLoading.setVisibility(View.GONE);
+            mAdapterSet = true;
+        } else {
+            //simply adds the events to already existing adapter
+            mAdapter.addEvents(events);
+        }
     }
 
+    //gets events from backend, keeps track of how many pages are already loaded and cached
     private void getEvents(Integer pageNumber, Session session, LatLng userLocation) {
         mNumberOfPagesLoaded ++;
         if (mNetworkUtil.isNetworkAvailable(getActivity())) {
@@ -207,7 +214,6 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
         } else {
             mListener.displayToastMessage(getString(R.string.error_no_network_connectivity), Toast.LENGTH_SHORT);
         }
-
     }
 
     private class EventsFetcherTask extends AsyncTask<Integer, Void, ArrayList<Event>> {
@@ -223,16 +229,9 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
         protected ArrayList<Event> doInBackground(Integer... pageNumbers) {
             ArrayList<Event> events = new ArrayList<Event>();
 
-            //send server request to get recommended events
-//            PaginatedResult<Event> rawRecommendedEvents = new EventsFinder(session)
-//                    .getRecommendedEvents(1, 20, userLocation.latitude, userLocation.longitude);
-
             //send server request to get events nearby
             PaginatedResult<Event> rawEventsNearby = new EventsFinder(session)
                     .getEvents(userLocation.latitude, userLocation.longitude, "30", pageNumbers[0], 20, null);
-
-            //add recommendedEvents to arrayList
-//            events.addAll(rawRecommendedEvents.getPageResults());
 
             //add eventsNearby to arrayList
             events.addAll(rawEventsNearby.getPageResults());
@@ -264,34 +263,6 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
         } else {
             viewContainer.setWeightSum(24); // weightSum is changed to account for removal of button from view
             mLoadMoreEventsButton.setVisibility(View.GONE);
-        }
-    }
-
-    //caches events to sharedPreferences
-    private void cacheEvents(int numberOfPagesLoaded, int totalNumberOfPages,ArrayList<Event> events) {
-        // stores events arrayList
-        if (!events.isEmpty()) {
-            Gson gson = new Gson();
-
-            //writes into events shared preferences
-            SharedPreferences eventsPreferences = getActivity().getSharedPreferences(HomeActivity.EVENTS_SHARED_PREFS_NAME, Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = eventsPreferences.edit();
-
-            //serialize events ArrayList
-            Type listOfEvents = new TypeToken<ArrayList<Event>>(){}.getType();
-            String serializedEvents = gson.toJson(events, listOfEvents);
-
-            //puts serialized Events list in bundle for retrieval upon fragment creation
-            editor.putString("events", serializedEvents);
-
-            //stores numberOfPagesLoaded so next user session knows what is already cached
-            editor.putInt("numberOfPagesLoaded", numberOfPagesLoaded);
-
-            //stores totalNumberOfPages so next user session knows how many total number of pages exist
-            editor.putInt("totalNumberOfPages", totalNumberOfPages);
-
-            // commit the new additions!
-            editor.apply();
         }
     }
 

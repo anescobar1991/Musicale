@@ -4,12 +4,15 @@ import android.app.Activity;
 
 import android.app.ActionBar;
 import android.app.FragmentManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.support.v4.widget.DrawerLayout;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
@@ -19,18 +22,28 @@ import com.anescobar.musicale.fragments.EventsMapViewFragment;
 import com.anescobar.musicale.fragments.NavigationDrawerFragment;
 import com.anescobar.musicale.fragments.SocializeViewFragment;
 import com.anescobar.musicale.fragments.TrendsViewFragment;
+import com.anescobar.musicale.interfaces.OnEventsFetcherTaskCompleted;
+import com.anescobar.musicale.utilsHelpers.EventsFinder;
 import com.anescobar.musicale.utilsHelpers.SessionManager;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+
+import de.umass.lastfm.Event;
+import de.umass.lastfm.PaginatedResult;
+import de.umass.lastfm.Session;
 
 public class HomeActivity extends Activity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks, EventsMapViewFragment.OnEventsMapViewFragmentInteractionListener,
         TrendsViewFragment.OnTrendsViewFragmentInteractionListener, EventsListViewFragment.OnEventsListViewFragmentInteractionListener,
         SocializeViewFragment.OnSocializeViewFragmentInteractionListener, GooglePlayServicesClient.ConnectionCallbacks,
-        GooglePlayServicesClient.OnConnectionFailedListener, ActionBar.OnNavigationListener{
+        GooglePlayServicesClient.OnConnectionFailedListener, ActionBar.OnNavigationListener, OnEventsFetcherTaskCompleted {
 
     private NavigationDrawerFragment mNavigationDrawerFragment; //Fragment managing the behaviors, interactions and presentation of the navigation drawer.
     private CharSequence mTitle; //Used to store the last screen title. For use in {@link #restoreActionBar()}.
@@ -41,6 +54,8 @@ public class HomeActivity extends Activity
     private boolean isMapViewDisplayed;
     private MenuItem mEventSearchIcon;
     private MenuItem mEventsRefreshIcon;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,18 +75,12 @@ public class HomeActivity extends Activity
 
     @Override
     public void onConnected(Bundle bundle) {
-        // stores user's current location in sharedPreferences
-        // that way it persists throughout app even when app is not in memory
-        Gson gson = new Gson();
-        String serializedCurrentUserLocation = gson.toJson(new LatLng(
-                mLocationClient.getLastLocation().getLatitude(),mLocationClient.getLastLocation().getLongitude()
-        ));
+        //gets current location
+        LatLng currentLocation = new LatLng(mLocationClient.getLastLocation().getLatitude(),
+                mLocationClient.getLastLocation().getLongitude());
 
-        SharedPreferences sharedPreferences = getSharedPreferences(LOCATION_SHARED_PREFS_NAME, MODE_PRIVATE);
-
-        SharedPreferences.Editor sharedPreferencesEditor = sharedPreferences.edit();
-        sharedPreferencesEditor.putString("userCurrentLatLng", serializedCurrentUserLocation);
-        sharedPreferencesEditor.apply();
+        //caches currentlocation in sharedPreferences
+        cacheUserLatLng(currentLocation);
     }
 
     @Override
@@ -111,6 +120,7 @@ public class HomeActivity extends Activity
                 //set flags which will tell menu to display events spinner
                 //spinner will be selected and thus load events view screen on its own
                 mIsEventsViewDisplayed = true;
+                //displays actionbar icons that should only be visible if in events view
                 mEventSearchIcon.setVisible(true);
                 mEventsRefreshIcon.setVisible(true);
                 break;
@@ -211,6 +221,17 @@ public class HomeActivity extends Activity
         return false;
     }
 
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.action_refresh_events:
+                refreshEvents();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
     /**
      * displays toast on bottom of screen
      * @param message String to be displayed on toast
@@ -220,4 +241,117 @@ public class HomeActivity extends Activity
         Toast toast = Toast.makeText(this, message, toastLength);
         toast.show();
     }
+
+    //    //caches events to sharedPreferences
+    public void cacheEvents(int numberOfPagesLoaded, int totalNumberOfPages,ArrayList<Event> events) {
+        // stores events arrayList
+        if (!events.isEmpty()) {
+            Gson gson = new Gson();
+
+            //writes into events shared preferences
+            SharedPreferences eventsPreferences = getSharedPreferences(EVENTS_SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = eventsPreferences.edit();
+
+            //serialize events ArrayList
+            Type listOfEvents = new TypeToken<ArrayList<Event>>() {
+            }.getType();
+            String serializedEvents = gson.toJson(events, listOfEvents);
+
+            //puts serialized Events list in bundle for retrieval upon fragment creation
+            editor.putString("events", serializedEvents);
+
+            //stores numberOfPagesLoaded so next user session knows what is already cached
+            editor.putInt("numberOfPagesLoaded", numberOfPagesLoaded);
+
+            //stores totalNumberOfPages so next user session knows how many total number of pages exist
+            editor.putInt("totalNumberOfPages", totalNumberOfPages);
+
+            // commit the new additions!
+            editor.apply();
+        }
+    }
+    // stores user's current location in sharedPreferences
+    // that way it persists throughout app even when app is not in memory
+    private void cacheUserLatLng(LatLng userLocation) {
+        Gson gson = new Gson();
+        String serializedCurrentUserLocation = gson.toJson(userLocation);
+
+        //writes into Location shared preferences
+        SharedPreferences sharedPreferences = getSharedPreferences(LOCATION_SHARED_PREFS_NAME, MODE_PRIVATE);
+        SharedPreferences.Editor sharedPreferencesEditor = sharedPreferences.edit();
+
+        //stores userCurrentLatLng
+        sharedPreferencesEditor.putString("userCurrentLatLng", serializedCurrentUserLocation);
+
+        //commits the new additions!
+        sharedPreferencesEditor.apply();
+    }
+
+    private void refreshEvents() {
+        //gets currentLocation
+        LatLng currentLocation = new LatLng(mLocationClient.getLastLocation().getLatitude(),
+                mLocationClient.getLastLocation().getLongitude());
+
+        //caches currentlocation in sharedPreferences
+        cacheUserLatLng(currentLocation);
+
+    }
+
+    @Override
+    public void onTaskAboutToStart() {
+
+    }
+
+    //this is called on onPostExecute of eventsFetcher asyncTask
+    @Override
+    public void onTaskCompleted() {
+        //creates new fragmentManager
+        FragmentManager fragmentManager = getFragmentManager();
+        //will refresh
+        if (isMapViewDisplayed) {
+            //TODO do whatever is necessary for refreshing map
+        } else {
+            //instantiates new instance of EventsMapViewFragment
+            //will load with refreshed events
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container, new EventsMapViewFragment())
+                    .commit();
+
+        }
+    }
+
+//    private class EventsFetcherTask extends AsyncTask<Integer, Void, ArrayList<Event>> {
+//        private Session session;
+//        private LatLng userLocation;
+//
+//        public EventsFetcherTask(Session session, LatLng userLocation) {
+//            this.session = session;
+//            this.userLocation = userLocation;
+//        }
+
+//        @Override
+//        protected ArrayList<Event> doInBackground(Integer... pageNumbers) {
+//            ArrayList<Event> events = new ArrayList<Event>();
+//
+//            //send server request to get events nearby
+//            PaginatedResult<Event> rawEventsNearby = new EventsFinder(session)
+//                    .getEvents(userLocation.latitude, userLocation.longitude, "30", pageNumbers[0], 20, null);
+//
+//            //add eventsNearby to arrayList
+//            events.addAll(rawEventsNearby.getPageResults());
+//
+//            mTotalNumberOfPages = rawEventsNearby.getTotalPages();
+//
+//            return events;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(ArrayList<Event> events) {
+//            //adds new events to mEvents
+//            mEvents.addAll(events);
+//            setEventsAdapter(events);
+//            mEventsLoading.setVisibility(View.GONE);
+//        }
+//    }
+
 }

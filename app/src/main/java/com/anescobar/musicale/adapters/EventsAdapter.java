@@ -16,6 +16,7 @@ import com.anescobar.musicale.R;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import de.umass.lastfm.Event;
 import de.umass.lastfm.ImageSize;
@@ -55,8 +56,17 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         holder.mVenueLocationTextView.setText(mEvents.get(position).getVenue().getCity() + " " + mEvents.get(position).getVenue().getCountry());
         String eventUrl = mEvents.get(position).getImageURL(ImageSize.EXTRALARGE);
         if (eventUrl.length() != 0) {
-            Picasso.with(mContext).load(eventUrl).into(holder.mEventImage);
+            Picasso.with(mContext)
+                    .load(eventUrl)
+                    .placeholder(R.drawable.placeholder)
+                    .into(holder.mEventImage);
         }
+    }
+
+    //adds events and notifies adapter that data set has changed and it should update view
+    public void addEvents(ArrayList<Event> events) {
+        mEvents.addAll(events);
+        notifyDataSetChanged();
     }
 
     // Return the size of your dataset (invoked by the layout manager)
