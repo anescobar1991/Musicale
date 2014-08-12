@@ -178,8 +178,8 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
 
             mAdapterSet = true;
         } else {
-            //simply adds the events to already existing adapter
-            mAdapter.addEvents();
+            //notifies adapter of data set change so that it can update view
+            mAdapter.notifyDataSetChanged();
         }
     }
 

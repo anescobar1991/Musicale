@@ -63,11 +63,6 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         }
     }
 
-    //adds events and notifies adapter that data set has changed and it should update view
-    public void addEvents() {
-        notifyDataSetChanged();
-    }
-
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
