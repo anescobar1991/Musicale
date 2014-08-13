@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.anescobar.musicale.activities.HomeActivity;
 import com.anescobar.musicale.interfaces.OnSessionHeartbeatCheckCompleted;
 import com.google.gson.Gson;
 
@@ -59,15 +60,24 @@ public class SessionManager {
     }
 
     /**
-     * discards current session from sharedPreferences
-     * if session is not valid then shows alert view to inform user that session is invalid and they must login again
+     * discards current session, location info, and events stored from sharedPreferences
      * @param context  activity context
      */
     public void discardSession(Context context) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences(SESSION_SHARED_PREFS_NAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor sharedPreferencesEditor = sharedPreferences.edit();
-        sharedPreferencesEditor.clear();
-        sharedPreferencesEditor.apply();
+        SharedPreferences sessionPreferences = context.getSharedPreferences(SESSION_SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+        sessionPreferences.edit()
+                .clear()
+                .apply();
+
+        SharedPreferences locationPreferences = context.getSharedPreferences(HomeActivity.LOCATION_SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+        locationPreferences.edit()
+                .clear()
+                .apply();
+
+        SharedPreferences eventsPreferences = context.getSharedPreferences(HomeActivity.EVENTS_SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+        eventsPreferences.edit()
+                .clear()
+                .apply();
     }
 
     //async task that performs heartbeat check for session using getRecommendedEvents method

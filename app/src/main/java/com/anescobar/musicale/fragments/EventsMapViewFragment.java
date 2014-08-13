@@ -49,35 +49,7 @@ public class EventsMapViewFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Gson gson = new Gson();
-
-        // Gets session from sharedPreferences
-        SharedPreferences sessionPreferences = getActivity().getSharedPreferences(SessionManager.SESSION_SHARED_PREFS_NAME, Context.MODE_PRIVATE);
-        String serializedSession = sessionPreferences.getString("userSession", null);
-        if (serializedSession != null) {
-            mSession = gson.fromJson(serializedSession, Session.class);
-        } //TODO here is where we check for and act on errors
-
-        //Gets user's location(LatLng serialized into string) from sharedPreferences
-        SharedPreferences userLocationPreferences = getActivity().getSharedPreferences(HomeActivity.LOCATION_SHARED_PREFS_NAME, Context.MODE_PRIVATE);
-        String serializedLatLng = userLocationPreferences.getString("userCurrentLatLng", null);
-        if (serializedLatLng != null) {
-            //deserializes userLatLng string into LatLng object
-            mUserLatLng = gson.fromJson(serializedLatLng, LatLng.class);
-        } //TODO here is where we check for and act on errors
-
-        //Gets Events data from sharedPreferences
-        SharedPreferences eventsPreferences = getActivity().getSharedPreferences(HomeActivity.EVENTS_SHARED_PREFS_NAME, Context.MODE_PRIVATE);
-        //
-
-        String serializedEvents = eventsPreferences.getString("events", null);
-
-        //deserializes events if there are any
-        if (serializedEvents != null) {
-            Type listOfEvents = new TypeToken<ArrayList<Event>>(){}.getType();
-            mEvents = gson.fromJson(serializedEvents, listOfEvents);
-
-        }
+        getCachedEvents();
     }
 
     @Override
@@ -154,5 +126,37 @@ public class EventsMapViewFragment extends Fragment {
         mMap.setBuildingsEnabled(true);
         mMap.setMyLocationEnabled(true);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 15));
+    }
+
+    private void getCachedEvents() {
+        Gson gson = new Gson();
+
+        // Gets session from sharedPreferences
+        SharedPreferences sessionPreferences = getActivity().getSharedPreferences(SessionManager.SESSION_SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+        String serializedSession = sessionPreferences.getString("userSession", null);
+        if (serializedSession != null) {
+            mSession = gson.fromJson(serializedSession, Session.class);
+        } //TODO here is where we check for and act on errors
+
+        //Gets user's location(LatLng serialized into string) from sharedPreferences
+        SharedPreferences userLocationPreferences = getActivity().getSharedPreferences(HomeActivity.LOCATION_SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+        String serializedLatLng = userLocationPreferences.getString("userCurrentLatLng", null);
+        if (serializedLatLng != null) {
+            //deserializes userLatLng string into LatLng object
+            mUserLatLng = gson.fromJson(serializedLatLng, LatLng.class);
+        } //TODO here is where we check for and act on errors
+
+        //Gets Events data from sharedPreferences
+        SharedPreferences eventsPreferences = getActivity().getSharedPreferences(HomeActivity.EVENTS_SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+        //
+
+        String serializedEvents = eventsPreferences.getString("events", null);
+
+        //deserializes events if there are any
+        if (serializedEvents != null) {
+            Type listOfEvents = new TypeToken<ArrayList<Event>>(){}.getType();
+            mEvents = gson.fromJson(serializedEvents, listOfEvents);
+
+        }
     }
 }

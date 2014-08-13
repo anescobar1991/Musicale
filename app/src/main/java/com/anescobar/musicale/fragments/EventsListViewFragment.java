@@ -48,8 +48,9 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
     private Button mLoadMoreEventsButton;
     private EventsAdapter mAdapter;
     private RecyclerView mRecyclerView;
-    private ProgressBar mEventsLoading;
+    private ProgressBar mEventsLoadingProgressBar;
     private NetworkUtil mNetworkUtil;
+    private ProgressBar mMoreEventsLoadingProgressBar;
 
     private boolean mAdapterSet = false;
     private int mTotalNumberOfPages = 0; // stores how many total pages of events there are
@@ -81,7 +82,7 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
         mNetworkUtil = new NetworkUtil();
 
         //gets all sharedPreferences and stores them locally
-        setCachedSettings();
+        getCachedSettings();
     }
 
     @Override
@@ -91,29 +92,21 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
 
         mLoadMoreEventsButton = (Button) view.findViewById(R.id.fragment_events_list_view_load_more_button);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.fragment_events_listView_event_cards_holder);
-        mEventsLoading = (ProgressBar) view.findViewById(R.id.fragment_events_list_view_loading);
-
-        // use a linear layout manager
+        mEventsLoadingProgressBar = (ProgressBar) view.findViewById(R.id.fragment_events_list_view_loading);
+        mMoreEventsLoadingProgressBar = (ProgressBar) view.findViewById(R.id.fragment_events_list_view_more_events_loading);
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         //sets on clickListener for load more events button
         mLoadMoreEventsButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                displayLoadMoreEventsButton(false); //hide load more events button
-                getEvents(mNumberOfPagesLoaded + 1, mSession, mUserLatLng);
+//                displayLoadMoreEventsButton(false); //hide load more events button
+                getEventsFromServer(mNumberOfPagesLoaded + 1, mSession, mUserLatLng);
             }
         });
 
-        //if there are no events from previous saved session then fetch events from backend
-        //else use events from previous saved session to populate cards
-        if (mEvents.isEmpty()) {
-            getEvents(1, mSession, mUserLatLng);
-        } else {
-            setEventsAdapter();
-        }
+        loadEventsToCards();
 
-        // Inflate the layout for this fragment
         return view;
     }
 
@@ -184,8 +177,8 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
     }
 
     public void refreshEvents() {
-        //forces fragment from getting cached settings
-        setCachedSettings();
+        //forces fragment to get cached settings
+        getCachedSettings();
 
         //with this flag set to false adapter will set itself up again
         mAdapterSet = false;
@@ -195,8 +188,9 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
     }
 
     //gets events from backend, keeps track of how many pages are already loaded and cached
-    private void getEvents(Integer pageNumber, Session session, LatLng userLocation) {
+    private void getEventsFromServer(Integer pageNumber, Session session, LatLng userLocation) {
         mNumberOfPagesLoaded ++;
+        System.out.println("getEventsFromServer"+mNumberOfPagesLoaded);
         if (mNetworkUtil.isNetworkAvailable(getActivity())) {
             new EventsFinder(session, this, userLocation).getEvents(pageNumber);
         } else {
@@ -220,7 +214,12 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
     @Override
     public void onTaskAboutToStart() {
         //display loading progressbar
-        mEventsLoading.setVisibility(View.VISIBLE);
+        if (mNumberOfPagesLoaded == 0) {
+            mEventsLoadingProgressBar.setVisibility(View.VISIBLE);
+        } else {
+            mMoreEventsLoadingProgressBar.setVisibility(View.VISIBLE);
+            mLoadMoreEventsButton.setVisibility(View.GONE);
+        }
     }
 
     //called onPostExecute of eventsFetcherTask
@@ -235,12 +234,29 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
 
         //set events adapter with new events
         setEventsAdapter();
+        if (mNumberOfPagesLoaded == 0) {
+            //hide loading progressbar
+            mEventsLoadingProgressBar.setVisibility(View.GONE);
+        } else {
+            mMoreEventsLoadingProgressBar.setVisibility(View.GONE);
+            LinearLayout viewContainer = (LinearLayout) getActivity().findViewById(R.id.fragment_events_list_view_container);
+            viewContainer.setWeightSum(24);
+        }
 
-        //hide loading progressbar
-        mEventsLoading.setVisibility(View.GONE);
+
     }
 
-    private void setCachedSettings() {
+    public void toggleEventsLoadingProgressBar(boolean displayProgressBar) {
+        if(displayProgressBar) {
+            mRecyclerView.setVisibility(View.INVISIBLE);
+            mEventsLoadingProgressBar.setVisibility(View.VISIBLE);
+        } else {
+            mRecyclerView.setVisibility(View.VISIBLE);
+            mEventsLoadingProgressBar.setVisibility(View.GONE);
+        }
+    }
+
+    private void getCachedSettings() {
         Gson gson = new Gson();
 
         // Gets session from sharedPreferences
@@ -269,6 +285,19 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
         if (serializedEvents != null) {
             Type listOfEvents = new TypeToken<ArrayList<Event>>(){}.getType();
             mEvents = gson.fromJson(serializedEvents, listOfEvents);
+        }
+        System.out.println("getCachedSettings"+mNumberOfPagesLoaded);
+    }
+
+    //loads events and sets adapter that will display them in recycler view
+    private void loadEventsToCards() {
+        System.out.println("loadEventsToCards"+mNumberOfPagesLoaded);
+        //if there are no events from previous saved session then fetch events from backend
+        //else use events from previous saved session to populate cards
+        if (mEvents.isEmpty()) {
+            getEventsFromServer(1, mSession, mUserLatLng);
+        } else {
+            setEventsAdapter();
         }
     }
 

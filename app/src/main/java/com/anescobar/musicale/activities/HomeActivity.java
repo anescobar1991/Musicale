@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.support.v4.widget.DrawerLayout;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
@@ -51,8 +52,10 @@ public class HomeActivity extends Activity
     public static final String EVENTS_SHARED_PREFS_NAME = "EventsPrefs";
     private static final String EVENTS_LIST_VIEW_FRAGMENT_TAG = "eventsListViewFragment";
     private static final String EVENTS_MAP_VIEW_FRAGMENT_TAG = "eventsMapViewFragment";
+    private static final String SOCIALIZE_VIEW_FRAGMENT = "socializeViewFragment";
+    private static final String TRENDS_VIEW_FRAGMENT = "trendsViewFragment";
     private LocationClient mLocationClient;
-    private FragmentManager mFragmentManager;
+    private EventsListViewFragment mEventsListViewFragment;
     private boolean mIsEventsViewDisplayed;
     private boolean isMapViewDisplayed;
     private MenuItem mEventSearchIcon;
@@ -64,8 +67,6 @@ public class HomeActivity extends Activity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //gets fragmentManager
-        mFragmentManager = getFragmentManager();
 
         setContentView(R.layout.activity_home);
 
@@ -73,8 +74,10 @@ public class HomeActivity extends Activity
         mNetworkUtil = new NetworkUtil();
         mLocationClient = new LocationClient(this, this, this);
         mNavigationDrawerFragment = (NavigationDrawerFragment)
-                mFragmentManager.findFragmentById(R.id.navigation_drawer);
+                getFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
+
+        mEventsListViewFragment = (EventsListViewFragment) getFragmentManager().findFragmentByTag(EVENTS_LIST_VIEW_FRAGMENT_TAG);
 
         // Set up the drawer.
         mNavigationDrawerFragment.setUp(
@@ -85,8 +88,7 @@ public class HomeActivity extends Activity
     @Override
     public void onConnected(Bundle bundle) {
         //gets current location
-        LatLng currentLocation = new LatLng(mLocationClient.getLastLocation().getLatitude(),
-                mLocationClient.getLastLocation().getLongitude());
+        LatLng currentLocation = getDevicesCurrentLatLng();
 
         //caches currentlocation in sharedPreferences
         cacheUserLatLng(currentLocation);
@@ -120,9 +122,8 @@ public class HomeActivity extends Activity
             case 0:
                 isMapViewDisplayed = false;
                 mIsEventsViewDisplayed = false;
-                mFragmentManager.beginTransaction()
-                        .replace(R.id.container, TrendsViewFragment.newInstance("example"))
-                        .commit();
+                //adds trends view to fragment
+                addFragmentToActivity(R.id.container, TrendsViewFragment.newInstance("example"), TRENDS_VIEW_FRAGMENT);
                 break;
             case 1:
                 //set flags which will tell menu to display events spinner
@@ -135,18 +136,12 @@ public class HomeActivity extends Activity
             case 2:
                 isMapViewDisplayed = false;
                 mIsEventsViewDisplayed = false;
-                mFragmentManager.beginTransaction()
-                        .replace(R.id.container, SocializeViewFragment.newInstance("example"))
-                        .commit();
+                //adds socialize view fragment to activity
+                addFragmentToActivity(R.id.container, SocializeViewFragment.newInstance("example"), SOCIALIZE_VIEW_FRAGMENT);
                 break;
             case 3:
-                //instantiates new SessionManager
-                SessionManager sessionManager = new SessionManager();
-
-                //discards session and logs out
-                sessionManager.discardSession(this);
-
                 //user is taken to login screen after logout
+                //login screen will take care of discarding of session
                 Intent loginActivityIntent = new Intent(this, LoginActivity.class);
                 startActivity(loginActivityIntent);
                 finish();
@@ -154,12 +149,12 @@ public class HomeActivity extends Activity
         }
     }
 
+    //restores actionBar to its original state
     public void restoreActionBar() {
         if (mIsEventsViewDisplayed && !mNavigationDrawerFragment.isDrawerOpen()) {
             displayEventsViewSpinner();
         } else {
 
-            //restores actionBar to its original state
             mEventSearchIcon.setVisible(false);
             mEventsRefreshIcon.setVisible(false);
             ActionBar bar = getActionBar();
@@ -214,15 +209,13 @@ public class HomeActivity extends Activity
         switch (itemPosition) {
             case 0:
                 isMapViewDisplayed = false;
-                mFragmentManager.beginTransaction()
-                        .replace(R.id.container, new EventsListViewFragment(), EVENTS_LIST_VIEW_FRAGMENT_TAG)
-                        .commit();
+                // adds events list view fragment to activity
+                addFragmentToActivity(R.id.container, new EventsListViewFragment(),EVENTS_LIST_VIEW_FRAGMENT_TAG);
                 break;
             case 1:
                 isMapViewDisplayed = true;
-                mFragmentManager.beginTransaction()
-                        .replace(R.id.container, new EventsMapViewFragment(), EVENTS_MAP_VIEW_FRAGMENT_TAG)
-                        .commit();
+                //adds events map view fragment to activity
+                addFragmentToActivity(R.id.container, new EventsMapViewFragment(),EVENTS_MAP_VIEW_FRAGMENT_TAG);
                 break;
         }
         return false;
@@ -293,11 +286,11 @@ public class HomeActivity extends Activity
         sharedPreferencesEditor.apply();
     }
 
+    //
     private void refreshEvents() {
         Gson gson = new Gson();
         //gets currentLocation
-        LatLng currentLocation = new LatLng(mLocationClient.getLastLocation().getLatitude(),
-                mLocationClient.getLastLocation().getLongitude());
+        LatLng currentLocation = getDevicesCurrentLatLng();
 
         //caches currentlocation in sharedPreferences
         cacheUserLatLng(currentLocation);
@@ -318,11 +311,17 @@ public class HomeActivity extends Activity
     }
 
     @Override
-    public void onTaskAboutToStart() {}
+    public void onTaskAboutToStart() {
+        EventsListViewFragment eventsViewFragment = (EventsListViewFragment) getFragmentManager().findFragmentByTag(EVENTS_LIST_VIEW_FRAGMENT_TAG);
+
+        //display loading progressbar
+        eventsViewFragment.toggleEventsLoadingProgressBar(true);
+    }
 
     //this is called on onPostExecute of eventsFetcher asyncTask
     @Override
     public void onTaskCompleted(PaginatedResult<Event> events) {
+        EventsListViewFragment eventsViewFragment = (EventsListViewFragment) getFragmentManager().findFragmentByTag(EVENTS_LIST_VIEW_FRAGMENT_TAG);
         ArrayList<Event> eventsNearby = new ArrayList<Event>(events.getPageResults());
 
         //caches results in sharedPreferences
@@ -332,16 +331,28 @@ public class HomeActivity extends Activity
         if (isMapViewDisplayed) {
             //TODO do whatever is necessary for refreshing map
         } else {
-            EventsListViewFragment eventListViewFragment = (EventsListViewFragment) mFragmentManager.findFragmentByTag(EVENTS_LIST_VIEW_FRAGMENT_TAG);
+            //hide loading progressbar
+            eventsViewFragment.toggleEventsLoadingProgressBar(false);
 
-            //calls method that refreshed events to those from
-            eventListViewFragment.refreshEvents();
-//            //instantiates new instance of EventsMapViewFragment
-//            //will load with refreshed events
-//            mFragmentManager.beginTransaction()
-//                    .replace(R.id.container, new EventsListViewFragment())
-//                    .commit();
+            //calls method that refreshes view and displays new events
+            eventsViewFragment.refreshEvents();
+
+
         }
+    }
+
+    //adds fragment to activity
+    private void addFragmentToActivity(int container, Fragment fragment, String fragmentTag) {
+        FragmentManager fragmentManager = getFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(container, fragment, fragmentTag)
+                .commit();
+    }
+
+    //returns LatLng object for devices current location
+    private LatLng getDevicesCurrentLatLng() {
+        return new LatLng(mLocationClient.getLastLocation().getLatitude(),
+                mLocationClient.getLastLocation().getLongitude());
     }
 
 }

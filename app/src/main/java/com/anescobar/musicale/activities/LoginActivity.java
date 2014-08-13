@@ -47,6 +47,8 @@ public class LoginActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        mSessionManager.discardSession(this);
+
         //initializes UI elements to be manipulated later
         mUserNameEditText = (EditText) findViewById(R.id.activity_login_username_textfield);
         mPasswordEditText = (EditText) findViewById(R.id.activity_login_password_textfield);
@@ -72,7 +74,9 @@ public class LoginActivity extends Activity {
                 return false;
             }
         });
-        checkFieldsForEmptyValues(); //checks for empty textfield upon activity creation
+
+        //checks for empty username and password textfields upon activity creation
+        checkFieldsForEmptyValues();
     }
 
     //TextWatcher used for disabling login button if userID or password textfields are empty
