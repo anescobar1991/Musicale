@@ -55,7 +55,6 @@ public class HomeActivity extends Activity
     private static final String SOCIALIZE_VIEW_FRAGMENT = "socializeViewFragment";
     private static final String TRENDS_VIEW_FRAGMENT = "trendsViewFragment";
     private LocationClient mLocationClient;
-    private EventsListViewFragment mEventsListViewFragment;
     private boolean mIsEventsViewDisplayed;
     private boolean isMapViewDisplayed;
     private MenuItem mEventSearchIcon;
@@ -76,8 +75,6 @@ public class HomeActivity extends Activity
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
-
-        mEventsListViewFragment = (EventsListViewFragment) getFragmentManager().findFragmentByTag(EVENTS_LIST_VIEW_FRAGMENT_TAG);
 
         // Set up the drawer.
         mNavigationDrawerFragment.setUp(
@@ -306,7 +303,7 @@ public class HomeActivity extends Activity
                 new EventsFinder(session, this, currentLocation).getEvents(1);
             }
         } else {
-            //TODO error scenario
+            displayToastMessage(getString(R.string.error_no_network_connectivity), Toast.LENGTH_SHORT);
         }
     }
 

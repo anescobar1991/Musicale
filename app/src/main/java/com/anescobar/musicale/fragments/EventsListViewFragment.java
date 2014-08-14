@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import de.umass.lastfm.Event;
 import de.umass.lastfm.PaginatedResult;
 import de.umass.lastfm.Session;
+import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -50,7 +51,7 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
     private RecyclerView mRecyclerView;
     private ProgressBar mEventsLoadingProgressBar;
     private NetworkUtil mNetworkUtil;
-    private ProgressBar mMoreEventsLoadingProgressBar;
+    private SmoothProgressBar mMoreEventsLoadingProgressBar;
 
     private boolean mAdapterSet = false;
     private int mTotalNumberOfPages = 0; // stores how many total pages of events there are
@@ -93,14 +94,13 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
         mLoadMoreEventsButton = (Button) view.findViewById(R.id.fragment_events_list_view_load_more_button);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.fragment_events_listView_event_cards_holder);
         mEventsLoadingProgressBar = (ProgressBar) view.findViewById(R.id.fragment_events_list_view_loading);
-        mMoreEventsLoadingProgressBar = (ProgressBar) view.findViewById(R.id.fragment_events_list_view_more_events_loading);
+        mMoreEventsLoadingProgressBar = (SmoothProgressBar) view.findViewById(R.id.fragment_events_list_view_more_events_loading);
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         //sets on clickListener for load more events button
         mLoadMoreEventsButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-//                displayLoadMoreEventsButton(false); //hide load more events button
                 getEventsFromServer(mNumberOfPagesLoaded + 1, mSession, mUserLatLng);
             }
         });
@@ -213,12 +213,13 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
     //called onPreExecute of eventsFetcherTask
     @Override
     public void onTaskAboutToStart() {
-        //display loading progressbar
-        if (mNumberOfPagesLoaded == 0) {
-            mEventsLoadingProgressBar.setVisibility(View.VISIBLE);
-        } else {
+        //display loading progressbar at bottom of screen if it is loading more events after first page
+        if (mNumberOfPagesLoaded > 1) {
             mMoreEventsLoadingProgressBar.setVisibility(View.VISIBLE);
             mLoadMoreEventsButton.setVisibility(View.GONE);
+            //display loading progressbar in middle of screen if it is loading first page of events
+        } else {
+            mEventsLoadingProgressBar.setVisibility(View.VISIBLE);
         }
     }
 
@@ -234,13 +235,14 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
 
         //set events adapter with new events
         setEventsAdapter();
-        if (mNumberOfPagesLoaded == 0) {
-            //hide loading progressbar
-            mEventsLoadingProgressBar.setVisibility(View.GONE);
-        } else {
+        //hides loading progressbar at bottom of screen if it is loading more events after first page
+        if (mNumberOfPagesLoaded > 1) {
             mMoreEventsLoadingProgressBar.setVisibility(View.GONE);
             LinearLayout viewContainer = (LinearLayout) getActivity().findViewById(R.id.fragment_events_list_view_container);
             viewContainer.setWeightSum(24);
+        } else {
+            //hide loading progressbar in middle of screen
+            mEventsLoadingProgressBar.setVisibility(View.GONE);
         }
 
 
