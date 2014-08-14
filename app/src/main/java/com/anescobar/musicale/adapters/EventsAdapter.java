@@ -10,13 +10,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.anescobar.musicale.R;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 import de.umass.lastfm.Event;
 import de.umass.lastfm.ImageSize;
@@ -103,7 +101,8 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         @Override
         public void onClick(View view) {
             if (view.getId() == mMoreEventDetailsButton.getId()) {
-                //opens event url in browser
+                //opens event url in browser for now
+                //TODO send intent to eventsDetails activity when that screen is completed
                 String eventUrl = mEvents.get(getPosition()).getUrl();
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(eventUrl));
                 mContext.startActivity(browserIntent);
@@ -117,6 +116,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         }
     }
 
+    //opens Maps app with URI parameters
     private static void showMap(Uri geoLocation) {
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(geoLocation);
