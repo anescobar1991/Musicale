@@ -56,7 +56,7 @@ public class HomeActivity extends Activity
     private static final String TRENDS_VIEW_FRAGMENT = "trendsViewFragment";
     private LocationClient mLocationClient;
     private boolean mIsEventsViewDisplayed;
-    private boolean isMapViewDisplayed;
+    private boolean mIsMapViewDisplayed;
     private MenuItem mEventSearchIcon;
     private MenuItem mEventsRefreshIcon;
     private NetworkUtil mNetworkUtil;
@@ -117,7 +117,7 @@ public class HomeActivity extends Activity
         // update the main content by replacing fragments
         switch (position) {
             case 0:
-                isMapViewDisplayed = false;
+                mIsEventsViewDisplayed = false;
                 mIsEventsViewDisplayed = false;
                 //adds trends view to fragment
                 addFragmentToActivity(R.id.container, TrendsViewFragment.newInstance("example"), TRENDS_VIEW_FRAGMENT);
@@ -131,7 +131,7 @@ public class HomeActivity extends Activity
                 mEventsRefreshIcon.setVisible(true);
                 break;
             case 2:
-                isMapViewDisplayed = false;
+                mIsMapViewDisplayed = false;
                 mIsEventsViewDisplayed = false;
                 //adds socialize view fragment to activity
                 addFragmentToActivity(R.id.container, SocializeViewFragment.newInstance("example"), SOCIALIZE_VIEW_FRAGMENT);
@@ -181,7 +181,7 @@ public class HomeActivity extends Activity
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
 
         actionBar.setListNavigationCallbacks(adapter, this);
-        if (isMapViewDisplayed) {
+        if (mIsMapViewDisplayed) {
             actionBar.setSelectedNavigationItem(1);
         }
     }
@@ -205,12 +205,12 @@ public class HomeActivity extends Activity
     public boolean onNavigationItemSelected(int itemPosition, long l) {
         switch (itemPosition) {
             case 0:
-                isMapViewDisplayed = false;
+                mIsMapViewDisplayed = false;
                 // adds events list view fragment to activity
                 addFragmentToActivity(R.id.container, new EventsListViewFragment(),EVENTS_LIST_VIEW_FRAGMENT_TAG);
                 break;
             case 1:
-                isMapViewDisplayed = true;
+                mIsMapViewDisplayed = true;
                 //adds events map view fragment to activity
                 addFragmentToActivity(R.id.container, new EventsMapViewFragment(),EVENTS_MAP_VIEW_FRAGMENT_TAG);
                 break;
@@ -325,7 +325,7 @@ public class HomeActivity extends Activity
         cacheEvents(1, events.getTotalPages(), eventsNearby);
 
         //will refresh
-        if (isMapViewDisplayed) {
+        if (mIsMapViewDisplayed) {
             //TODO do whatever is necessary for refreshing map
         } else {
             //hide loading progressbar

@@ -45,12 +45,10 @@
             android:visibility="gone"
             android:layout_gravity="center"
             app:spb_sections_count="4"
-            app:spb_color="@color/accent"
+            app:spb_colors="@array/progress_bar_colors"
             app:spb_speed="2.0"
-            app:spb_stroke_width="5dp"
-            app:spb_stroke_separator_length="2dp"
-            app:spb_reversed="true"
-            app:spb_mirror_mode="true" />
+            app:spb_stroke_width="4dp"
+            app:spb_stroke_separator_length="0dp" />
 
         <Button
             android:id="@+id/fragment_events_list_view_load_more_button"

@@ -76,9 +76,8 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         public TextView mEventTitleTextView;
         public TextView mEventDateTextView;
         public TextView mEventVenueNameTextView;
-        public ImageView mMapPinImage;
         public TextView mVenueLocationTextView;
-        public Button mEventBuzzButton;
+        public Button mViewInMapButton;
         public TextView mMoreEventDetailsButton;
 
         /**
@@ -89,18 +88,16 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
             super(view);
             this.mEvents = events;
 
-            mEventImage = (ImageView) view.findViewById(R.id.eventCard_imageView_eventImage);
-            mEventTitleTextView = (TextView) view.findViewById(R.id.eventCard_textView_eventTitle);
-            mEventDateTextView = (TextView) view.findViewById(R.id.eventCard_textView_eventDate);
-            mEventVenueNameTextView = (TextView) view.findViewById(R.id.eventCard_textView_venueName);
-            mMapPinImage = (ImageView) view.findViewById(R.id.eventCard_imageView_mapPin);
-            mVenueLocationTextView = (TextView) view.findViewById(R.id.eventCard_textView_venueLocation);
-            mEventBuzzButton = (Button) view.findViewById(R.id.eventsCard_button_eventBuzz);
-            mMoreEventDetailsButton = (Button) view.findViewById(R.id.eventsCard_button_moreDetails);
+            mEventImage = (ImageView) view.findViewById(R.id.event_card_event_image);
+            mEventTitleTextView = (TextView) view.findViewById(R.id.event_card_event_title_textfield);
+            mEventDateTextView = (TextView) view.findViewById(R.id.event_Card_event_date_textfield);
+            mEventVenueNameTextView = (TextView) view.findViewById(R.id.event_card_venue_name_textfield);
+            mVenueLocationTextView = (TextView) view.findViewById(R.id.event_card_venue_location_textfield);
+            mViewInMapButton = (Button) view.findViewById(R.id.event_card_show_in_map_button);
+            mMoreEventDetailsButton = (Button) view.findViewById(R.id.event_card_more_details_button);
 
-            mMapPinImage.setOnClickListener(this);
             mMoreEventDetailsButton.setOnClickListener(this);
-            mEventBuzzButton.setOnClickListener(this);
+            mViewInMapButton.setOnClickListener(this);
         }
 
         @Override
@@ -110,14 +107,12 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
                 String eventUrl = mEvents.get(getPosition()).getUrl();
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(eventUrl));
                 mContext.startActivity(browserIntent);
-            } else if (view.getId() == mMapPinImage.getId()) {
+            } else if (view.getId() == mViewInMapButton.getId()) {
                 //shows venue location in maps app
                 Float venueLat = mEvents.get(getPosition()).getVenue().getLatitude();
                 Float venueLng = mEvents.get(getPosition()).getVenue().getLongitude();
                 String venueName = mEvents.get(getPosition()).getVenue().getName();
                 showMap(Uri.parse("geo:0,0?q=" + venueLat +"," + venueLng + "(" + venueName + ")"));
-            } else if (view.getId() == mEventBuzzButton.getId()) {
-                Toast.makeText(mContext, "Buzz about this event button tapped", Toast.LENGTH_SHORT).show();
             }
         }
     }

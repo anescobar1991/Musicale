@@ -1,6 +1,5 @@
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/eventCard_cardView_eventCard"
     android:layout_gravity="center"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -12,15 +11,15 @@
     card_view:cardCornerRadius="2dp">
 
     <RelativeLayout
-        android:id="@+id/eventCard_relativeLayout_eventCard"
         android:layout_width="match_parent"
         android:paddingLeft="8dp"
-        android:paddingTop="8dp"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
         android:paddingRight="8dp"
         android:layout_height="match_parent">
 
         <ImageView
-            android:id="@+id/eventCard_imageView_eventImage"
+            android:id="@+id/event_card_event_image"
             android:layout_width="wrap_content"
             android:maxHeight="100dp"
             android:paddingTop="8dp"
@@ -29,10 +28,11 @@
             android:contentDescription="@null" />
 
         <TextView
-            android:id="@+id/eventCard_textView_eventTitle"
+            android:id="@+id/event_card_event_title_textfield"
             android:layout_width="wrap_content"
             android:paddingLeft="8dp"
-            android:layout_toRightOf="@+id/eventCard_imageView_eventImage"
+            android:paddingRight="8dp"
+            android:layout_toEndOf="@+id/event_card_event_image"
             android:textSize="20sp"
             android:textColor="#ff2f2f2f"
             android:ellipsize="end"
@@ -40,71 +40,65 @@
             android:layout_height="wrap_content" />
 
         <TextView
-            android:id="@+id/eventCard_textView_eventDate"
+            android:id="@+id/event_Card_event_date_textfield"
             android:layout_width="wrap_content"
             android:paddingLeft="8dp"
-            android:layout_below="@+id/eventCard_textView_eventTitle"
-            android:layout_toRightOf="@+id/eventCard_imageView_eventImage"
+            android:paddingRight="8dp"
+            android:layout_below="@+id/event_card_event_title_textfield"
+            android:layout_toEndOf="@+id/event_card_event_image"
             android:textSize="14sp"
             android:ellipsize="end"
             android:maxLines="1"
             android:layout_height="wrap_content" />
 
         <TextView
-            android:id="@+id/eventCard_textView_venueName"
+            android:id="@+id/event_card_venue_name_textfield"
             android:paddingLeft="8dp"
-            android:layout_below="@+id/eventCard_textView_eventDate"
-            android:layout_toRightOf="@+id/eventCard_imageView_eventImage"
+            android:paddingRight="8dp"
+            android:layout_below="@+id/event_Card_event_date_textfield"
+            android:layout_toEndOf="@+id/event_card_event_image"
             android:textSize="14sp"
             android:layout_width="wrap_content"
             android:maxLength="33"
             android:layout_height="wrap_content" />
 
-        <ImageView
-            android:id="@+id/eventCard_imageView_mapPin"
-            android:layout_width="wrap_content"
-            android:adjustViewBounds="true"
-            android:maxHeight="20dp"
-            android:layout_toRightOf="@+id/eventCard_textView_venueName"
-            android:layout_alignTop="@+id/eventCard_textView_venueName"
-            android:src="@drawable/ic_action_place"
-            android:layout_height="wrap_content"
-            android:contentDescription="@string/event_card_open_map_accessibility_label" />
-
         <TextView
-            android:id="@+id/eventCard_textView_venueLocation"
-            android:layout_toRightOf="@+id/eventCard_imageView_eventImage"
+            android:id="@+id/event_card_venue_location_textfield"
+            android:layout_toEndOf="@+id/event_card_event_image"
             android:paddingLeft="8dp"
+            android:paddingRight="8dp"
             android:textSize="14sp"
-            android:layout_below="@+id/eventCard_textView_venueName"
+            android:layout_below="@+id/event_card_venue_name_textfield"
             android:layout_width="wrap_content"
             android:ellipsize="end"
             android:maxLines="1"
             android:layout_height="wrap_content" />
 
         <Button
-            android:id="@+id/eventsCard_button_eventBuzz"
+            android:id="@+id/event_card_show_in_map_button"
             android:layout_marginTop="16dp"
-            android:paddingLeft="0dp"
             style="@android:style/Widget.Holo.Light.Button.Borderless"
-            android:layout_below="@+id/eventCard_textView_venueLocation"
+            android:layout_below="@+id/event_card_venue_location_textfield"
             android:layout_width="wrap_content"
-            android:gravity="left|center_vertical"
+            android:paddingStart="0dp"
+            android:paddingEnd="8dp"
             android:layout_height="wrap_content"
-            android:text="@string/event_card_buzz_button_text"
+            android:text="@string/event_card_show_in_map_button_text"
             android:minHeight="40dp"
             android:minWidth="0dp"
             android:textColor="@color/accent"
             android:textSize="16sp" />
 
         <Button
-            android:id="@+id/eventsCard_button_moreDetails"
-            android:layout_marginLeft="8dp"
+            android:id="@+id/event_card_more_details_button"
             android:layout_marginTop="16dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
             style="@android:style/Widget.Holo.Light.Button.Borderless"
-            android:layout_below="@+id/eventCard_textView_venueLocation"
-            android:layout_toRightOf="@+id/eventsCard_button_eventBuzz"
+            android:layout_below="@+id/event_card_venue_location_textfield"
             android:layout_width="wrap_content"
+            android:layout_toEndOf="@id/event_card_show_in_map_button"
+            android:gravity="start|center_vertical"
             android:layout_height="wrap_content"
             android:text="@string/event_card_more_details_button_text"
             android:minHeight="40dp"
