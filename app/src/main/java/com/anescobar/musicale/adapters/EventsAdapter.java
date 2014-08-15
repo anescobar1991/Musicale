@@ -41,12 +41,12 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.event_card, parent, false);
 
-        return new ViewHolder(view, mEvents);
+        return new ViewHolder(view);
     }
 
     // Replace the contents of a view. This is invoked by the layout manager.
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(ViewHolder holder, final int position) {
         //sets event card details
         holder.mEventTitleTextView.setText(mEvents.get(position).getTitle());
         holder.mEventDateTextView.setText(mEvents.get(position).getStartDate().toLocaleString().substring(0, 12));
@@ -59,7 +59,29 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
                     .placeholder(R.drawable.placeholder)
                     .into(holder.mEventImage);
         }
+        //sets onClickListener for moreDetails button
+        holder.mMoreEventDetailsButton.setOnClickListener(new Button.OnClickListener() {
+            public void onClick(View v) {
+                //opens event url in browser for now
+                //TODO send intent to eventsDetails activity when that screen is completed
+                String eventUrl = mEvents.get(position).getUrl();
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(eventUrl));
+                mContext.startActivity(browserIntent);
+            }
+        });
+        //sets onClickListener for view in map button
+        holder.mViewInMapButton.setOnClickListener(new Button.OnClickListener() {
+            public void onClick(View v) {
+                //shows venue location in maps app for now
+                //TODO link to map view if possible
+                Float venueLat = mEvents.get(position).getVenue().getLatitude();
+                Float venueLng = mEvents.get(position).getVenue().getLongitude();
+                String venueName = mEvents.get(position).getVenue().getName();
+                showMap(Uri.parse("geo:0,0?q=" + venueLat +"," + venueLng + "(" + venueName + ")"));
+            }
+        });
     }
+
 
     // Return the size of your dataset (invoked by the layout manager)
     @Override
@@ -68,8 +90,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
     }
 
     // Create the ViewHolder class to keep references to your views
-    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        private ArrayList<Event> mEvents;
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         public ImageView mEventImage;
         public TextView mEventTitleTextView;
         public TextView mEventDateTextView;
@@ -82,9 +103,8 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
          * Constructor
          * @param view The container view which holds the elements from the row item xml
          */
-        public ViewHolder(View view, ArrayList<Event> events) {
+        public ViewHolder(View view) {
             super(view);
-            this.mEvents = events;
 
             mEventImage = (ImageView) view.findViewById(R.id.event_card_event_image);
             mEventTitleTextView = (TextView) view.findViewById(R.id.event_card_event_title_textfield);
@@ -93,31 +113,12 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
             mVenueLocationTextView = (TextView) view.findViewById(R.id.event_card_venue_location_textfield);
             mViewInMapButton = (Button) view.findViewById(R.id.event_card_show_in_map_button);
             mMoreEventDetailsButton = (Button) view.findViewById(R.id.event_card_more_details_button);
-
-            mMoreEventDetailsButton.setOnClickListener(this);
-            mViewInMapButton.setOnClickListener(this);
         }
 
-        @Override
-        public void onClick(View view) {
-            if (view.getId() == mMoreEventDetailsButton.getId()) {
-                //opens event url in browser for now
-                //TODO send intent to eventsDetails activity when that screen is completed
-                String eventUrl = mEvents.get(getPosition()).getUrl();
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(eventUrl));
-                mContext.startActivity(browserIntent);
-            } else if (view.getId() == mViewInMapButton.getId()) {
-                //shows venue location in maps app
-                Float venueLat = mEvents.get(getPosition()).getVenue().getLatitude();
-                Float venueLng = mEvents.get(getPosition()).getVenue().getLongitude();
-                String venueName = mEvents.get(getPosition()).getVenue().getName();
-                showMap(Uri.parse("geo:0,0?q=" + venueLat +"," + venueLng + "(" + venueName + ")"));
-            }
-        }
     }
 
     //opens Maps app with URI parameters
-    private static void showMap(Uri geoLocation) {
+    private void showMap(Uri geoLocation) {
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(geoLocation);
         if (intent.resolveActivity(mContext.getPackageManager()) != null) {
