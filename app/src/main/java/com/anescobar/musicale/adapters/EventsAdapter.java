@@ -53,10 +53,10 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         holder.mEventDateTextView.setText(mEvents.get(position).getStartDate().toLocaleString().substring(0, 12));
         holder.mEventVenueNameTextView.setText(mEvents.get(position).getVenue().getName());
         holder.mVenueLocationTextView.setText(mEvents.get(position).getVenue().getCity() + " " + mEvents.get(position).getVenue().getCountry());
-        String eventUrl = mEvents.get(position).getImageURL(ImageSize.EXTRALARGE);
-        if (eventUrl.length() != 0) {
+        String eventImageUrl = mEvents.get(position).getImageURL(ImageSize.EXTRALARGE);
+        if (eventImageUrl.length() > 0) {
             Picasso.with(mContext)
-                    .load(eventUrl)
+                    .load(eventImageUrl)
                     .placeholder(R.drawable.placeholder)
                     .into(holder.mEventImage);
         }

@@ -25,6 +25,7 @@ import com.anescobar.musicale.utilsHelpers.SessionManager;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -269,12 +270,15 @@ public class EventsMapViewFragment extends Fragment implements OnEventsFetcherTa
         //that way user can see ALL markers for same location
         if (mMarkerPositions.contains(latLng)) {
             eventMarker = mMap.addMarker(new MarkerOptions()
-                            .position(new LatLng(latLng.latitude * (Math.random() * (1.000001 - .999999) + .999999),
-                                    latLng.longitude * (Math.random() * (1.000001 - .999999) + .999999)))
+                    .position(new LatLng(latLng.latitude * (Math.random() * (1.000001 - .999999) + .999999),
+                            latLng.longitude * (Math.random() * (1.000001 - .999999) + .999999)))
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.music_live))
+
             );
         } else {
             eventMarker = mMap.addMarker(new MarkerOptions()
                             .position(latLng)
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.music_live))
             );
         }
         //mMarkers keeps track of all Event markers that have been put down on map
@@ -322,12 +326,16 @@ public class EventsMapViewFragment extends Fragment implements OnEventsFetcherTa
             eventDateTextfield.setText(mMarkers.get(marker.getId()).getStartDate().toLocaleString().substring(0, 12));
             venueNameTextfield.setText(mMarkers.get(marker.getId()).getVenue().getName());
 
-            //load event image into eventImage imageView
-            Picasso.with(mContext)
-                    .load(mMarkers.get(marker.getId())
-                    .getImageURL(ImageSize.EXTRALARGE))
-                    .placeholder(R.drawable.placeholder)
-                    .into(eventImage, onImageLoaded);
+            String eventImageUrl = mMarkers.get(marker.getId()).getImageURL(ImageSize.EXTRALARGE);
+
+            //load event image into eventImage imageView if event has an image
+            if (eventImageUrl.length() > 0) {
+                Picasso.with(mContext)
+                        .load(eventImageUrl)
+                        .placeholder(R.drawable.placeholder)
+                        .into(eventImage, onImageLoaded);
+            }
+
 
             // Returning the view containing InfoWindow contents
             return infoWindow;
