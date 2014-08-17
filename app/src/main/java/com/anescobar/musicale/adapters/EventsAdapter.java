@@ -49,6 +49,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
     public void onBindViewHolder(ViewHolder holder, final int position) {
         //sets event card details
         holder.mEventTitleTextView.setText(mEvents.get(position).getTitle());
+        //gets event date as Date object but only needs MMDDYYYY, not the timestamp
         holder.mEventDateTextView.setText(mEvents.get(position).getStartDate().toLocaleString().substring(0, 12));
         holder.mEventVenueNameTextView.setText(mEvents.get(position).getVenue().getName());
         holder.mVenueLocationTextView.setText(mEvents.get(position).getVenue().getCity() + " " + mEvents.get(position).getVenue().getCountry());
@@ -60,7 +61,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
                     .into(holder.mEventImage);
         }
         //sets onClickListener for moreDetails button
-        holder.mMoreEventDetailsButton.setOnClickListener(new Button.OnClickListener() {
+        holder.mMoreDetailsButton.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
                 //opens event url in browser for now
                 //TODO send intent to eventsDetails activity when that screen is completed
@@ -97,7 +98,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         public TextView mEventVenueNameTextView;
         public TextView mVenueLocationTextView;
         public Button mViewInMapButton;
-        public TextView mMoreEventDetailsButton;
+        public Button mMoreDetailsButton;
 
         /**
          * Constructor
@@ -112,7 +113,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
             mEventVenueNameTextView = (TextView) view.findViewById(R.id.event_card_venue_name_textfield);
             mVenueLocationTextView = (TextView) view.findViewById(R.id.event_card_venue_location_textfield);
             mViewInMapButton = (Button) view.findViewById(R.id.event_card_show_in_map_button);
-            mMoreEventDetailsButton = (Button) view.findViewById(R.id.event_card_more_details_button);
+            mMoreDetailsButton = (Button) view.findViewById(R.id.event_card_more_details_button);
         }
 
     }

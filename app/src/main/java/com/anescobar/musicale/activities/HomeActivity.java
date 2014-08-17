@@ -116,8 +116,9 @@ public class HomeActivity extends Activity
         // update the main content by replacing fragments
         switch (position) {
             case 0:
+                mIsMapViewDisplayed = false;
                 mIsEventsViewDisplayed = false;
-                mIsEventsViewDisplayed = false;
+
                 //adds trends view to fragment
                 addFragmentToActivity(R.id.container, TrendsViewFragment.newInstance("example"), TRENDS_VIEW_FRAGMENT);
                 break;
@@ -125,13 +126,11 @@ public class HomeActivity extends Activity
                 //set flags which will tell menu to display events spinner
                 //spinner will be selected and thus load events view screen on its own
                 mIsEventsViewDisplayed = true;
-                //displays actionbar icons that should only be visible if in events view
-                mEventSearchIcon.setVisible(true);
-                mEventsRefreshIcon.setVisible(true);
                 break;
             case 2:
                 mIsMapViewDisplayed = false;
                 mIsEventsViewDisplayed = false;
+
                 //adds socialize view fragment to activity
                 addFragmentToActivity(R.id.container, SocializeViewFragment.newInstance("example"), SOCIALIZE_VIEW_FRAGMENT);
                 break;
@@ -150,7 +149,6 @@ public class HomeActivity extends Activity
         if (mIsEventsViewDisplayed && !mNavigationDrawerFragment.isDrawerOpen()) {
             displayEventsViewSpinner();
         } else {
-
             mEventSearchIcon.setVisible(false);
             mEventsRefreshIcon.setVisible(false);
             ActionBar bar = getActionBar();
@@ -205,11 +203,18 @@ public class HomeActivity extends Activity
         switch (itemPosition) {
             case 0:
                 mIsMapViewDisplayed = false;
+
+                //displays both correct icons for view in actionbar
+                mEventSearchIcon.setVisible(true);
+                mEventsRefreshIcon.setVisible(true);
+
                 // adds events list view fragment to activity
                 addFragmentToActivity(R.id.container, new EventsListViewFragment(),EVENTS_LIST_VIEW_FRAGMENT_TAG);
                 break;
             case 1:
                 mIsMapViewDisplayed = true;
+                //hides search icon in actionbar
+                mEventSearchIcon.setVisible(false);
                 //adds events map view fragment to activity
                 addFragmentToActivity(R.id.container, new EventsMapViewFragment(),EVENTS_MAP_VIEW_FRAGMENT_TAG);
                 break;
@@ -226,16 +231,6 @@ public class HomeActivity extends Activity
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    /**
-     * displays toast on bottom of screen
-     * @param message String to be displayed on toast
-     * @param toastLength enum to indicate how long toast should remain on screen, either Toast.LENGTH_SHORT, or Toast.LENGTH_LONG
-     */
-    public void displayToastMessage(String message, int toastLength) {
-        Toast toast = Toast.makeText(this, message, toastLength);
-        toast.show();
     }
 
     //caches events to sharedPreferences
@@ -300,40 +295,46 @@ public class HomeActivity extends Activity
             //performs events search if network is available
             if (mNetworkUtil.isNetworkAvailable(this)) {
                 new EventsFinder(session, this, currentLocation).getEvents(1);
+            } else {
+                Toast.makeText(this, getString(R.string.error_no_network_connectivity), Toast.LENGTH_SHORT).show();
             }
-        } else {
-            displayToastMessage(getString(R.string.error_no_network_connectivity), Toast.LENGTH_SHORT);
         }
     }
 
     @Override
     public void onTaskAboutToStart() {
-        EventsListViewFragment eventsViewFragment = (EventsListViewFragment) getFragmentManager().findFragmentByTag(EVENTS_LIST_VIEW_FRAGMENT_TAG);
 
-        //display loading progressbar
-        eventsViewFragment.toggleEventsLoadingProgressBar(true);
+        if (mIsMapViewDisplayed) {
+            //TODO do whatever is necessary for refreshing map
+        } else {
+            EventsListViewFragment eventsViewFragment = (EventsListViewFragment) getFragmentManager().findFragmentByTag(EVENTS_LIST_VIEW_FRAGMENT_TAG);
+
+            //hide loading progressbar
+            eventsViewFragment.toggleEventsLoadingProgressBar(true);
+        }
     }
 
     //this is called on onPostExecute of eventsFetcher asyncTask
     @Override
     public void onTaskCompleted(PaginatedResult<Event> events) {
-        EventsListViewFragment eventsViewFragment = (EventsListViewFragment) getFragmentManager().findFragmentByTag(EVENTS_LIST_VIEW_FRAGMENT_TAG);
         ArrayList<Event> eventsNearby = new ArrayList<Event>(events.getPageResults());
 
         //caches results in sharedPreferences
         cacheEvents(1, events.getTotalPages(), eventsNearby);
 
-        //will refresh
         if (mIsMapViewDisplayed) {
-            //TODO do whatever is necessary for refreshing map
+            EventsMapViewFragment eventsMapViewFragment = (EventsMapViewFragment) getFragmentManager().findFragmentByTag(EVENTS_MAP_VIEW_FRAGMENT_TAG);
+
+            //calls method that refreshes the view and displays new events on map
+            eventsMapViewFragment.refreshEvents();
         } else {
+            EventsListViewFragment eventsListViewFragment = (EventsListViewFragment) getFragmentManager().findFragmentByTag(EVENTS_LIST_VIEW_FRAGMENT_TAG);
+
             //hide loading progressbar
-            eventsViewFragment.toggleEventsLoadingProgressBar(false);
+            eventsListViewFragment.toggleEventsLoadingProgressBar(false);
 
             //calls method that refreshes view and displays new events
-            eventsViewFragment.refreshEvents();
-
-
+            eventsListViewFragment.refreshEvents();
         }
     }
 

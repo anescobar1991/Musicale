@@ -67,7 +67,6 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
      * activity.
      */
     public interface OnEventsListViewFragmentInteractionListener {
-        public void displayToastMessage(String message, int toastLength);
         public void cacheEvents(int numberOfPagesLoaded, int totalNumberOfPages,ArrayList<Event> events);
     }
 
@@ -190,11 +189,11 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
     //gets events from backend, keeps track of how many pages are already loaded and cached
     private void getEventsFromServer(Integer pageNumber, Session session, LatLng userLocation) {
         mNumberOfPagesLoaded ++;
-        System.out.println("getEventsFromServer"+mNumberOfPagesLoaded);
+
         if (mNetworkUtil.isNetworkAvailable(getActivity())) {
             new EventsFinder(session, this, userLocation).getEvents(pageNumber);
         } else {
-            mListener.displayToastMessage(getString(R.string.error_no_network_connectivity), Toast.LENGTH_SHORT);
+            Toast.makeText(getActivity(),getString(R.string.error_no_network_connectivity),Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -245,7 +244,6 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
             mEventsLoadingProgressBar.setVisibility(View.GONE);
         }
 
-
     }
 
     public void toggleEventsLoadingProgressBar(boolean displayProgressBar) {
@@ -288,12 +286,10 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
             Type listOfEvents = new TypeToken<ArrayList<Event>>(){}.getType();
             mEvents = gson.fromJson(serializedEvents, listOfEvents);
         }
-        System.out.println("getCachedSettings"+mNumberOfPagesLoaded);
     }
 
     //loads events and sets adapter that will display them in recycler view
     private void loadEventsToCards() {
-        System.out.println("loadEventsToCards"+mNumberOfPagesLoaded);
         //if there are no events from previous saved session then fetch events from backend
         //else use events from previous saved session to populate cards
         if (mEvents.isEmpty()) {
