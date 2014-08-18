@@ -31,7 +31,7 @@ public class EventsFinder {
         this.mLocation = location;
     }
 
-    //publicly accessible method which is called to getEvents back from backend
+    //publicly accessible method which is called to get Events back from backend
     public void getEvents(Integer pageNumber) {
         new EventsFetcherTask(mSession, mLocation, mListener).execute(pageNumber);
     }

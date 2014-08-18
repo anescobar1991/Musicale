@@ -21,9 +21,6 @@ import com.anescobar.musicale.fragments.EventsMapViewFragment;
 import com.anescobar.musicale.fragments.NavigationDrawerFragment;
 import com.anescobar.musicale.fragments.SocializeViewFragment;
 import com.anescobar.musicale.fragments.TrendsViewFragment;
-import com.anescobar.musicale.interfaces.OnEventsFetcherTaskCompleted;
-import com.anescobar.musicale.utils.EventsFinder;
-import com.anescobar.musicale.utils.NetworkUtil;
 import com.anescobar.musicale.utils.SessionManager;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
@@ -36,14 +33,13 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 import de.umass.lastfm.Event;
-import de.umass.lastfm.PaginatedResult;
 import de.umass.lastfm.Session;
 
 public class HomeActivity extends Activity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks, EventsMapViewFragment.OnEventsMapViewFragmentInteractionListener,
         TrendsViewFragment.OnTrendsViewFragmentInteractionListener, EventsListViewFragment.OnEventsListViewFragmentInteractionListener,
         SocializeViewFragment.OnSocializeViewFragmentInteractionListener, GooglePlayServicesClient.ConnectionCallbacks,
-        GooglePlayServicesClient.OnConnectionFailedListener, ActionBar.OnNavigationListener, OnEventsFetcherTaskCompleted {
+        GooglePlayServicesClient.OnConnectionFailedListener, ActionBar.OnNavigationListener {
 
     private NavigationDrawerFragment mNavigationDrawerFragment; //Fragment managing the behaviors, interactions and presentation of the navigation drawer.
     private CharSequence mTitle; //Used to store the last screen title. For use in {@link #restoreActionBar()}.
@@ -58,9 +54,6 @@ public class HomeActivity extends Activity
     private boolean mIsMapViewDisplayed;
     private MenuItem mEventSearchIcon;
     private MenuItem mEventsRefreshIcon;
-    private NetworkUtil mNetworkUtil;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,9 +61,9 @@ public class HomeActivity extends Activity
 
         setContentView(R.layout.activity_home);
 
-        //instantiates new instance of NetworkUtil
-        mNetworkUtil = new NetworkUtil();
+        //creates new LocationClient instance
         mLocationClient = new LocationClient(this, this, this);
+
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
@@ -101,11 +94,14 @@ public class HomeActivity extends Activity
     @Override
     protected void onStart() {
         super.onStart();
+
+        //connects location client
         mLocationClient.connect();
     }
 
     @Override
     protected void onStop() {
+
         // Disconnecting the client invalidates it.
         mLocationClient.disconnect();
         super.onStop();
@@ -146,6 +142,7 @@ public class HomeActivity extends Activity
 
     //restores actionBar to its original state
     public void restoreActionBar() {
+        //if user is in events section of app then original action bar has spinner on it
         if (mIsEventsViewDisplayed && !mNavigationDrawerFragment.isDrawerOpen()) {
             displayEventsViewSpinner();
         } else {
@@ -160,14 +157,16 @@ public class HomeActivity extends Activity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.home, menu);
+
         mEventSearchIcon = menu.findItem(R.id.action_search_events);
         mEventsRefreshIcon = menu.findItem(R.id.action_refresh_events);
+
         restoreActionBar();
         return super.onCreateOptionsMenu(menu);
     }
 
     /**
-     * displays eventsViewSpinner
+     * displays eventsViewSpinner which helps user select which events view they would like to see
      * Should only be displayed when either one of events view screens are visible
      */
     private void displayEventsViewSpinner() {
@@ -290,51 +289,22 @@ public class HomeActivity extends Activity
         SharedPreferences sessionPreferences = getSharedPreferences(SessionManager.SESSION_SHARED_PREFS_NAME, Context.MODE_PRIVATE);
         String serializedSession = sessionPreferences.getString("userSession", null);
         if (serializedSession != null) {
+            //deserializes cached session and stores it locally
             Session session = gson.fromJson(serializedSession, Session.class);
 
-            //performs events search if network is available
-            if (mNetworkUtil.isNetworkAvailable(this)) {
-                new EventsFinder(session, this, currentLocation).getEvents(1);
+            if (mIsMapViewDisplayed) {
+                EventsMapViewFragment eventsMapViewFragment = (EventsMapViewFragment) getFragmentManager().findFragmentByTag(EVENTS_MAP_VIEW_FRAGMENT_TAG);
+
+                //calls eventMapViewFragment's getEvents method, which gets events from backend and displays and stores them as needed
+                eventsMapViewFragment.getEventsFromServer(1, session, currentLocation);
             } else {
-                Toast.makeText(this, getString(R.string.error_no_network_connectivity), Toast.LENGTH_SHORT).show();
+                EventsListViewFragment eventsListViewFragment = (EventsListViewFragment) getFragmentManager().findFragmentByTag(EVENTS_LIST_VIEW_FRAGMENT_TAG);
+
+                //calls eventsListViewFragment's getEvents method, which gets events from backend and displays and stores them as needed
+                eventsListViewFragment.getEventsFromServer(1, session, currentLocation);
             }
-        }
-    }
-
-    @Override
-    public void onTaskAboutToStart() {
-
-        if (mIsMapViewDisplayed) {
-            //TODO do whatever is necessary for refreshing map
         } else {
-            EventsListViewFragment eventsViewFragment = (EventsListViewFragment) getFragmentManager().findFragmentByTag(EVENTS_LIST_VIEW_FRAGMENT_TAG);
-
-            //hide loading progressbar
-            eventsViewFragment.toggleEventsLoadingProgressBar(true);
-        }
-    }
-
-    //this is called on onPostExecute of eventsFetcher asyncTask
-    @Override
-    public void onTaskCompleted(PaginatedResult<Event> events) {
-        ArrayList<Event> eventsNearby = new ArrayList<Event>(events.getPageResults());
-
-        //caches results in sharedPreferences
-        cacheEvents(1, events.getTotalPages(), eventsNearby);
-
-        if (mIsMapViewDisplayed) {
-            EventsMapViewFragment eventsMapViewFragment = (EventsMapViewFragment) getFragmentManager().findFragmentByTag(EVENTS_MAP_VIEW_FRAGMENT_TAG);
-
-            //calls method that refreshes the view and displays new events on map
-            eventsMapViewFragment.refreshEvents();
-        } else {
-            EventsListViewFragment eventsListViewFragment = (EventsListViewFragment) getFragmentManager().findFragmentByTag(EVENTS_LIST_VIEW_FRAGMENT_TAG);
-
-            //hide loading progressbar
-            eventsListViewFragment.toggleEventsLoadingProgressBar(false);
-
-            //calls method that refreshes view and displays new events
-            eventsListViewFragment.refreshEvents();
+            Toast.makeText(this, getString(R.string.error_generic), Toast.LENGTH_SHORT).show();
         }
     }
 

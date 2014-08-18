@@ -149,7 +149,7 @@ public class EventsMapViewFragment extends Fragment implements OnEventsFetcherTa
     }
 
     //gets events from backend
-    private void getEventsFromServer(Integer pageNumber, Session session, LatLng userLocation) {
+    public void getEventsFromServer(Integer pageNumber, Session session, LatLng userLocation) {
 
         if (mNetworkUtil.isNetworkAvailable(getActivity())) {
             new EventsFinder(session, this, userLocation).getEvents(pageNumber);
@@ -244,17 +244,14 @@ public class EventsMapViewFragment extends Fragment implements OnEventsFetcherTa
         if (serializedEvents != null) {
             Type listOfEvents = new TypeToken<ArrayList<Event>>(){}.getType();
             mEvents = gson.fromJson(serializedEvents, listOfEvents);
-        } else {
-            //if there were no events cached for some reason
-            Toast.makeText(getActivity(),getString(R.string.error_generic),Toast.LENGTH_SHORT).show();
         }
     }
 
     @Override
     public void onTaskAboutToStart() {
         //hides map fragment on screen
-        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-        transaction.hide(mMapFragment)
+        getChildFragmentManager().beginTransaction()
+                .hide(mMapFragment)
                 .commit();
 
         //displays progress bar before getting events
@@ -267,10 +264,17 @@ public class EventsMapViewFragment extends Fragment implements OnEventsFetcherTa
         if (Caller.getInstance().getLastResult().isSuccessful()) {
             ArrayList<Event> events= new ArrayList<Event>(eventsNearby.getPageResults());
 
+            //sets variable that keeps track of how many pages of results are cached
+            mNumberOfPagesLoaded = 1;
+
+            //set variable that stores total number of pages
+            mTotalNumberOfPages = eventsNearby.getTotalPages();
+
+            //clears events list before adding events to it
+            mEvents.clear();
+
             //add events to mEvents
             mEvents.addAll(events);
-
-            mTotalNumberOfPages = eventsNearby.getTotalPages();
 
             //set events adapter with new events
             displayEventsInMap();
@@ -280,8 +284,8 @@ public class EventsMapViewFragment extends Fragment implements OnEventsFetcherTa
         }
 
         //shows map fragment on screen again
-        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-        transaction.show(mMapFragment)
+        getChildFragmentManager().beginTransaction()
+                .show(mMapFragment)
                 .commit();
 
         //hide loading progressbar in middle of screen

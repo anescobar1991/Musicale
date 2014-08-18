@@ -181,10 +181,9 @@ public class LoginActivity extends Activity {
 
     //async task that handles user authentication with last.fm
     private class GetSessionTask extends AsyncTask<UserCredentials, Void, Session> {
-        private String lastFmApiKey = getString(R.string.lastFm_api_key);
-        private String lastFmSecret = getString(R.string.lastFm_secret);
+        private final String LAST_FM_API_KEY = getString(R.string.lastFm_api_key);
+        private final String LAST_FM_SECRET = getString(R.string.lastFm_secret);
         private ProgressBar loginProgressBar = (ProgressBar) findViewById(R.id.activity_login_login_progressbar);
-
 
         @Override
         protected void onPreExecute() {
@@ -200,7 +199,7 @@ public class LoginActivity extends Activity {
 
             //returns null if there was any issue
             return Authenticator.getMobileSession(userCredentials[0].username, userCredentials[0].password,
-                    lastFmApiKey, lastFmSecret);
+                    LAST_FM_API_KEY, LAST_FM_SECRET);
         }
 
         protected void onPostExecute(Session session) {
@@ -219,10 +218,9 @@ public class LoginActivity extends Activity {
             } else { //valid session was retrieved from last.Fm service
                 //caches session to sharedPreferences so that it persists even when app is out of memory
                 mSessionManager.cacheSession(session,getApplicationContext());
-//                Gson gson = new Gson();
-//                String sessionString = gson.toJson(session); //serialized session object
+
+                //navigates to home activity
                 Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
-//                intent.putExtra("com.anescobar.musicale.activities.HomeActivity.session", sessionString); //Puts session object to to Home Activity Intent
                 startActivity(intent);
                 finish();
             }
