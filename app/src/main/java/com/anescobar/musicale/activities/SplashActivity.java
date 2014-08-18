@@ -6,8 +6,8 @@ import android.os.Bundle;
 
 import com.anescobar.musicale.R;
 import com.anescobar.musicale.interfaces.OnSessionHeartbeatCheckCompleted;
-import com.anescobar.musicale.utilsHelpers.SessionManager;
-import com.anescobar.musicale.utilsHelpers.NetworkUtil;
+import com.anescobar.musicale.utils.SessionManager;
+import com.anescobar.musicale.utils.NetworkUtil;
 
 import de.umass.lastfm.Session;
 

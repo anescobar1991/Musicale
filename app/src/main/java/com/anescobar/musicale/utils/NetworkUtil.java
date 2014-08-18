@@ -1,4 +1,4 @@
-package com.anescobar.musicale.utilsHelpers;
+package com.anescobar.musicale.utils;
 
 import android.content.Context;
 import android.net.ConnectivityManager;

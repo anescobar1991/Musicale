@@ -21,8 +21,8 @@ import android.widget.Toast;
 
 import com.anescobar.musicale.R;
 import com.anescobar.musicale.models.UserCredentials;
-import com.anescobar.musicale.utilsHelpers.SessionManager;
-import com.anescobar.musicale.utilsHelpers.NetworkUtil;
+import com.anescobar.musicale.utils.SessionManager;
+import com.anescobar.musicale.utils.NetworkUtil;
 
 import de.umass.lastfm.Authenticator;
 import de.umass.lastfm.Caller;

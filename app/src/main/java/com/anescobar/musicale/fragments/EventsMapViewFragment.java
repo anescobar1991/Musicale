@@ -19,9 +19,9 @@ import android.widget.Toast;
 import com.anescobar.musicale.R;
 import com.anescobar.musicale.activities.HomeActivity;
 import com.anescobar.musicale.interfaces.OnEventsFetcherTaskCompleted;
-import com.anescobar.musicale.utilsHelpers.EventsFinder;
-import com.anescobar.musicale.utilsHelpers.NetworkUtil;
-import com.anescobar.musicale.utilsHelpers.SessionManager;
+import com.anescobar.musicale.utils.EventsFinder;
+import com.anescobar.musicale.utils.NetworkUtil;
+import com.anescobar.musicale.utils.SessionManager;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -38,6 +38,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import de.umass.lastfm.Caller;
 import de.umass.lastfm.Event;
 import de.umass.lastfm.ImageSize;
 import de.umass.lastfm.PaginatedResult;
@@ -66,7 +67,6 @@ public class EventsMapViewFragment extends Fragment implements OnEventsFetcherTa
     private HashMap<String, Event> mMarkers = new HashMap<String, Event>();
     private ArrayList<LatLng> mMarkerPositions = new ArrayList<LatLng>();
     private ArrayList<Event> mEvents = new ArrayList<Event>();
-
 
     public EventsMapViewFragment() {
         // Required empty public constructor
@@ -97,31 +97,31 @@ public class EventsMapViewFragment extends Fragment implements OnEventsFetcherTa
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_events_map_view, container, false);
+        //creates MapFragment
         mMapFragment = new MapFragment();
-        mEventsLoadingProgressbar = (ProgressBar) view.findViewById(R.id.fragment_events_map_view_events_loading);
 
+        //displays map fragment on screen
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-        transaction.add(R.id.eventsMapView_framelayout_container, mMapFragment)
+        transaction.add(R.id.fragment_events_map_view_container, mMapFragment)
                 .commit();
+
+        mEventsLoadingProgressbar = (ProgressBar) view.findViewById(R.id.fragment_events_map_view_events_loading);
 
         return view;
     }
 
-    // Called at the start of the visible lifetime.
     @Override
     public void onStart(){
         super.onStart();
+        //sets up map, with its settings, and adds event markers
         setUpMapIfNeeded(mUserLatLng, mSession);
-        // Apply any required UI change now that the Fragment is visible.
     }
 
-    // Called at the start of the active lifetime.
     @Override
     public void onResume(){
         super.onResume();
+        //sets up map, with its settings, and adds event markers
         setUpMapIfNeeded(mUserLatLng, mSession);
-        // Resume any paused UI updates, threads, or processes required
-        // by the Fragment but suspended when it became inactive.
     }
 
     @Override
@@ -217,7 +217,10 @@ public class EventsMapViewFragment extends Fragment implements OnEventsFetcherTa
         String serializedSession = sessionPreferences.getString("userSession", null);
         if (serializedSession != null) {
             mSession = gson.fromJson(serializedSession, Session.class);
-        } //TODO here is where we check for and act on errors
+        } else {
+            //if there was no cached session found for some reason
+            Toast.makeText(getActivity(),getString(R.string.error_generic),Toast.LENGTH_SHORT).show();
+        }
 
         //Gets user's location(LatLng serialized into string) from sharedPreferences
         SharedPreferences userLocationPreferences = getActivity().getSharedPreferences(HomeActivity.LOCATION_SHARED_PREFS_NAME, Context.MODE_PRIVATE);
@@ -225,7 +228,10 @@ public class EventsMapViewFragment extends Fragment implements OnEventsFetcherTa
         if (serializedLatLng != null) {
             //deserializes userLatLng string into LatLng object
             mUserLatLng = gson.fromJson(serializedLatLng, LatLng.class);
-        } //TODO here is where we check for and act on errors
+        } else {
+            //if there was no latlng found for some reason
+            Toast.makeText(getActivity(),getString(R.string.error_generic),Toast.LENGTH_SHORT).show();
+        }
 
         //Gets Events data from sharedPreferences
         SharedPreferences eventsPreferences = getActivity().getSharedPreferences(HomeActivity.EVENTS_SHARED_PREFS_NAME, Context.MODE_PRIVATE);
@@ -238,27 +244,45 @@ public class EventsMapViewFragment extends Fragment implements OnEventsFetcherTa
         if (serializedEvents != null) {
             Type listOfEvents = new TypeToken<ArrayList<Event>>(){}.getType();
             mEvents = gson.fromJson(serializedEvents, listOfEvents);
-
+        } else {
+            //if there were no events cached for some reason
+            Toast.makeText(getActivity(),getString(R.string.error_generic),Toast.LENGTH_SHORT).show();
         }
     }
 
     @Override
     public void onTaskAboutToStart() {
+        //hides map fragment on screen
+        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+        transaction.hide(mMapFragment)
+                .commit();
+
         //displays progress bar before getting events
         mEventsLoadingProgressbar.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void onTaskCompleted(PaginatedResult<Event> eventsNearby) {
-        ArrayList<Event> events= new ArrayList<Event>(eventsNearby.getPageResults());
+        //if last call was successful then load events to screen
+        if (Caller.getInstance().getLastResult().isSuccessful()) {
+            ArrayList<Event> events= new ArrayList<Event>(eventsNearby.getPageResults());
 
-        //add events to mEvents
-        mEvents.addAll(events);
+            //add events to mEvents
+            mEvents.addAll(events);
 
-        mTotalNumberOfPages = eventsNearby.getTotalPages();
+            mTotalNumberOfPages = eventsNearby.getTotalPages();
 
-        //set events adapter with new events
-        displayEventsInMap();
+            //set events adapter with new events
+            displayEventsInMap();
+        } else {
+            //if call to backend was not successful
+            Toast.makeText(getActivity(),getString(R.string.error_generic),Toast.LENGTH_SHORT).show();
+        }
+
+        //shows map fragment on screen again
+        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+        transaction.show(mMapFragment)
+                .commit();
 
         //hide loading progressbar in middle of screen
         mEventsLoadingProgressbar.setVisibility(View.GONE);
