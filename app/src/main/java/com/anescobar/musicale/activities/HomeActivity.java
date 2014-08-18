@@ -55,9 +55,14 @@ public class HomeActivity extends Activity
     private MenuItem mEventSearchIcon;
     private MenuItem mEventsRefreshIcon;
 
+    private LatLng mCachedLatLng;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //creates new instance of Gson class
+        Gson gson = new Gson();
 
         setContentView(R.layout.activity_home);
 
@@ -68,6 +73,14 @@ public class HomeActivity extends Activity
                 getFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
 
+        //Gets user's location(LatLng serialized into string) from sharedPreferences
+        SharedPreferences userLocationPreferences = getSharedPreferences(HomeActivity.LOCATION_SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+        String serializedLatLng = userLocationPreferences.getString("userCurrentLatLng", null);
+        if (serializedLatLng != null) {
+            //deserializes userLatLng string into LatLng object
+            mCachedLatLng = gson.fromJson(serializedLatLng, LatLng.class);
+        }
+
         // Set up the drawer.
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
@@ -76,11 +89,14 @@ public class HomeActivity extends Activity
 
     @Override
     public void onConnected(Bundle bundle) {
-        //gets current location
-        LatLng currentLocation = getDevicesCurrentLatLng();
+        //no need to get location unless requested by user if there is already location cached
+        if (mCachedLatLng == null) {
+            //gets current location
+            LatLng currentLocation = getDevicesCurrentLatLng();
 
-        //caches currentlocation in sharedPreferences
-        cacheUserLatLng(currentLocation);
+            //caches currentlocation in sharedPreferences
+            cacheUserLatLng(currentLocation);
+        }
     }
 
     @Override
@@ -279,11 +295,6 @@ public class HomeActivity extends Activity
     //
     private void refreshEvents() {
         Gson gson = new Gson();
-        //gets currentLocation
-        LatLng currentLocation = getDevicesCurrentLatLng();
-
-        //caches currentlocation in sharedPreferences
-        cacheUserLatLng(currentLocation);
 
         //gets session from sharedPreferences
         SharedPreferences sessionPreferences = getSharedPreferences(SessionManager.SESSION_SHARED_PREFS_NAME, Context.MODE_PRIVATE);
@@ -295,9 +306,20 @@ public class HomeActivity extends Activity
             if (mIsMapViewDisplayed) {
                 EventsMapViewFragment eventsMapViewFragment = (EventsMapViewFragment) getFragmentManager().findFragmentByTag(EVENTS_MAP_VIEW_FRAGMENT_TAG);
 
+                LatLng mapCenter = eventsMapViewFragment.getMapCenterLatLng();
+
+                //caches map center to sharedPreferences
+                cacheUserLatLng(mapCenter);
+
                 //calls eventMapViewFragment's getEvents method, which gets events from backend and displays and stores them as needed
-                eventsMapViewFragment.getEventsFromServer(1, session, currentLocation);
+                eventsMapViewFragment.getEventsFromServer(1, session, mapCenter);
             } else {
+                //gets currentLocation
+                LatLng currentLocation = getDevicesCurrentLatLng();
+
+                //caches currentlocation in sharedPreferences
+                cacheUserLatLng(currentLocation);
+
                 EventsListViewFragment eventsListViewFragment = (EventsListViewFragment) getFragmentManager().findFragmentByTag(EVENTS_LIST_VIEW_FRAGMENT_TAG);
 
                 //calls eventsListViewFragment's getEvents method, which gets events from backend and displays and stores them as needed

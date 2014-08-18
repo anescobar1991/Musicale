@@ -159,7 +159,7 @@ public class EventsMapViewFragment extends Fragment implements OnEventsFetcherTa
     }
 
     //sets up map if it hasnt already been setup,
-    private void setUpMapIfNeeded(LatLng userLocation, Session session) {
+    private void setUpMapIfNeeded(LatLng cachedLocation, Session session) {
         // Do a null check to confirm that we have not already instantiated the map.
         if (mMap == null) {
             mMap = mMapFragment.getMap();
@@ -167,7 +167,7 @@ public class EventsMapViewFragment extends Fragment implements OnEventsFetcherTa
             //set custom marker info window adapter
             mMap.setInfoWindowAdapter(new EventMarkerInfoWindowAdapter(getActivity()));
         }
-        setUpMap(userLocation, session);
+        setUpMap(cachedLocation, session);
     }
 
     /**
@@ -316,13 +316,8 @@ public class EventsMapViewFragment extends Fragment implements OnEventsFetcherTa
         mMarkerPositions.add(latLng);
     }
 
-    //gets latest events from cache and then displays them on map
-    public void refreshEvents() {
-        //gets cached events and event related data
-        getCachedEvents();
-
-        //displays events in map
-        displayEventsInMap();
+    public LatLng getMapCenterLatLng() {
+        return mMap.getCameraPosition().target;
     }
 
     public class EventMarkerInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
