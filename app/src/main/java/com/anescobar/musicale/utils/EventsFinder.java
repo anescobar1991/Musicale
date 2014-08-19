@@ -1,6 +1,7 @@
 package com.anescobar.musicale.utils;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.anescobar.musicale.interfaces.OnEventsFetcherTaskCompleted;
 import com.google.android.gms.maps.model.LatLng;
@@ -59,6 +60,7 @@ public class EventsFinder {
      */
     private PaginatedResult<Event> getEventsQuery(double latitude, double longitude, String distance,
                                              int page, int limit, String tag) {
+
         Map<String, String> params = new HashMap<String, String>();
         params.put("lat", String.valueOf(latitude));
         params.put("long", String.valueOf(longitude));
@@ -84,6 +86,9 @@ public class EventsFinder {
 
         @Override
         protected PaginatedResult<Event> doInBackground(Integer... pageNumbers) {
+            //necessary to fix bug in last fm library
+            Caller.getInstance().setCache(null);
+
             //send server request to get events nearby
             return getEventsQuery(
                     mUserLocation.latitude, mUserLocation.longitude, "30", pageNumbers[0], 20, null
@@ -98,6 +103,9 @@ public class EventsFinder {
 
         @Override
         protected void onPostExecute(PaginatedResult<Event> events) {
+            Result response = Caller.getInstance().getLastResult();
+            Log.w("events_finder_response", response.toString());
+
             mListener.onTaskCompleted(events);
         }
     }

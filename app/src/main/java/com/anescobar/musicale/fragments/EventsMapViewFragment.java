@@ -179,9 +179,9 @@ public class EventsMapViewFragment extends Fragment implements OnEventsFetcherTa
         mMap.setBuildingsEnabled(true);
         mMap.setMyLocationEnabled(true);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 10));
+        mMap.setMyLocationEnabled(true);
 
         //sets maps onInfoWindow click listener
-
         mMap.setOnInfoWindowClickListener(this);
 
         //if there are no events from previous saved session then fetch events from backend

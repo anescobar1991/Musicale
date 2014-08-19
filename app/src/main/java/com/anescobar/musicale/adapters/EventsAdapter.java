@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.anescobar.musicale.R;
@@ -54,11 +55,14 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         holder.mEventVenueNameTextView.setText(mEvents.get(position).getVenue().getName());
         holder.mVenueLocationTextView.setText(mEvents.get(position).getVenue().getCity() + " " + mEvents.get(position).getVenue().getCountry());
         String eventImageUrl = mEvents.get(position).getImageURL(ImageSize.EXTRALARGE);
+        // if there is an image for the event load it into view. Else load placeholder into view
         if (eventImageUrl.length() > 0) {
             Picasso.with(mContext)
                     .load(eventImageUrl)
                     .placeholder(R.drawable.placeholder)
                     .into(holder.mEventImage);
+        } else {
+            holder.mEventImage.setImageResource(R.drawable.placeholder);
         }
         //sets onClickListener for moreDetails button
         holder.mMoreDetailsButton.setOnClickListener(new Button.OnClickListener() {

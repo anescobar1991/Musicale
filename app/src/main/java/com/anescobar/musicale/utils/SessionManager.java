@@ -99,7 +99,7 @@ public class SessionManager {
         protected void onPostExecute(PaginatedResult<Event> events) {
             //gets result object for last call
             Result response = Caller.getInstance().getLastResult();
-            Log.w("session_getter_error", response.toString());
+            Log.w("session_getter_response", response.toString());
 
             //informs callback method of whether last call with session given to validate was successful
             mListener.onHeartbeatCheckTaskCompleted(response.isSuccessful());
