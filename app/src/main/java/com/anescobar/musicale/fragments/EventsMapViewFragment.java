@@ -347,7 +347,7 @@ public class EventsMapViewFragment extends Fragment implements OnEventsFetcherTa
             eventTitleTextfield.setText(mMarkers.get(marker.getId()).getTitle());
             //gets event date as Date object but only needs MMDDYYYY, not the timestamp
             eventDateTextfield.setText(mMarkers.get(marker.getId()).getStartDate().toLocaleString().substring(0, 12));
-            venueNameTextfield.setText(mMarkers.get(marker.getId()).getVenue().getName());
+            venueNameTextfield.setText("@ " + mMarkers.get(marker.getId()).getVenue().getName());
 
             String eventImageUrl = mMarkers.get(marker.getId()).getImageURL(ImageSize.EXTRALARGE);
 

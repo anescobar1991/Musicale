@@ -52,7 +52,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         holder.mEventTitleTextView.setText(mEvents.get(position).getTitle());
         //gets event date as Date object but only needs MMDDYYYY, not the timestamp
         holder.mEventDateTextView.setText(mEvents.get(position).getStartDate().toLocaleString().substring(0, 12));
-        holder.mEventVenueNameTextView.setText(mEvents.get(position).getVenue().getName());
+        holder.mEventVenueNameTextView.setText("@ " + mEvents.get(position).getVenue().getName());
         holder.mVenueLocationTextView.setText(mEvents.get(position).getVenue().getCity() + " " + mEvents.get(position).getVenue().getCountry());
         String eventImageUrl = mEvents.get(position).getImageURL(ImageSize.EXTRALARGE);
         // if there is an image for the event load it into view. Else load placeholder into view
