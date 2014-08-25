@@ -9,10 +9,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.anescobar.musicale.R;
+import com.anescobar.musicale.activities.EventDetailsActivity;
+import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -64,14 +65,19 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         } else {
             holder.mEventImage.setImageResource(R.drawable.placeholder);
         }
+
         //sets onClickListener for moreDetails button
         holder.mMoreDetailsButton.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
-                //opens event url in browser for now
-                //TODO send intent to eventsDetails activity when that screen is completed
-                String eventUrl = mEvents.get(position).getUrl();
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(eventUrl));
-                mContext.startActivity(browserIntent);
+                Gson gson = new Gson();
+
+                //serialize event using GSON
+                String serializedEvent = gson.toJson(mEvents.get(position), Event.class);
+
+                //starts EventDetailsActivity
+                Intent intent = new Intent(mContext, EventDetailsActivity.class);
+                intent.putExtra("EVENT", serializedEvent);
+                mContext.startActivity(intent);
             }
         });
         //sets onClickListener for view in map button
@@ -113,7 +119,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
 
             mEventImage = (ImageView) view.findViewById(R.id.event_card_event_image);
             mEventTitleTextView = (TextView) view.findViewById(R.id.event_card_event_title_textfield);
-            mEventDateTextView = (TextView) view.findViewById(R.id.event_Card_event_date_textfield);
+            mEventDateTextView = (TextView) view.findViewById(R.id.event_card_event_date_textfield);
             mEventVenueNameTextView = (TextView) view.findViewById(R.id.event_card_venue_name_textfield);
             mVenueLocationTextView = (TextView) view.findViewById(R.id.event_card_venue_location_textfield);
             mViewInMapButton = (Button) view.findViewById(R.id.event_card_show_in_map_button);

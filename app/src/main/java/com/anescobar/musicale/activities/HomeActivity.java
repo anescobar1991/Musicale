@@ -340,8 +340,17 @@ public class HomeActivity extends Activity
 
     //returns LatLng object for devices current location
     private LatLng getDevicesCurrentLatLng() {
-        return new LatLng(mLocationClient.getLastLocation().getLatitude(),
-                mLocationClient.getLastLocation().getLongitude());
+        //TODO refactor this so that it always sends me a location even if locatoin services if off or doesnt exist
+        LatLng currentLocation = null;
+
+        if (mLocationClient != null) {
+            currentLocation = new LatLng(mLocationClient.getLastLocation().getLatitude(),
+                    mLocationClient.getLastLocation().getLongitude());
+        } else {
+            Toast.makeText(this,R.string.error_no_network_connectivity, Toast.LENGTH_SHORT);
+        }
+        return currentLocation;
+
     }
 
 }

@@ -40,7 +40,7 @@
             android:layout_height="wrap_content" />
 
         <TextView
-            android:id="@+id/event_Card_event_date_textfield"
+            android:id="@+id/event_card_event_date_textfield"
             android:layout_width="wrap_content"
             android:paddingLeft="8dp"
             android:paddingRight="8dp"
@@ -55,7 +55,7 @@
             android:id="@+id/event_card_venue_name_textfield"
             android:paddingLeft="8dp"
             android:paddingRight="8dp"
-            android:layout_below="@+id/event_Card_event_date_textfield"
+            android:layout_below="@+id/event_card_event_date_textfield"
             android:layout_toEndOf="@+id/event_card_event_image"
             android:textSize="14sp"
             android:layout_width="wrap_content"

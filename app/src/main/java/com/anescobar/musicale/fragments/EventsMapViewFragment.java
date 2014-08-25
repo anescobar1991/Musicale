@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.anescobar.musicale.R;
+import com.anescobar.musicale.activities.EventDetailsActivity;
 import com.anescobar.musicale.activities.HomeActivity;
 import com.anescobar.musicale.interfaces.OnEventsFetcherTaskCompleted;
 import com.anescobar.musicale.utils.EventsFinder;
@@ -394,11 +395,17 @@ public class EventsMapViewFragment extends Fragment implements OnEventsFetcherTa
 
     @Override
     public void onInfoWindowClick(Marker marker) {
-        String eventUrl = mMarkers.get(marker.getId()).getUrl();
-        //opens event url in browser for now
-        //TODO send intent to eventsDetails activity when that screen is completed
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(eventUrl));
-        getActivity().startActivity(browserIntent);
+        Gson gson = new Gson();
+        //get Event for marker
+        Event event = mMarkers.get(marker.getId());
+
+        //serialize event using GSON
+        String serializedEvent = gson.toJson(event, Event.class);
+
+        //starts EventDetailsActivity
+        Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
+        intent.putExtra("EVENT", serializedEvent);
+        startActivity(intent);
     }
 
 }
