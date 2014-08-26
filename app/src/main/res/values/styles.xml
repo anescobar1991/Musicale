@@ -11,6 +11,9 @@
         <item name="android:colorAccent">@color/accent</item>
 
         <item name="android:dropDownListViewStyle">@style/actionBarSpinnerStyle</item>
+
+        <item name="vpiTabPageIndicatorStyle">@style/Widget.TabPageIndicator</item>
+
     </style>
 
     <!-- Base application theme for when no actionBar is wanted. -->
@@ -24,6 +27,9 @@
         <item name="android:colorPrimaryDark">@color/primary_dark</item>
         <!--   theme UI controls like checkboxes and text fields -->
         <item name="android:colorAccent">@color/accent</item>
+
+        <item name="vpiTabPageIndicatorStyle">@style/Widget.TabPageIndicator</item>
+
     </style>
 
     <style name="actionBarSpinnerStyle" parent="android:style/Widget.ListView.DropDown">
@@ -33,6 +39,20 @@
         <item name="android:width">168dp</item>
         <item name="android:background">#FFFFFF</item>
         <item name="android:textColor">@drawable/events_view_selector</item>
+    </style>
+
+    <style name="Widget.TabPageIndicator" parent="Widget">
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/vpi__tab_indicator</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">12dp</item>
+        <item name="android:textAppearance">@style/TextAppearance.TabPageIndicator</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:maxLines">1</item>
+    </style>
+
+    <style name="TextAppearance.TabPageIndicator" parent="Widget">
+        <item name="android:textColor">@drawable/tab_page_indicator_title_colors</item>
     </style>
 
 </resources>

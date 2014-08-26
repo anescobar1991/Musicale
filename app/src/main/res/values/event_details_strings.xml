@@ -6,5 +6,8 @@
 
     <string name="event_image_accessibility_label">Event Image</string>
 
+    <string name="event_details_get_tickets_button_text">Get tickets</string>
+
+    <string name="event_details_show_in_map_button_text">Show in map</string>
 
 </resources>

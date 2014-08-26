@@ -51,17 +51,24 @@
             android:layout_width="wrap_content"
             android:textColor="#FFFFFF"
             android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             android:layout_toEndOf="@+id/activity_event_details_event_image"
             android:layout_below="@+id/activity_event_details_venue_name"
             android:layout_height="wrap_content" />
 
     </RelativeLayout>
 
+    <com.viewpagerindicator.TabPageIndicator
+        android:id="@+id/activity_event_details_view_pager_title"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/activity_event_details_header"
+        android:layout_width="match_parent" />
+
     <FrameLayout
         android:id="@+id/activity_event_details_view_pager_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/activity_event_details_header">
+        android:layout_below="@+id/activity_event_details_view_pager_title">
 
         <TextView
             android:id="@+id/activity_event_details_view_pager_error_container"
@@ -74,13 +81,9 @@
         <ProgressBar
             android:id="@+id/activity_event_details_view_pager_progress_bar"
             android:layout_width="wrap_content"
+            android:visibility="gone"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal|center_vertical" />
-
-        <com.viewpagerindicator.TitlePageIndicator
-            android:id="@+id/activity_event_details_view_pager_title"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent" />
 
         <android.support.v4.view.ViewPager
             android:id="@+id/activity_event_details_view_pager"

@@ -1,7 +1,8 @@
 package com.anescobar.musicale.activities;
 
-import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
@@ -9,15 +10,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.anescobar.musicale.R;
+import com.anescobar.musicale.adapters.EventDetailsPagerAdapter;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
+import com.viewpagerindicator.TabPageIndicator;
 
 import java.util.Collection;
 
 import de.umass.lastfm.Event;
 import de.umass.lastfm.ImageSize;
 
-public class EventDetailsActivity extends Activity {
+public class EventDetailsActivity extends FragmentActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,9 +30,18 @@ public class EventDetailsActivity extends Activity {
         //show home/up button on actionbar
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
+        //Set the pager with an adapter
+        ViewPager pager = (ViewPager) findViewById(R.id.activity_event_details_view_pager);
+        pager.setAdapter(new EventDetailsPagerAdapter(getSupportFragmentManager()));
+
+        //Bind the title indicator to the adapter
+        TabPageIndicator titleIndicator = (TabPageIndicator)findViewById(R.id.activity_event_details_view_pager_title);
+        titleIndicator.setViewPager(pager);
+
+        //gets extras that were passed into activity
         Bundle extras = getIntent().getExtras();
 
-        //get passed Event from extras
+        //get passed Event from extras if there are any
         if (extras != null) {
             Gson gson = new Gson();
 
@@ -42,7 +54,6 @@ public class EventDetailsActivity extends Activity {
             Toast.makeText(this, R.string.error_generic, Toast.LENGTH_SHORT).show();
         }
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -98,6 +109,11 @@ public class EventDetailsActivity extends Activity {
         } else {
             eventImageView.setImageResource(R.drawable.placeholder);
         }
+
+        System.out.println(event.getVenue().getWebsite());
+        System.out.println(event.getVenue().availableSizes());
+        System.out.println(event.getVenue().getStreet());
+        System.out.println(event.getVenue().getPhonenumber());
 
         //sets all textviews to display events data
         eventTitleTextView.setText(event.getTitle());
