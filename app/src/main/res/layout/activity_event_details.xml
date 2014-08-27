@@ -24,7 +24,9 @@
             android:id="@+id/activity_event_details_event_title"
             android:layout_width="match_parent"
             android:layout_toEndOf="@id/activity_event_details_event_image"
-            android:textSize="20sp"
+            android:textSize="22sp"
+            android:paddingStart="0dp"
+            android:paddingEnd="4dp"
             android:layout_marginBottom="4dp"
             android:textColor="#FFFFFF"
             android:layout_height="wrap_content" />
@@ -42,6 +44,8 @@
             android:id="@+id/activity_event_details_venue_name"
             android:layout_width="wrap_content"
             android:textColor="#FFFFFF"
+            android:paddingEnd="4dp"
+            android:paddingStart="0dp"
             android:layout_toEndOf="@id/activity_event_details_event_date"
             android:layout_below="@+id/activity_event_details_event_title"
             android:layout_height="wrap_content" />
@@ -50,25 +54,35 @@
             android:id="@+id/activity_event_details_event_artists"
             android:layout_width="wrap_content"
             android:textColor="#FFFFFF"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="12dp"
             android:layout_marginBottom="4dp"
+            android:paddingEnd="4dp"
+            android:paddingStart="0dp"
             android:layout_toEndOf="@+id/activity_event_details_event_image"
             android:layout_below="@+id/activity_event_details_venue_name"
             android:layout_height="wrap_content" />
 
     </RelativeLayout>
 
-    <com.viewpagerindicator.TabPageIndicator
-        android:id="@+id/activity_event_details_view_pager_title"
-        android:layout_height="wrap_content"
+    <FrameLayout
+        android:id="@+id/activity_event_details_pager_title_container"
+        android:layout_width="match_parent"
+        android:background="#ffd5d5d5"
         android:layout_below="@+id/activity_event_details_header"
-        android:layout_width="match_parent" />
+        android:layout_height="wrap_content">
+
+        <com.viewpagerindicator.TabPageIndicator
+            android:id="@+id/activity_event_details_view_pager_title"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent" />
+
+    </FrameLayout>
 
     <FrameLayout
         android:id="@+id/activity_event_details_view_pager_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/activity_event_details_view_pager_title">
+        android:layout_below="@+id/activity_event_details_pager_title_container">
 
         <TextView
             android:id="@+id/activity_event_details_view_pager_error_container"

@@ -3,6 +3,6 @@
     <item android:state_selected="true"
         android:color="@color/accent"/>
 
-    <item android:color="#ff464646"/> <!-- default -->
+    <item android:color="#ff343434"/> <!-- default -->
 
 </selector>

@@ -2,7 +2,6 @@
 <resources>
 
     <string name="event_card_open_map_accessibility_label">View venue in map</string>
-    <string name="event_card_buzz_button_text">Word on the street</string>
     <string name="event_card_more_details_button_text">View more details</string>
     <string name="event_list_view_load_more_button_text">Load more events</string>
     <string name="event_card_show_in_map_button_text">Show in map</string>
