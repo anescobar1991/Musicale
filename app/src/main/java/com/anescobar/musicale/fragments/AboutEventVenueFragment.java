@@ -105,7 +105,9 @@ public class AboutEventVenueFragment extends Fragment {
         //loads all dynamic data into view
         venueName.setText(venue.getName());
         streetAddress.setText(venue.getStreet());
-        cityPostalCountry.setText(venue.getCity() + venue.getPostal() + venue.getCountry());
+        cityPostalCountry.setText(venue.getCity() + " " + venue.getPostal() + " " + venue.getCountry());
+
+        System.out.println(venue.getImageURL(ImageSize.EXTRALARGE));
 
         String venueImageUrl = venue.getImageURL(ImageSize.EXTRALARGE);
 
@@ -113,6 +115,8 @@ public class AboutEventVenueFragment extends Fragment {
         if (venueImageUrl.length() > 0) {
             Picasso.with(getActivity()).load(venueImageUrl)
                     .placeholder(R.drawable.placeholder)
+                    .centerInside()
+                    .resize(720, 360)
                     .into(venueImage);
          //else will load placeholder image into view
         } else {
