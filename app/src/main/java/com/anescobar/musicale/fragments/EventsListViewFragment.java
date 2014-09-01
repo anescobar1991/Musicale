@@ -58,7 +58,7 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
     private int mTotalNumberOfPages = 0; // stores how many total pages of events there are
     private int mNumberOfPagesLoaded = 0; //keeps track of how many pages are loaded
     private ArrayList<Event> mEvents = new ArrayList<Event>();
-    private LatLng mUserLatLng;
+    public LatLng mUserLatLng;
     private Session mSession;
 
     /**
@@ -252,7 +252,6 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
             //if call to backend was not successful
             Toast.makeText(getActivity(),getString(R.string.error_generic),Toast.LENGTH_SHORT).show();
         }
-
 
         if (mNumberOfPagesLoaded == 1) {
             //hide loading progressbar in middle of screen

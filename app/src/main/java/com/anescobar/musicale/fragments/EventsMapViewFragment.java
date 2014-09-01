@@ -10,6 +10,7 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -26,6 +27,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -52,16 +54,18 @@ import de.umass.lastfm.Session;
 *
 */
 public class EventsMapViewFragment extends Fragment implements OnEventsFetcherTaskCompleted,
-        GoogleMap.OnInfoWindowClickListener {
+        GoogleMap.OnInfoWindowClickListener, GoogleMap.OnCameraChangeListener {
 
     private MapFragment mMapFragment;
     private NetworkUtil mNetworkUtil;
     private GoogleMap mMap;
     private ProgressBar mEventsLoadingProgressbar;
+    private Button mRedoSearchButton;
     private OnEventsMapViewFragmentInteractionListener mListener;
 
     private int mTotalNumberOfPages = 0; // stores how many total pages of events there are
     private int mNumberOfPagesLoaded = 0; //keeps track of how many pages are loaded
+    private int mCameraChangeCount = 0; //keeps track of how many times map camera change has occurred
     private Session mSession;
     private LatLng mUserLatLng;
     private HashMap<String, Event> mMarkers = new HashMap<String, Event>();
@@ -80,6 +84,7 @@ public class EventsMapViewFragment extends Fragment implements OnEventsFetcherTa
      */
     public interface OnEventsMapViewFragmentInteractionListener {
         public void cacheEvents(int numberOfPagesLoaded, int totalNumberOfPages,ArrayList<Event> events);
+        public void cacheUserLatLng(LatLng latLng);
     }
 
     @Override
@@ -105,7 +110,22 @@ public class EventsMapViewFragment extends Fragment implements OnEventsFetcherTa
         transaction.add(R.id.fragment_events_map_view_container, mMapFragment)
                 .commit();
 
+        mRedoSearchButton = (Button) view.findViewById(R.id.fragment_events_map_redo_search);
         mEventsLoadingProgressbar = (ProgressBar) view.findViewById(R.id.fragment_events_map_view_events_loading);
+
+        //sets click listener for when user taps anywhere in map
+        mRedoSearchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LatLng newLatLng = mMap.getCameraPosition().target;
+
+                //caches map center to sharedPreferences
+                mListener.cacheUserLatLng(newLatLng);
+
+                //calls getEvents method, which gets events from backend and displays and stores them as needed
+                getEventsFromServer(1, mSession, newLatLng);
+            }
+        });
 
         return view;
     }
@@ -181,9 +201,6 @@ public class EventsMapViewFragment extends Fragment implements OnEventsFetcherTa
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 10));
         mMap.setMyLocationEnabled(true);
 
-        //sets maps onInfoWindow click listener
-        mMap.setOnInfoWindowClickListener(this);
-
         //if there are no events from previous saved session then fetch events from backend
         //else use events from previous saved session to populate cards
         if (mEvents.isEmpty()) {
@@ -191,6 +208,12 @@ public class EventsMapViewFragment extends Fragment implements OnEventsFetcherTa
         } else {
             displayEventsInMap();
         }
+
+        //sets maps' onInfoWindow click listener
+        mMap.setOnInfoWindowClickListener(this);
+
+        //sets maps' onCameraChange listener
+        mMap.setOnCameraChangeListener(this);
     }
 
     //iterates through arrayList of Events and displays them on map
@@ -249,6 +272,11 @@ public class EventsMapViewFragment extends Fragment implements OnEventsFetcherTa
 
     @Override
     public void onTaskAboutToStart() {
+        //hides redo search button if visible
+        if (mRedoSearchButton.getVisibility() == View.VISIBLE) {
+            mRedoSearchButton.setVisibility(View.GONE);
+        }
+
         //hides map fragment on screen
         getChildFragmentManager().beginTransaction()
                 .hide(mMapFragment)
@@ -314,10 +342,6 @@ public class EventsMapViewFragment extends Fragment implements OnEventsFetcherTa
 
         //mMarkerPositions keeps track of the location of all markers that have been put on map
         mMarkerPositions.add(latLng);
-    }
-
-    public LatLng getMapCenterLatLng() {
-        return mMap.getCameraPosition().target;
     }
 
     public class EventMarkerInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
@@ -386,7 +410,6 @@ public class EventsMapViewFragment extends Fragment implements OnEventsFetcherTa
 
             @Override
             public void onError() {
-
             }
         };
 
@@ -407,4 +430,16 @@ public class EventsMapViewFragment extends Fragment implements OnEventsFetcherTa
         startActivity(intent);
     }
 
+    //listener for when user moves map camera
+    @Override
+    public void onCameraChange(CameraPosition cameraPosition) {
+        mCameraChangeCount ++;
+
+        //first time cameraChanges is always for the initial map setup
+        if (mCameraChangeCount > 1) {
+            //displays redo search button when user moves map camera position
+            mRedoSearchButton.setVisibility(View.VISIBLE);
+        }
+
+    }
 }

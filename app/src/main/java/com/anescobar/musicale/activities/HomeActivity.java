@@ -230,6 +230,10 @@ public class HomeActivity extends Activity
                 mIsMapViewDisplayed = true;
                 //hides search icon in actionbar
                 mEventSearchIcon.setVisible(false);
+
+                //hides refresh icon in actionbar
+                mEventsRefreshIcon.setVisible(false);
+
                 //adds events map view fragment to activity
                 addFragmentToActivity(R.id.container, new EventsMapViewFragment(),EVENTS_MAP_VIEW_FRAGMENT_TAG);
                 break;
@@ -277,7 +281,7 @@ public class HomeActivity extends Activity
     }
     // stores user's current location in sharedPreferences
     // that way it persists throughout app even when app is not in memory
-    private void cacheUserLatLng(LatLng userLocation) {
+    public void cacheUserLatLng(LatLng userLocation) {
         Gson gson = new Gson();
         String serializedCurrentUserLocation = gson.toJson(userLocation);
 
@@ -299,32 +303,23 @@ public class HomeActivity extends Activity
         //gets session from sharedPreferences
         SharedPreferences sessionPreferences = getSharedPreferences(SessionManager.SESSION_SHARED_PREFS_NAME, Context.MODE_PRIVATE);
         String serializedSession = sessionPreferences.getString("userSession", null);
+
         if (serializedSession != null) {
+            EventsListViewFragment eventsListViewFragment = (EventsListViewFragment) getFragmentManager().findFragmentByTag(EVENTS_LIST_VIEW_FRAGMENT_TAG);
+
             //deserializes cached session and stores it locally
             Session session = gson.fromJson(serializedSession, Session.class);
 
-            if (mIsMapViewDisplayed) {
-                EventsMapViewFragment eventsMapViewFragment = (EventsMapViewFragment) getFragmentManager().findFragmentByTag(EVENTS_MAP_VIEW_FRAGMENT_TAG);
+            //gets currentLocation
+            LatLng currentLocation = getDevicesCurrentLatLng();
 
-                LatLng mapCenter = eventsMapViewFragment.getMapCenterLatLng();
+            //caches currentlocation in sharedPreferences
+            cacheUserLatLng(currentLocation);
 
-                //caches map center to sharedPreferences
-                cacheUserLatLng(mapCenter);
+            eventsListViewFragment.mUserLatLng = currentLocation;
 
-                //calls eventMapViewFragment's getEvents method, which gets events from backend and displays and stores them as needed
-                eventsMapViewFragment.getEventsFromServer(1, session, mapCenter);
-            } else {
-                //gets currentLocation
-                LatLng currentLocation = getDevicesCurrentLatLng();
-
-                //caches currentlocation in sharedPreferences
-                cacheUserLatLng(currentLocation);
-
-                EventsListViewFragment eventsListViewFragment = (EventsListViewFragment) getFragmentManager().findFragmentByTag(EVENTS_LIST_VIEW_FRAGMENT_TAG);
-
-                //calls eventsListViewFragment's getEvents method, which gets events from backend and displays and stores them as needed
-                eventsListViewFragment.getEventsFromServer(1, session, currentLocation);
-            }
+            //calls eventsListViewFragment's getEvents method, which gets events from backend and displays and stores them as needed
+            eventsListViewFragment.getEventsFromServer(1, session, currentLocation);
         } else {
             Toast.makeText(this, getString(R.string.error_generic), Toast.LENGTH_SHORT).show();
         }
@@ -347,7 +342,7 @@ public class HomeActivity extends Activity
             currentLocation = new LatLng(mLocationClient.getLastLocation().getLatitude(),
                     mLocationClient.getLastLocation().getLongitude());
         } else {
-            Toast.makeText(this,R.string.error_no_network_connectivity, Toast.LENGTH_SHORT);
+            Toast.makeText(this,R.string.error_no_network_connectivity, Toast.LENGTH_SHORT).show();
         }
         return currentLocation;
 

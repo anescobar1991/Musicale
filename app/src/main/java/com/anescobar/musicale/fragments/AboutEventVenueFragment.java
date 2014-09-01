@@ -108,7 +108,6 @@ public class AboutEventVenueFragment extends Fragment {
     @Override
     public void onStart(){
         super.onStart();
-        System.out.println("onStart");
         //sets up map, with its settings, and adds event markers
         setUpMapIfNeeded(mVenue);
     }
@@ -116,7 +115,6 @@ public class AboutEventVenueFragment extends Fragment {
     @Override
     public void onResume(){
         super.onResume();
-        System.out.println("onresume");
         //sets up map, with its settings, and adds event markers
         setUpMapIfNeeded(mVenue);
     }
@@ -142,6 +140,7 @@ public class AboutEventVenueFragment extends Fragment {
         //disables user interaction
         mMap.getUiSettings().setAllGesturesEnabled(false);
 
+        //sets click listener for when user taps anywhere in map
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
