@@ -16,11 +16,11 @@ import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import com.anescobar.musicale.R;
+import com.anescobar.musicale.fragments.AboutMusicaleFragment;
 import com.anescobar.musicale.fragments.EventsListViewFragment;
 import com.anescobar.musicale.fragments.EventsMapViewFragment;
+import com.anescobar.musicale.fragments.HomeViewFragment;
 import com.anescobar.musicale.fragments.NavigationDrawerFragment;
-import com.anescobar.musicale.fragments.SocializeViewFragment;
-import com.anescobar.musicale.fragments.TrendsViewFragment;
 import com.anescobar.musicale.utils.SessionManager;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
@@ -37,18 +37,18 @@ import de.umass.lastfm.Session;
 
 public class HomeActivity extends Activity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks, EventsMapViewFragment.OnEventsMapViewFragmentInteractionListener,
-        TrendsViewFragment.OnTrendsViewFragmentInteractionListener, EventsListViewFragment.OnEventsListViewFragmentInteractionListener,
-        SocializeViewFragment.OnSocializeViewFragmentInteractionListener, GooglePlayServicesClient.ConnectionCallbacks,
+        HomeViewFragment.OnHomeFragmentInteractionListener, EventsListViewFragment.OnEventsListViewFragmentInteractionListener,
+        AboutMusicaleFragment.OnAboutMusicaleFragmentInteractionListener, GooglePlayServicesClient.ConnectionCallbacks,
         GooglePlayServicesClient.OnConnectionFailedListener, ActionBar.OnNavigationListener {
 
     private NavigationDrawerFragment mNavigationDrawerFragment; //Fragment managing the behaviors, interactions and presentation of the navigation drawer.
     private CharSequence mTitle; //Used to store the last screen title. For use in {@link #restoreActionBar()}.
+    public static final String ABOUT_MUSICALE_FRAGMENT = "aboutMusicaleFragment";
     public static final String LOCATION_SHARED_PREFS_NAME = "LocationPrefs";
     public static final String EVENTS_SHARED_PREFS_NAME = "EventsPrefs";
     private static final String EVENTS_LIST_VIEW_FRAGMENT_TAG = "eventsListViewFragment";
     private static final String EVENTS_MAP_VIEW_FRAGMENT_TAG = "eventsMapViewFragment";
-    private static final String SOCIALIZE_VIEW_FRAGMENT = "socializeViewFragment";
-    private static final String TRENDS_VIEW_FRAGMENT = "trendsViewFragment";
+    private static final String HOME_VIEW_FRAGMENT = "homeViewFragment";
     private LocationClient mLocationClient;
     private boolean mIsEventsViewDisplayed;
     private boolean mIsMapViewDisplayed;
@@ -132,7 +132,7 @@ public class HomeActivity extends Activity
                 mIsEventsViewDisplayed = false;
 
                 //adds trends view to fragment
-                addFragmentToActivity(R.id.container, TrendsViewFragment.newInstance("example"), TRENDS_VIEW_FRAGMENT);
+                addFragmentToActivity(R.id.container, HomeViewFragment.newInstance("example"), HOME_VIEW_FRAGMENT);
                 break;
             case 1:
                 //set flags which will tell menu to display events spinner
@@ -144,7 +144,7 @@ public class HomeActivity extends Activity
                 mIsEventsViewDisplayed = false;
 
                 //adds socialize view fragment to activity
-                addFragmentToActivity(R.id.container, SocializeViewFragment.newInstance("example"), SOCIALIZE_VIEW_FRAGMENT);
+                addFragmentToActivity(R.id.container, AboutMusicaleFragment.newInstance("example"), ABOUT_MUSICALE_FRAGMENT);
                 break;
             case 3:
                 //user is taken to login screen after logout
@@ -202,13 +202,13 @@ public class HomeActivity extends Activity
     public void onAttachDisplayTitle(int sectionIndex) {
         switch (sectionIndex) {
             case 0:
-                mTitle = getString(R.string.title_trends_section);
+                mTitle = getString(R.string.title_home_section);
                 break;
             case 1:
                 mTitle = getString(R.string.title_events_section);
                 break;
             case 2:
-                mTitle = getString(R.string.title_socialize_section);
+                mTitle = getString(R.string.title_about_musicale_section);
                 break;
         }
     }

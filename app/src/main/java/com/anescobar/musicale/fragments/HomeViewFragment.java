@@ -4,8 +4,6 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -14,17 +12,17 @@ import com.anescobar.musicale.R;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link SocializeViewFragment.OnSocializeViewFragmentInteractionListener} interface
+ * {@link HomeViewFragment.OnHomeFragmentInteractionListener} interface
  * to handle interaction home.
- * Use the {@link SocializeViewFragment#newInstance} factory method to
+ * Use the {@link HomeViewFragment#newInstance} factory method to
  * create an instance of this fragment.
  *
  */
-public class SocializeViewFragment extends Fragment {
-    private static final int SECTION_INDEX = 2; //index that identifies fragment for activity to display correct title
-    private OnSocializeViewFragmentInteractionListener mListener;
+public class HomeViewFragment extends Fragment {
+    private static final int SECTION_INDEX = 0; //index that identifies fragment for activity to display correct title
+    private OnHomeFragmentInteractionListener mListener;
 
-    public SocializeViewFragment() {
+    public HomeViewFragment() {
         // Required empty public constructor
     }
 
@@ -35,8 +33,8 @@ public class SocializeViewFragment extends Fragment {
      * @param example_arg EXAMPLEEEEE
      * @return A new instance of fragment EventsMapViewFragment.
      */
-    public static SocializeViewFragment newInstance(String example_arg) {
-        SocializeViewFragment fragment = new SocializeViewFragment();
+    public static HomeViewFragment newInstance(String example_arg) {
+        HomeViewFragment fragment = new HomeViewFragment();
 
         return fragment;
     }
@@ -45,26 +43,18 @@ public class SocializeViewFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_socialize_view, container, false);
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.socialize, menu);
-
-        super.onCreateOptionsMenu(menu, inflater);
+        return inflater.inflate(R.layout.fragment_trends, container, false);
     }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            setHasOptionsMenu(true); //sets actionbar to display this fragment's specific actionbar
-            mListener = (OnSocializeViewFragmentInteractionListener) activity;
+            mListener = (OnHomeFragmentInteractionListener) activity;
             mListener.onAttachDisplayTitle(SECTION_INDEX); //tells activity to display correct title
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnSocializeViewFragmentInteractionListener");
+                    + " must implement OnHomeFragmentInteractionListener");
         }
     }
 
@@ -80,7 +70,7 @@ public class SocializeViewFragment extends Fragment {
      * to the activity and potentially other fragments contained in that
      * activity.
      */
-    public interface OnSocializeViewFragmentInteractionListener {
+    public interface OnHomeFragmentInteractionListener {
         public void onAttachDisplayTitle(int sectionIndex);
     }
 

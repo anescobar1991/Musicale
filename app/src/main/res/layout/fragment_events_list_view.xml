@@ -5,8 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/light_background"
-    android:weightSum="24"
-    tools:context=".fragments.EventsListViewFragment">
+    android:weightSum="24" >
 
     <FrameLayout
         android:id="@+id/fragment_events_list_view_list_container"

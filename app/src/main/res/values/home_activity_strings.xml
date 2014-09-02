@@ -1,6 +1,6 @@
 <resources>
     <!-- Strings related to home screen -->
     <string name="title_events_section">Events</string>
-    <string name="title_trends_section">Trends</string>
-    <string name="title_socialize_section">Socialize</string>
+    <string name="title_home_section">Home</string>
+    <string name="title_about_musicale_section">About Musicale</string>
 </resources>

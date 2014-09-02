@@ -12,17 +12,17 @@ import com.anescobar.musicale.R;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link TrendsViewFragment.OnTrendsViewFragmentInteractionListener} interface
+ * {@link AboutMusicaleFragment.OnAboutMusicaleFragmentInteractionListener} interface
  * to handle interaction home.
- * Use the {@link TrendsViewFragment#newInstance} factory method to
+ * Use the {@link AboutMusicaleFragment#newInstance} factory method to
  * create an instance of this fragment.
  *
  */
-public class TrendsViewFragment extends Fragment {
-    private static final int SECTION_INDEX = 0; //index that identifies fragment for activity to display correct title
-    private OnTrendsViewFragmentInteractionListener mListener;
+public class AboutMusicaleFragment extends Fragment {
+    private static final int SECTION_INDEX = 2; //index that identifies fragment for activity to display correct title
+    private OnAboutMusicaleFragmentInteractionListener mListener;
 
-    public TrendsViewFragment() {
+    public AboutMusicaleFragment() {
         // Required empty public constructor
     }
 
@@ -33,8 +33,8 @@ public class TrendsViewFragment extends Fragment {
      * @param example_arg EXAMPLEEEEE
      * @return A new instance of fragment EventsMapViewFragment.
      */
-    public static TrendsViewFragment newInstance(String example_arg) {
-        TrendsViewFragment fragment = new TrendsViewFragment();
+    public static AboutMusicaleFragment newInstance(String example_arg) {
+        AboutMusicaleFragment fragment = new AboutMusicaleFragment();
 
         return fragment;
     }
@@ -43,18 +43,19 @@ public class TrendsViewFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_trends, container, false);
+        return inflater.inflate(R.layout.fragment_about_musicale, container, false);
     }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mListener = (OnTrendsViewFragmentInteractionListener) activity;
+            setHasOptionsMenu(true); //sets actionbar to display this fragment's specific actionbar
+            mListener = (OnAboutMusicaleFragmentInteractionListener) activity;
             mListener.onAttachDisplayTitle(SECTION_INDEX); //tells activity to display correct title
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnTrendsViewFragmentInteractionListener");
+                    + " must implement OnAboutMusicaleViewFragmentInteractionListener");
         }
     }
 
@@ -70,7 +71,7 @@ public class TrendsViewFragment extends Fragment {
      * to the activity and potentially other fragments contained in that
      * activity.
      */
-    public interface OnTrendsViewFragmentInteractionListener {
+    public interface OnAboutMusicaleFragmentInteractionListener {
         public void onAttachDisplayTitle(int sectionIndex);
     }
 
