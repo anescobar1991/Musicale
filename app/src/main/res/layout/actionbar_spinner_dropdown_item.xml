@@ -3,6 +3,6 @@
     android:singleLine="true"
     android:textSize="16sp"
     style="?android:attr/dropDownListViewStyle"
-    android:gravity="left|center_vertical"
+    android:gravity="start|center_vertical"
     android:layout_width="match_parent"
     android:layout_height="48dp" />

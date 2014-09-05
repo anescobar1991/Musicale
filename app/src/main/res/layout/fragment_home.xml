@@ -1,20 +1,13 @@
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/container"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <include layout="@layout/musicale_title_header"
-        android:id="@+id/activity_home_musicale_header"/>
-
     <Button
-        android:id="@+id/activity_home_go_to_events_view"
-        android:layout_below="@+id/activity_home_musicale_header"
+        android:id="@+id/fragment_home_go_to_events_view"
         android:layout_width="match_parent"
         android:textColor="#FFFFFF"
         style="@android:style/Widget.Material.Light.Button"
         android:background="@drawable/default_raised_button"
-        android:onClick="showNearbyEvents"
         android:text="@string/home_view_shows_nearby_button_text"
         android:layout_height="wrap_content" />
 

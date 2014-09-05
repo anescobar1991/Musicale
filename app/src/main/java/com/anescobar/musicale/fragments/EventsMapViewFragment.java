@@ -18,11 +18,10 @@ import android.widget.Toast;
 
 import com.anescobar.musicale.R;
 import com.anescobar.musicale.activities.EventDetailsActivity;
-import com.anescobar.musicale.activities.HomeActivity;
+import com.anescobar.musicale.activities.EventsActivity;
 import com.anescobar.musicale.interfaces.OnEventsFetcherTaskCompleted;
 import com.anescobar.musicale.utils.EventsFinder;
 import com.anescobar.musicale.utils.NetworkUtil;
-import com.anescobar.musicale.utils.SessionManager;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -44,7 +43,6 @@ import de.umass.lastfm.Caller;
 import de.umass.lastfm.Event;
 import de.umass.lastfm.ImageSize;
 import de.umass.lastfm.PaginatedResult;
-import de.umass.lastfm.Session;
 
 /**
 * A simple {@link Fragment} subclass.
@@ -66,7 +64,6 @@ public class EventsMapViewFragment extends Fragment implements OnEventsFetcherTa
     private int mTotalNumberOfPages = 0; // stores how many total pages of events there are
     private int mNumberOfPagesLoaded = 0; //keeps track of how many pages are loaded
     private int mCameraChangeCount = 0; //keeps track of how many times map camera change has occurred
-    private Session mSession;
     private LatLng mUserLatLng;
     private HashMap<String, Event> mMarkers = new HashMap<String, Event>();
     private ArrayList<LatLng> mMarkerPositions = new ArrayList<LatLng>();
@@ -123,7 +120,7 @@ public class EventsMapViewFragment extends Fragment implements OnEventsFetcherTa
                 mListener.cacheUserLatLng(newLatLng);
 
                 //calls getEvents method, which gets events from backend and displays and stores them as needed
-                getEventsFromServer(1, mSession, newLatLng);
+                getEventsFromServer(1, newLatLng);
             }
         });
 
@@ -134,14 +131,14 @@ public class EventsMapViewFragment extends Fragment implements OnEventsFetcherTa
     public void onStart(){
         super.onStart();
         //sets up map, with its settings, and adds event markers
-        setUpMapIfNeeded(mUserLatLng, mSession);
+        setUpMapIfNeeded(mUserLatLng);
     }
 
     @Override
     public void onResume(){
         super.onResume();
         //sets up map, with its settings, and adds event markers
-        setUpMapIfNeeded(mUserLatLng, mSession);
+        setUpMapIfNeeded(mUserLatLng);
     }
 
     @Override
@@ -169,17 +166,17 @@ public class EventsMapViewFragment extends Fragment implements OnEventsFetcherTa
     }
 
     //gets events from backend
-    public void getEventsFromServer(Integer pageNumber, Session session, LatLng userLocation) {
+    public void getEventsFromServer(Integer pageNumber, LatLng userLocation) {
 
         if (mNetworkUtil.isNetworkAvailable(getActivity())) {
-            new EventsFinder(session, this, userLocation).getEvents(pageNumber);
+            new EventsFinder(this, userLocation).getEvents(pageNumber);
         } else {
             Toast.makeText(getActivity(),getString(R.string.error_no_network_connectivity),Toast.LENGTH_SHORT).show();
         }
     }
 
     //sets up map if it hasnt already been setup,
-    private void setUpMapIfNeeded(LatLng cachedLocation, Session session) {
+    private void setUpMapIfNeeded(LatLng cachedLocation) {
         // Do a null check to confirm that we have not already instantiated the map.
         if (mMap == null) {
             mMap = mMapFragment.getMap();
@@ -187,14 +184,14 @@ public class EventsMapViewFragment extends Fragment implements OnEventsFetcherTa
             //set custom marker info window adapter
             mMap.setInfoWindowAdapter(new EventMarkerInfoWindowAdapter(getActivity()));
         }
-        setUpMap(cachedLocation, session);
+        setUpMap(cachedLocation);
     }
 
     /**
      * This is where map is setup with home and with current or searched location as center
      * This should only be called once and when we are sure that {@link #mMap} is not null.
      */
-    private void setUpMap(LatLng userLocation, Session session) {
+    private void setUpMap(LatLng userLocation) {
         //sets map's initial state
         mMap.setBuildingsEnabled(true);
         mMap.setMyLocationEnabled(true);
@@ -204,7 +201,7 @@ public class EventsMapViewFragment extends Fragment implements OnEventsFetcherTa
         //if there are no events from previous saved session then fetch events from backend
         //else use events from previous saved session to populate cards
         if (mEvents.isEmpty()) {
-            getEventsFromServer(1, session, userLocation);
+            getEventsFromServer(1, userLocation);
         } else {
             displayEventsInMap();
         }
@@ -235,18 +232,8 @@ public class EventsMapViewFragment extends Fragment implements OnEventsFetcherTa
     private void getCachedEvents() {
         Gson gson = new Gson();
 
-        // Gets session from sharedPreferences
-        SharedPreferences sessionPreferences = getActivity().getSharedPreferences(SessionManager.SESSION_SHARED_PREFS_NAME, Context.MODE_PRIVATE);
-        String serializedSession = sessionPreferences.getString("userSession", null);
-        if (serializedSession != null) {
-            mSession = gson.fromJson(serializedSession, Session.class);
-        } else {
-            //if there was no cached session found for some reason
-            Toast.makeText(getActivity(),getString(R.string.error_generic),Toast.LENGTH_SHORT).show();
-        }
-
         //Gets user's location(LatLng serialized into string) from sharedPreferences
-        SharedPreferences userLocationPreferences = getActivity().getSharedPreferences(HomeActivity.LOCATION_SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences userLocationPreferences = getActivity().getSharedPreferences(EventsActivity.LOCATION_SHARED_PREFS_NAME, Context.MODE_PRIVATE);
         String serializedLatLng = userLocationPreferences.getString("userCurrentLatLng", null);
         if (serializedLatLng != null) {
             //deserializes userLatLng string into LatLng object
@@ -257,7 +244,7 @@ public class EventsMapViewFragment extends Fragment implements OnEventsFetcherTa
         }
 
         //Gets Events data from sharedPreferences
-        SharedPreferences eventsPreferences = getActivity().getSharedPreferences(HomeActivity.EVENTS_SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences eventsPreferences = getActivity().getSharedPreferences(EventsActivity.EVENTS_SHARED_PREFS_NAME, Context.MODE_PRIVATE);
 
         mNumberOfPagesLoaded = eventsPreferences.getInt("numberOfPagesLoaded", 0);
         mTotalNumberOfPages = eventsPreferences.getInt("totalNumberOfPages", 0);

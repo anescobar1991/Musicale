@@ -52,7 +52,6 @@ public class AboutMusicaleFragment extends Fragment {
         try {
             setHasOptionsMenu(true); //sets actionbar to display this fragment's specific actionbar
             mListener = (OnAboutMusicaleFragmentInteractionListener) activity;
-            mListener.onAttachDisplayTitle(SECTION_INDEX); //tells activity to display correct title
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnAboutMusicaleViewFragmentInteractionListener");
@@ -72,7 +71,6 @@ public class AboutMusicaleFragment extends Fragment {
      * activity.
      */
     public interface OnAboutMusicaleFragmentInteractionListener {
-        public void onAttachDisplayTitle(int sectionIndex);
     }
 
 }

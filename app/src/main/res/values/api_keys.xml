@@ -2,7 +2,6 @@
 <resources>
 
     <string name="lastFm_api_key">824f19ce3c166a10c7b9858e3dfc3235</string>
-    <string name="lastFm_secret">9c6512152a3ee6cc0b3efba3aeaebb3d</string>
     <string name="google_maps_key">AIzaSyBhzuoHBiKZnW3gWrndK7q9R9cO7Br5LU4</string>
 
 </resources>

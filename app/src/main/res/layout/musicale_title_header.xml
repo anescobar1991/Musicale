@@ -1,0 +1,39 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/musicale_header"
+    android:layout_width="match_parent"
+    android:background="@color/primary"
+    android:layout_height="48dp">
+
+    <TextView
+        android:id="@+id/musicale_header_app_name_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/app_name"
+        android:paddingEnd="0dp"
+        android:paddingStart="32dp"
+        android:layout_gravity="center"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:textSize="24sp"/>
+
+    <TextView
+        android:id="@+id/musicale_header_powered_by_text"
+        android:layout_width="wrap_content"
+        android:paddingLeft="8dp"
+        android:layout_height="wrap_content"
+        android:paddingRight="8dp"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:layout_gravity="center"
+        android:text="@string/info_powered_by"/>
+
+    <ImageButton
+        android:id="@+id/musicale_header_last_fm_logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/lastfm_logo_white"
+        android:contentDescription="@string/accessibility_lastFmLogo" />
+
+</LinearLayout>

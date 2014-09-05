@@ -16,12 +16,11 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.anescobar.musicale.R;
-import com.anescobar.musicale.activities.HomeActivity;
+import com.anescobar.musicale.activities.EventsActivity;
 import com.anescobar.musicale.adapters.EventsAdapter;
 import com.anescobar.musicale.interfaces.OnEventsFetcherTaskCompleted;
 import com.anescobar.musicale.utils.EventsFinder;
 import com.anescobar.musicale.utils.NetworkUtil;
-import com.anescobar.musicale.utils.SessionManager;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -32,7 +31,6 @@ import java.util.ArrayList;
 import de.umass.lastfm.Caller;
 import de.umass.lastfm.Event;
 import de.umass.lastfm.PaginatedResult;
-import de.umass.lastfm.Session;
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 
 /**
@@ -59,7 +57,7 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
     private int mNumberOfPagesLoaded = 0; //keeps track of how many pages are loaded
     private ArrayList<Event> mEvents = new ArrayList<Event>();
     public LatLng mUserLatLng;
-    private Session mSession;
+//    private Session mSession;
 
     /**
      * This interface must be implemented by activities that contain this
@@ -101,7 +99,7 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
         //sets on clickListener for load more events button
         mLoadMoreEventsButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                getEventsFromServer(mNumberOfPagesLoaded + 1, mSession, mUserLatLng);
+                getEventsFromServer(mNumberOfPagesLoaded + 1, mUserLatLng);
             }
         });
 
@@ -188,12 +186,12 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
     }
 
     //gets events from backend, keeps track of how many pages are already loaded and cached
-    public void getEventsFromServer(Integer pageNumber, Session session, LatLng userLocation) {
+    public void getEventsFromServer(Integer pageNumber, LatLng userLocation) {
 
         if (mNetworkUtil.isNetworkAvailable(getActivity())) {
             mNumberOfPagesLoaded = pageNumber;
 
-            new EventsFinder(session, this, userLocation).getEvents(pageNumber);
+            new EventsFinder(this, userLocation).getEvents(pageNumber);
         } else {
             Toast.makeText(getActivity(),getString(R.string.error_no_network_connectivity),Toast.LENGTH_SHORT).show();
         }
@@ -272,18 +270,8 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
     private void getCachedSettings() {
         Gson gson = new Gson();
 
-        // Gets session from sharedPreferences
-        SharedPreferences sessionPreferences = getActivity().getSharedPreferences(SessionManager.SESSION_SHARED_PREFS_NAME, Context.MODE_PRIVATE);
-        String serializedSession = sessionPreferences.getString("userSession", null);
-        if (serializedSession != null) {
-            mSession = gson.fromJson(serializedSession, Session.class);
-        } else {
-            //if for some reason there was no cached session found
-            Toast.makeText(getActivity(),getString(R.string.error_generic),Toast.LENGTH_SHORT).show();
-        }
-
         //Gets user's location(LatLng serialized into string) from sharedPreferences
-        SharedPreferences userLocationPreferences = getActivity().getSharedPreferences(HomeActivity.LOCATION_SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences userLocationPreferences = getActivity().getSharedPreferences(EventsActivity.LOCATION_SHARED_PREFS_NAME, Context.MODE_PRIVATE);
         String serializedLatLng = userLocationPreferences.getString("userCurrentLatLng", null);
         if (serializedLatLng != null) {
             //deserializes userLatLng string into LatLng object
@@ -294,7 +282,7 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
         }
 
         //Gets Events data from sharedPreferences
-        SharedPreferences eventsPreferences = getActivity().getSharedPreferences(HomeActivity.EVENTS_SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences eventsPreferences = getActivity().getSharedPreferences(EventsActivity.EVENTS_SHARED_PREFS_NAME, Context.MODE_PRIVATE);
 
         mNumberOfPagesLoaded = eventsPreferences.getInt("numberOfPagesLoaded", 0);
         mTotalNumberOfPages = eventsPreferences.getInt("totalNumberOfPages", 0);
@@ -312,7 +300,7 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
         //if there are no events from previous saved session then fetch events from backend
         //else use events from previous saved session to populate cards
         if (mEvents.isEmpty()) {
-            getEventsFromServer(1, mSession, mUserLatLng);
+            getEventsFromServer(1, mUserLatLng);
         } else {
             setEventsAdapter();
         }
