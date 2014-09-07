@@ -2,8 +2,6 @@
 
     <!-- Strings related to home screen -->
     <string name="home_view_shows_nearby_button_text">Shows nearby</string>
-    <string name="title_events_section">Events</string>
-    <string name="title_home_section">Home</string>
     <string name="title_about_musicale_section">About Musicale</string>
     <string name="action_about_app">About Musicale</string>
     <string name="action_events_search">Search for events</string>

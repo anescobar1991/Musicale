@@ -25,6 +25,7 @@ import com.anescobar.musicale.utils.NetworkUtil;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -193,10 +194,15 @@ public class EventsMapViewFragment extends Fragment implements OnEventsFetcherTa
      */
     private void setUpMap(LatLng userLocation) {
         //sets map's initial state
-        mMap.setBuildingsEnabled(true);
+        UiSettings mapSettings = mMap.getUiSettings();
+
         mMap.setMyLocationEnabled(true);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 10));
         mMap.setMyLocationEnabled(true);
+        mapSettings.setZoomControlsEnabled(false);
+        mapSettings.setMyLocationButtonEnabled(false);
+        mapSettings.setTiltGesturesEnabled(false);
+        mapSettings.setRotateGesturesEnabled(false);
 
         //if there are no events from previous saved session then fetch events from backend
         //else use events from previous saved session to populate cards

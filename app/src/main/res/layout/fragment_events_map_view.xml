@@ -1,21 +1,10 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <Button
-        android:id="@+id/fragment_events_map_redo_search"
-        android:layout_width="match_parent"
-        android:textColor="#FFFFFF"
-        android:visibility="gone"
-        style="@android:style/Widget.Material.Light.Button"
-        android:background="@drawable/default_raised_button"
-        android:text="@string/events_map_redo_search"
-        android:layout_height="wrap_content" />
-
-    <FrameLayout
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/fragment_events_map_view_container"
         android:layout_width="match_parent"
-        android:layout_below="@+id/fragment_events_map_redo_search"
         android:layout_height="match_parent" >
 
         <ProgressBar
@@ -27,4 +16,15 @@
 
     </FrameLayout>
 
-</RelativeLayout>
+    <Button
+        android:id="@+id/fragment_events_map_redo_search"
+        android:layout_width="match_parent"
+        android:textColor="#FFFFFF"
+        android:layout_gravity="bottom"
+        android:visibility="gone"
+        style="@android:style/Widget.Material.Light.Button"
+        android:background="@drawable/default_raised_button"
+        android:text="@string/events_map_redo_search"
+        android:layout_height="wrap_content" />
+
+</FrameLayout>
