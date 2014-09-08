@@ -8,8 +8,7 @@ import com.anescobar.musicale.R;
 import com.anescobar.musicale.fragments.EventsMapViewFragment;
 import com.google.android.gms.common.ConnectionResult;
 
-public class EventsMapViewActivity extends BaseActivity implements
-        EventsMapViewFragment.OnEventsMapViewFragmentInteractionListener {
+public class EventsMapViewActivity extends BaseActivity {
 
     public static final String EVENTS_MAP_VIEW_FRAGMENT_TAG = "eventsMapViewFragment";
 

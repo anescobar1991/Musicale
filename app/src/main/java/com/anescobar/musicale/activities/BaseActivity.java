@@ -3,22 +3,14 @@ package com.anescobar.musicale.activities;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Toast;
 
 import com.anescobar.musicale.R;
+import com.anescobar.musicale.utils.EventQueryDetails;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-
-import de.umass.lastfm.Event;
 
 /**
  * Created by andres on 9/5/14.
@@ -29,11 +21,8 @@ public abstract class BaseActivity extends Activity implements
         GooglePlayServicesClient.ConnectionCallbacks,
         GooglePlayServicesClient.OnConnectionFailedListener {
 
-    public static final String LOCATION_SHARED_PREFS_NAME = "LocationPrefs";
-    public static final String EVENTS_SHARED_PREFS_NAME = "EventsPrefs";
-
     protected LocationClient mLocationClient;
-    protected LatLng mCachedLatLng;
+    protected EventQueryDetails mEventQueryDetails = EventQueryDetails.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,47 +53,4 @@ public abstract class BaseActivity extends Activity implements
         return currentLocation;
     }
 
-    //caches events to sharedPreferences
-    public void cacheEvents(int numberOfPagesLoaded, int totalNumberOfPages, ArrayList<Event> events) {
-        // stores events arrayList
-        if (!events.isEmpty()) {
-            Gson gson = new Gson();
-
-            //writes into events shared preferences
-            SharedPreferences eventsPreferences = getSharedPreferences(EVENTS_SHARED_PREFS_NAME, Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = eventsPreferences.edit();
-
-            //serialize events ArrayList
-            Type listOfEvents = new TypeToken<ArrayList<Event>>() {}.getType();
-            String serializedEvents = gson.toJson(events, listOfEvents);
-
-            //puts serialized Events list in bundle for retrieval upon fragment creation
-            editor.putString("events", serializedEvents);
-
-            //stores numberOfPagesLoaded so next user session knows what is already cached
-            editor.putInt("numberOfPagesLoaded", numberOfPagesLoaded);
-
-            //stores totalNumberOfPages so next user session knows how many total number of pages exist
-            editor.putInt("totalNumberOfPages", totalNumberOfPages);
-
-            // commit the new additions!
-            editor.apply();
-        }
-    }
-    // stores user's current location in sharedPreferences
-    // that way it persists throughout app even when app is not in memory
-    public void cacheUserLatLng(LatLng userLocation) {
-        Gson gson = new Gson();
-        String serializedCurrentUserLocation = gson.toJson(userLocation);
-
-        //writes into Location shared preferences
-        SharedPreferences sharedPreferences = getSharedPreferences(LOCATION_SHARED_PREFS_NAME, MODE_PRIVATE);
-        SharedPreferences.Editor sharedPreferencesEditor = sharedPreferences.edit();
-
-        //stores userCurrentLatLng
-        sharedPreferencesEditor.putString("userCurrentLatLng", serializedCurrentUserLocation);
-
-        //commits the new additions!
-        sharedPreferencesEditor.apply();
-    }
 }

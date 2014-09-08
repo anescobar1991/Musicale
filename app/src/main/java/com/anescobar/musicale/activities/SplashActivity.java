@@ -2,13 +2,9 @@ package com.anescobar.musicale.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Toast;
 
 import com.anescobar.musicale.R;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesClient;
-import com.google.android.gms.location.LocationClient;
-import com.google.android.gms.maps.model.LatLng;
 
 /**
  * Splash activity
@@ -22,7 +18,6 @@ public class SplashActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        startHomeActivity();
     }
 
     @Override
@@ -36,13 +31,12 @@ public class SplashActivity extends BaseActivity {
     @Override
     public void onConnected(Bundle bundle) {
         //no need to get location unless requested by user if there is already location cached
-        if (mCachedLatLng == null) {
-            //gets current location
-            LatLng currentLocation = getDevicesCurrentLatLng();
+        if (mEventQueryDetails.currentLatLng == null) {
 
-            //caches currentlocation in sharedPreferences
-            cacheUserLatLng(currentLocation);
+            //gets current location and stores it
+            mEventQueryDetails.currentLatLng = getDevicesCurrentLatLng();
         }
+        startHomeActivity();
     }
 
     @Override

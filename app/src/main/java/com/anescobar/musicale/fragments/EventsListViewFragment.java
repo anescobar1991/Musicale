@@ -1,9 +1,6 @@
 package com.anescobar.musicale.fragments;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,17 +14,14 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.anescobar.musicale.R;
-import com.anescobar.musicale.activities.EventsActivity;
 import com.anescobar.musicale.activities.EventsMapViewActivity;
 import com.anescobar.musicale.adapters.EventsAdapter;
 import com.anescobar.musicale.interfaces.OnEventsFetcherTaskCompleted;
 import com.anescobar.musicale.utils.EventsFinder;
 import com.anescobar.musicale.utils.NetworkUtil;
+import com.anescobar.musicale.utils.EventQueryDetails;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 import de.umass.lastfm.Caller;
@@ -35,17 +29,10 @@ import de.umass.lastfm.Event;
 import de.umass.lastfm.PaginatedResult;
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link EventsListViewFragment.OnEventsListViewFragmentInteractionListener} interface
- * to handle interaction home.
- *
- */
 public class EventsListViewFragment extends Fragment implements RecyclerView.OnScrollListener,
         OnEventsFetcherTaskCompleted {
 
-    private OnEventsListViewFragmentInteractionListener mListener;
+//    private OnEventsListViewFragmentInteractionListener mListener;
     private LinearLayoutManager mLayoutManager;
     private Button mLoadMoreEventsButton;
     private EventsAdapter mAdapter;
@@ -55,11 +42,9 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
     private SmoothProgressBar mMoreEventsLoadingProgressBar;
     private Button mExploreInMapButton;
 
+    private EventQueryDetails mEventQueryDetails = EventQueryDetails.getInstance();
+
     private boolean mAdapterSet = false;
-    private int mTotalNumberOfPages = 0; // stores how many total pages of events there are
-    private int mNumberOfPagesLoaded = 0; //keeps track of how many pages are loaded
-    private ArrayList<Event> mEvents = new ArrayList<Event>();
-    public LatLng mUserLatLng;
 
     /**
      * This interface must be implemented by activities that contain this
@@ -67,9 +52,8 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
      * to the activity and potentially other fragments contained in that
      * activity.
      */
-    public interface OnEventsListViewFragmentInteractionListener {
-        public void cacheEvents(int numberOfPagesLoaded, int totalNumberOfPages,ArrayList<Event> events);
-    }
+//    public interface OnEventsListViewFragmentInteractionListener {
+//    }
 
     public EventsListViewFragment() {
         // Required empty public constructor
@@ -81,9 +65,6 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
 
         //initializes networkUtil class
         mNetworkUtil = new NetworkUtil();
-
-        //gets all sharedPreferences and stores them locally
-        getCachedSettings();
     }
 
     @Override
@@ -102,7 +83,7 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
         //sets on clickListener for load more events button
         mLoadMoreEventsButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                getEventsFromServer(mNumberOfPagesLoaded + 1, mUserLatLng);
+                getEventsFromServer(mEventQueryDetails.numberOfEventPagesLoaded + 1, mEventQueryDetails.currentLatLng);
             }
         });
 
@@ -126,29 +107,22 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
         loadEventsToCards();
     }
 
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            mListener = (OnEventsListViewFragmentInteractionListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onPause() {
-        //caches all events data to sharedPreferences
-        mListener.cacheEvents(mNumberOfPagesLoaded, mTotalNumberOfPages,mEvents);
-        super.onPause();
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
+//    @Override
+//    public void onAttach(Activity activity) {
+//        super.onAttach(activity);
+//        try {
+//            mListener = (OnEventsListViewFragmentInteractionListener) activity;
+//        } catch (ClassCastException e) {
+//            throw new ClassCastException(activity.toString()
+//                    + " must implement OnFragmentInteractionListener");
+//        }
+//    }
+//
+//    @Override
+//    public void onDetach() {
+//        super.onDetach();
+//        mListener = null;
+//    }
 
     //makes sure that load more vents button is only displayed when scrolled to bottom of screen
     //and when there are more pages left of events
@@ -160,7 +134,7 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
             int itemCount = mAdapter.getItemCount() - 1;
 
             //if user has scrolled to bottom of recycle view and there are still pages of events left
-            if (mLayoutManager.findLastCompletelyVisibleItemPosition() == itemCount && mTotalNumberOfPages > mNumberOfPagesLoaded) {
+            if (mLayoutManager.findLastCompletelyVisibleItemPosition() == itemCount && mEventQueryDetails.totalNumberOfEventPages > mEventQueryDetails.numberOfEventPagesLoaded) {
                 //scroll to last item to fix bug of button being on top of last item
                 mRecyclerView.scrollToPosition(itemCount);
 
@@ -181,7 +155,7 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
         // only sets up adapter if it hasnt been setup already
         if (!mAdapterSet) {
             // Create the adapter
-            mAdapter = new EventsAdapter(getActivity(), mEvents);
+            mAdapter = new EventsAdapter(getActivity(), mEventQueryDetails.events);
 
             //set recycler view with adapter
             mRecyclerView.setAdapter(mAdapter);
@@ -200,7 +174,7 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
     public void getEventsFromServer(Integer pageNumber, LatLng userLocation) {
 
         if (mNetworkUtil.isNetworkAvailable(getActivity())) {
-            mNumberOfPagesLoaded = pageNumber;
+            mEventQueryDetails.numberOfEventPagesLoaded = pageNumber;
 
             new EventsFinder(this, userLocation).getEvents(pageNumber);
         } else {
@@ -226,7 +200,7 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
     @Override
     public void onTaskAboutToStart() {
         //display loading progressbar at bottom of screen if it is loading more events after first page
-        if (mNumberOfPagesLoaded > 1) {
+        if (mEventQueryDetails.numberOfEventPagesLoaded > 1) {
             mLoadMoreEventsButton.setVisibility(View.GONE);
             mMoreEventsLoadingProgressBar.setVisibility(View.VISIBLE);
             //display loading progressbar in middle of screen if it is loading first page of events
@@ -251,14 +225,14 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
             ArrayList<Event> events= new ArrayList<Event>(eventsNearby.getPageResults());
 
             //set variable that stores total number of pages
-            mTotalNumberOfPages = eventsNearby.getTotalPages();
+            mEventQueryDetails.totalNumberOfEventPages = eventsNearby.getTotalPages();
 
-            if (mNumberOfPagesLoaded == 1) {
+            if (mEventQueryDetails.numberOfEventPagesLoaded == 1) {
                 //clears events list before adding events to it
-                mEvents.clear();
+                mEventQueryDetails.events.clear();
             }
             //add events to mEvents
-            mEvents.addAll(events);
+            mEventQueryDetails.events.addAll(events);
 
             //set events adapter with new events
             setEventsAdapter();
@@ -267,7 +241,7 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
             Toast.makeText(getActivity(),getString(R.string.error_generic),Toast.LENGTH_SHORT).show();
         }
 
-        if (mNumberOfPagesLoaded == 1) {
+        if (mEventQueryDetails.numberOfEventPagesLoaded == 1) {
             //hide loading progressbar in middle of screen
             mEventsLoadingProgressBar.setVisibility(View.GONE);
 
@@ -283,40 +257,12 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
         }
     }
 
-    private void getCachedSettings() {
-        Gson gson = new Gson();
-
-        //Gets user's location(LatLng serialized into string) from sharedPreferences
-        SharedPreferences userLocationPreferences = getActivity().getSharedPreferences(EventsActivity.LOCATION_SHARED_PREFS_NAME, Context.MODE_PRIVATE);
-        String serializedLatLng = userLocationPreferences.getString("userCurrentLatLng", null);
-        if (serializedLatLng != null) {
-            //deserializes userLatLng string into LatLng object
-            mUserLatLng = gson.fromJson(serializedLatLng, LatLng.class);
-        } else {
-            //if for some reason there was no latLng found
-            Toast.makeText(getActivity(),getString(R.string.error_generic),Toast.LENGTH_SHORT).show();
-        }
-
-        //Gets Events data from sharedPreferences
-        SharedPreferences eventsPreferences = getActivity().getSharedPreferences(EventsActivity.EVENTS_SHARED_PREFS_NAME, Context.MODE_PRIVATE);
-
-        mNumberOfPagesLoaded = eventsPreferences.getInt("numberOfPagesLoaded", 0);
-        mTotalNumberOfPages = eventsPreferences.getInt("totalNumberOfPages", 0);
-        String serializedEvents = eventsPreferences.getString("events", null);
-
-        //deserializes events if there are any
-        if (serializedEvents != null) {
-            Type listOfEvents = new TypeToken<ArrayList<Event>>(){}.getType();
-            mEvents = gson.fromJson(serializedEvents, listOfEvents);
-        }
-    }
-
     //loads events and sets adapter that will display them in recycler view
     private void loadEventsToCards() {
         //if there are no events from previous saved session then fetch events from backend
         //else use events from previous saved session to populate cards
-        if (mEvents.isEmpty()) {
-            getEventsFromServer(1, mUserLatLng);
+        if (mEventQueryDetails.events.isEmpty()) {
+            getEventsFromServer(1, mEventQueryDetails.currentLatLng);
         } else {
             setEventsAdapter();
         }
