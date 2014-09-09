@@ -6,10 +6,10 @@ import android.view.MenuItem;
 
 import com.anescobar.musicale.R;
 import com.anescobar.musicale.fragments.EventsListViewFragment;
-import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.maps.model.LatLng;
 
-public class EventsActivity extends BaseActivity {
+public class EventsListViewActivity extends BaseActivity implements
+        EventsListViewFragment.OnEventsListViewFragmentInteractionListener {
 
     private static final String EVENTS_LIST_VIEW_FRAGMENT_TAG = "eventsListViewFragment";
 
@@ -34,7 +34,7 @@ public class EventsActivity extends BaseActivity {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.action_refresh_events:
-                refreshEvents();
+                refreshEvents(getCurrentLatLng());
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -44,41 +44,41 @@ public class EventsActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
-        //connects location client
-        mLocationClient.connect();
+        // Connect the client
+        mLocationProvider.connectClient();
     }
 
-    @Override
-    public void onConnected(Bundle bundle) {
-    }
-
+    /*
+     * Called when the Activity is no longer visible.
+     */
     @Override
     protected void onStop() {
         // Disconnecting the client invalidates it.
-        mLocationClient.disconnect();
+        mLocationProvider.disconnectClient();
         super.onStop();
     }
 
-    @Override
-    public void onDisconnected() {
-    }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-    }
-
-    private void refreshEvents() {
+    private void refreshEvents(LatLng userLatLng) {
         EventsListViewFragment eventsListViewFragment = (EventsListViewFragment) getFragmentManager().findFragmentByTag(EVENTS_LIST_VIEW_FRAGMENT_TAG);
 
-        //gets currentLatLng
-        LatLng currentLocation = getDevicesCurrentLatLng();
-
         //stores new current location
-        mEventQueryDetails.currentLatLng = currentLocation;
+        mEventQueryDetails.currentLatLng = userLatLng;
 
         //calls eventsListViewFragment's getEvents method, which gets events from backend and displays and stores them as needed
-        eventsListViewFragment.getEventsFromServer(1,currentLocation);
+        eventsListViewFragment.getEventsFromServer(1,userLatLng);
     }
 
+    @Override
+    public void onConnectionResult(boolean success) {
+//        if (success) {
+//            refreshEvents(mLocationProvider.getCurrentLatLng());
+//        } else {
+//            Toast.makeText(this, R.string.error_no_network_connectivity, Toast.LENGTH_SHORT).show();
+//        }
+    }
+
+    @Override
+    public LatLng getCurrentLatLng() {
+        return mLocationProvider.getCurrentLatLng();
+    }
 }

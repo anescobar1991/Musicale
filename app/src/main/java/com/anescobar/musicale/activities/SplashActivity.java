@@ -2,9 +2,11 @@ package com.anescobar.musicale.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.anescobar.musicale.R;
-import com.google.android.gms.common.ConnectionResult;
+import com.anescobar.musicale.utils.LocationProvider;
+import com.crashlytics.android.Crashlytics;
 
 /**
  * Splash activity
@@ -13,45 +15,43 @@ import com.google.android.gms.common.ConnectionResult;
  */
 public class SplashActivity extends BaseActivity {
 
+    private LocationProvider mLocationProvider = LocationProvider.getInstance();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_splash);
 
+        //starts crashlytics
+        Crashlytics.start(this);
+        setContentView(R.layout.activity_splash);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-
-        //connects location client
-        mLocationClient.connect();
+        // Connect the client
+        mLocationProvider.connectClient();
     }
 
-    @Override
-    public void onConnected(Bundle bundle) {
-        //no need to get location unless requested by user if there is already location cached
-        if (mEventQueryDetails.currentLatLng == null) {
-
-            //gets current location and stores it
-            mEventQueryDetails.currentLatLng = getDevicesCurrentLatLng();
-        }
-        startHomeActivity();
-    }
-
+    /*
+     * Called when the Activity is no longer visible.
+     */
     @Override
     protected void onStop() {
         // Disconnecting the client invalidates it.
-        mLocationClient.disconnect();
+        mLocationProvider.disconnectClient();
         super.onStop();
     }
 
     @Override
-    public void onDisconnected() {
-    }
+    public void onConnectionResult(boolean success) {
+        if (success) {
+            mEventQueryDetails.currentLatLng = mLocationProvider.getCurrentLatLng();
 
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
+            startHomeActivity();
+        } else {
+            Toast.makeText(this, R.string.error_no_network_connectivity, Toast.LENGTH_SHORT).show();
+        }
     }
 
     /**

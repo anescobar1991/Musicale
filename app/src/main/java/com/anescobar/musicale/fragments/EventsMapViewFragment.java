@@ -1,5 +1,6 @@
 package com.anescobar.musicale.fragments;
 
+import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
@@ -16,7 +17,7 @@ import android.widget.Toast;
 
 import com.anescobar.musicale.R;
 import com.anescobar.musicale.activities.EventDetailsActivity;
-import com.anescobar.musicale.interfaces.OnEventsFetcherTaskCompleted;
+import com.anescobar.musicale.interfaces.EventFetcherListener;
 import com.anescobar.musicale.utils.EventsFinder;
 import com.anescobar.musicale.utils.NetworkUtil;
 import com.anescobar.musicale.utils.EventQueryDetails;
@@ -41,7 +42,7 @@ import de.umass.lastfm.Event;
 import de.umass.lastfm.ImageSize;
 import de.umass.lastfm.PaginatedResult;
 
-public class EventsMapViewFragment extends Fragment implements OnEventsFetcherTaskCompleted,
+public class EventsMapViewFragment extends Fragment implements EventFetcherListener,
         GoogleMap.OnInfoWindowClickListener, GoogleMap.OnCameraChangeListener {
 
     private MapFragment mMapFragment;
@@ -49,7 +50,7 @@ public class EventsMapViewFragment extends Fragment implements OnEventsFetcherTa
     private GoogleMap mMap;
     private ProgressBar mEventsLoadingProgressbar;
     private Button mRedoSearchButton;
-//    private OnEventsMapViewFragmentInteractionListener mListener;
+    private OnEventsMapViewFragmentInteractionListener mListener;
 
     private EventQueryDetails mEventQueryDetails = EventQueryDetails.getInstance();
 
@@ -67,8 +68,9 @@ public class EventsMapViewFragment extends Fragment implements OnEventsFetcherTa
      * to the activity and potentially other fragments contained in that
      * activity.
      */
-//    public interface OnEventsMapViewFragmentInteractionListener {
-//    }
+    public interface OnEventsMapViewFragmentInteractionListener {
+        public LatLng getCurrentLatLng();
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -76,9 +78,6 @@ public class EventsMapViewFragment extends Fragment implements OnEventsFetcherTa
 
         //initializes networkUtil class
         mNetworkUtil = new NetworkUtil();
-
-        //gets all sharedPreferences and stores them locally
-//        getCachedEvents();
     }
 
     @Override
@@ -116,6 +115,9 @@ public class EventsMapViewFragment extends Fragment implements OnEventsFetcherTa
     @Override
     public void onStart(){
         super.onStart();
+        if (mEventQueryDetails.currentLatLng == null) {
+            mEventQueryDetails.currentLatLng = mListener.getCurrentLatLng();
+        }
         //sets up map, with its settings, and adds event markers
         setUpMapIfNeeded(mEventQueryDetails.currentLatLng);
     }
@@ -127,22 +129,22 @@ public class EventsMapViewFragment extends Fragment implements OnEventsFetcherTa
         setUpMapIfNeeded(mEventQueryDetails.currentLatLng);
     }
 
-//    @Override
-//    public void onAttach(Activity activity) {
-//        super.onAttach(activity);
-//        try {
-//            mListener = (OnEventsMapViewFragmentInteractionListener) activity;
-//        } catch (ClassCastException e) {
-//            throw new ClassCastException(activity.toString()
-//                    + " must implement OnEventMapViewFragmentInteractionListener");
-//        }
-//    }
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mListener = (OnEventsMapViewFragmentInteractionListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnEventMapViewFragmentInteractionListener");
+        }
+    }
 
-//    @Override
-//    public void onDetach() {
-//        super.onDetach();
-//        mListener = null;
-//    }
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
 
     //gets events from backend
     public void getEventsFromServer(Integer pageNumber, LatLng userLocation) {
@@ -213,34 +215,6 @@ public class EventsMapViewFragment extends Fragment implements OnEventsFetcherTa
             createMapMarker(venueLatLng, event);
         }
     }
-
-//    private void getCachedEvents() {
-//        Gson gson = new Gson();
-//
-//        //Gets user's location(LatLng serialized into string) from sharedPreferences
-//        SharedPreferences userLocationPreferences = getActivity().getSharedPreferences(EventsActivity.LOCATION_SHARED_PREFS_NAME, Context.MODE_PRIVATE);
-//        String serializedLatLng = userLocationPreferences.getString("userCurrentLatLng", null);
-//        if (serializedLatLng != null) {
-//            //deserializes userLatLng string into LatLng object
-//            mUserLatLng = gson.fromJson(serializedLatLng, LatLng.class);
-//        } else {
-//            //if there was no latlng found for some reason
-//            Toast.makeText(getActivity(),getString(R.string.error_generic),Toast.LENGTH_SHORT).show();
-//        }
-//
-//        //Gets Events data from sharedPreferences
-//        SharedPreferences eventsPreferences = getActivity().getSharedPreferences(EventsActivity.EVENTS_SHARED_PREFS_NAME, Context.MODE_PRIVATE);
-//
-//        mNumberOfPagesLoaded = eventsPreferences.getInt("numberOfPagesLoaded", 0);
-//        mTotalNumberOfPages = eventsPreferences.getInt("totalNumberOfPages", 0);
-//        String serializedEvents = eventsPreferences.getString("events", null);
-//
-//        //deserializes events if there are any
-//        if (serializedEvents != null) {
-//            Type listOfEvents = new TypeToken<ArrayList<Event>>(){}.getType();
-//            mEvents = gson.fromJson(serializedEvents, listOfEvents);
-//        }
-//    }
 
     @Override
     public void onTaskAboutToStart() {

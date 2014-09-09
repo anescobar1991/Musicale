@@ -7,7 +7,7 @@ import de.umass.lastfm.PaginatedResult;
  * Created by Andres Escobar on 8/11/14.
  * Interface to be used as callback for EventsFetcher asynctask
  */
-public interface OnEventsFetcherTaskCompleted{
+public interface EventFetcherListener {
     void onTaskAboutToStart();
     void onTaskCompleted(PaginatedResult<Event> events);
 }

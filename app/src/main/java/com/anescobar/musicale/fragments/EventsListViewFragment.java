@@ -1,5 +1,6 @@
 package com.anescobar.musicale.fragments;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -16,7 +17,7 @@ import android.widget.Toast;
 import com.anescobar.musicale.R;
 import com.anescobar.musicale.activities.EventsMapViewActivity;
 import com.anescobar.musicale.adapters.EventsAdapter;
-import com.anescobar.musicale.interfaces.OnEventsFetcherTaskCompleted;
+import com.anescobar.musicale.interfaces.EventFetcherListener;
 import com.anescobar.musicale.utils.EventsFinder;
 import com.anescobar.musicale.utils.NetworkUtil;
 import com.anescobar.musicale.utils.EventQueryDetails;
@@ -30,9 +31,9 @@ import de.umass.lastfm.PaginatedResult;
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 
 public class EventsListViewFragment extends Fragment implements RecyclerView.OnScrollListener,
-        OnEventsFetcherTaskCompleted {
+        EventFetcherListener {
 
-//    private OnEventsListViewFragmentInteractionListener mListener;
+    private OnEventsListViewFragmentInteractionListener mListener;
     private LinearLayoutManager mLayoutManager;
     private Button mLoadMoreEventsButton;
     private EventsAdapter mAdapter;
@@ -52,8 +53,9 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
      * to the activity and potentially other fragments contained in that
      * activity.
      */
-//    public interface OnEventsListViewFragmentInteractionListener {
-//    }
+    public interface OnEventsListViewFragmentInteractionListener {
+        public LatLng getCurrentLatLng();
+    }
 
     public EventsListViewFragment() {
         // Required empty public constructor
@@ -103,26 +105,29 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
     public void onStart(){
         super.onStart();
 
+        if (mEventQueryDetails.currentLatLng == null) {
+            mEventQueryDetails.currentLatLng = mListener.getCurrentLatLng();
+        }
         //adds events to view
-        loadEventsToCards();
+        loadEventsToView();
     }
 
-//    @Override
-//    public void onAttach(Activity activity) {
-//        super.onAttach(activity);
-//        try {
-//            mListener = (OnEventsListViewFragmentInteractionListener) activity;
-//        } catch (ClassCastException e) {
-//            throw new ClassCastException(activity.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
-//    }
-//
-//    @Override
-//    public void onDetach() {
-//        super.onDetach();
-//        mListener = null;
-//    }
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mListener = (OnEventsListViewFragmentInteractionListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
 
     //makes sure that load more vents button is only displayed when scrolled to bottom of screen
     //and when there are more pages left of events
@@ -258,7 +263,7 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
     }
 
     //loads events and sets adapter that will display them in recycler view
-    private void loadEventsToCards() {
+    private void loadEventsToView() {
         //if there are no events from previous saved session then fetch events from backend
         //else use events from previous saved session to populate cards
         if (mEventQueryDetails.events.isEmpty()) {

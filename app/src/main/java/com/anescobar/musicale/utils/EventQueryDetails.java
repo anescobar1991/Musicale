@@ -11,7 +11,7 @@ import de.umass.lastfm.Event;
  * Created by andres on 9/7/14.
  */
 public class EventQueryDetails {
-    private static EventQueryDetails instance = null;
+    private static EventQueryDetails mInstance = null;
 
     public ArrayList<Event> events = new ArrayList<Event>();
     public LatLng currentLatLng;
@@ -22,10 +22,10 @@ public class EventQueryDetails {
     }
 
     public static EventQueryDetails getInstance() {
-        if (instance == null) {
-            instance = new EventQueryDetails();
+        if (mInstance == null) {
+            mInstance = new EventQueryDetails();
         }
-        return instance;
+        return mInstance;
     }
 
 }
