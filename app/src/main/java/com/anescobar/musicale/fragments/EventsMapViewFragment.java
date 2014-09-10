@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
@@ -18,10 +17,10 @@ import android.widget.Toast;
 
 import com.anescobar.musicale.R;
 import com.anescobar.musicale.activities.EventDetailsActivity;
-import com.anescobar.musicale.activities.EventsActivity;
-import com.anescobar.musicale.interfaces.OnEventsFetcherTaskCompleted;
+import com.anescobar.musicale.interfaces.EventFetcherListener;
 import com.anescobar.musicale.utils.EventsFinder;
 import com.anescobar.musicale.utils.NetworkUtil;
+import com.anescobar.musicale.utils.EventQueryDetails;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -32,11 +31,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -45,14 +42,7 @@ import de.umass.lastfm.Event;
 import de.umass.lastfm.ImageSize;
 import de.umass.lastfm.PaginatedResult;
 
-/**
-* A simple {@link Fragment} subclass.
-* Activities that contain this fragment must implement the
-* {@link EventsMapViewFragment.OnEventsMapViewFragmentInteractionListener} interface
-* to handle interaction home.
-*
-*/
-public class EventsMapViewFragment extends Fragment implements OnEventsFetcherTaskCompleted,
+public class EventsMapViewFragment extends Fragment implements EventFetcherListener,
         GoogleMap.OnInfoWindowClickListener, GoogleMap.OnCameraChangeListener {
 
     private MapFragment mMapFragment;
@@ -62,13 +52,11 @@ public class EventsMapViewFragment extends Fragment implements OnEventsFetcherTa
     private Button mRedoSearchButton;
     private OnEventsMapViewFragmentInteractionListener mListener;
 
-    private int mTotalNumberOfPages = 0; // stores how many total pages of events there are
-    private int mNumberOfPagesLoaded = 0; //keeps track of how many pages are loaded
+    private EventQueryDetails mEventQueryDetails = EventQueryDetails.getInstance();
+
     private int mCameraChangeCount = 0; //keeps track of how many times map camera change has occurred
-    private LatLng mUserLatLng;
     private HashMap<String, Event> mMarkers = new HashMap<String, Event>();
     private ArrayList<LatLng> mMarkerPositions = new ArrayList<LatLng>();
-    private ArrayList<Event> mEvents = new ArrayList<Event>();
 
     public EventsMapViewFragment() {
         // Required empty public constructor
@@ -81,8 +69,7 @@ public class EventsMapViewFragment extends Fragment implements OnEventsFetcherTa
      * activity.
      */
     public interface OnEventsMapViewFragmentInteractionListener {
-        public void cacheEvents(int numberOfPagesLoaded, int totalNumberOfPages,ArrayList<Event> events);
-        public void cacheUserLatLng(LatLng latLng);
+        public LatLng getCurrentLatLng();
     }
 
     @Override
@@ -91,9 +78,6 @@ public class EventsMapViewFragment extends Fragment implements OnEventsFetcherTa
 
         //initializes networkUtil class
         mNetworkUtil = new NetworkUtil();
-
-        //gets all sharedPreferences and stores them locally
-        getCachedEvents();
     }
 
     @Override
@@ -117,8 +101,8 @@ public class EventsMapViewFragment extends Fragment implements OnEventsFetcherTa
             public void onClick(View view) {
                 LatLng newLatLng = mMap.getCameraPosition().target;
 
-                //caches map center to sharedPreferences
-                mListener.cacheUserLatLng(newLatLng);
+                //stores map center latlng
+                mEventQueryDetails.currentLatLng = newLatLng;
 
                 //calls getEvents method, which gets events from backend and displays and stores them as needed
                 getEventsFromServer(1, newLatLng);
@@ -131,15 +115,18 @@ public class EventsMapViewFragment extends Fragment implements OnEventsFetcherTa
     @Override
     public void onStart(){
         super.onStart();
+        if (mEventQueryDetails.currentLatLng == null) {
+            mEventQueryDetails.currentLatLng = mListener.getCurrentLatLng();
+        }
         //sets up map, with its settings, and adds event markers
-        setUpMapIfNeeded(mUserLatLng);
+        setUpMapIfNeeded(mEventQueryDetails.currentLatLng);
     }
 
     @Override
     public void onResume(){
         super.onResume();
         //sets up map, with its settings, and adds event markers
-        setUpMapIfNeeded(mUserLatLng);
+        setUpMapIfNeeded(mEventQueryDetails.currentLatLng);
     }
 
     @Override
@@ -151,13 +138,6 @@ public class EventsMapViewFragment extends Fragment implements OnEventsFetcherTa
             throw new ClassCastException(activity.toString()
                     + " must implement OnEventMapViewFragmentInteractionListener");
         }
-    }
-
-    @Override
-    public void onPause() {
-        //caches all events data to sharedPreferences
-        mListener.cacheEvents(mNumberOfPagesLoaded, mTotalNumberOfPages, mEvents);
-        super.onPause();
     }
 
     @Override
@@ -206,7 +186,7 @@ public class EventsMapViewFragment extends Fragment implements OnEventsFetcherTa
 
         //if there are no events from previous saved session then fetch events from backend
         //else use events from previous saved session to populate cards
-        if (mEvents.isEmpty()) {
+        if (mEventQueryDetails.events.isEmpty()) {
             getEventsFromServer(1, userLocation);
         } else {
             displayEventsInMap();
@@ -224,42 +204,15 @@ public class EventsMapViewFragment extends Fragment implements OnEventsFetcherTa
         //clears old events from map
         mMap.clear();
 
+        ArrayList<Event> events = mEventQueryDetails.events;
         //iterate through events list
-        for (Event event : mEvents) {
+        for (Event event : events) {
             float lat = event.getVenue().getLatitude();
             float lng = event.getVenue().getLongitude();
             LatLng venueLatLng = new LatLng(lat, lng);
 
             //adds marker that represents Event venue to map
             createMapMarker(venueLatLng, event);
-        }
-    }
-
-    private void getCachedEvents() {
-        Gson gson = new Gson();
-
-        //Gets user's location(LatLng serialized into string) from sharedPreferences
-        SharedPreferences userLocationPreferences = getActivity().getSharedPreferences(EventsActivity.LOCATION_SHARED_PREFS_NAME, Context.MODE_PRIVATE);
-        String serializedLatLng = userLocationPreferences.getString("userCurrentLatLng", null);
-        if (serializedLatLng != null) {
-            //deserializes userLatLng string into LatLng object
-            mUserLatLng = gson.fromJson(serializedLatLng, LatLng.class);
-        } else {
-            //if there was no latlng found for some reason
-            Toast.makeText(getActivity(),getString(R.string.error_generic),Toast.LENGTH_SHORT).show();
-        }
-
-        //Gets Events data from sharedPreferences
-        SharedPreferences eventsPreferences = getActivity().getSharedPreferences(EventsActivity.EVENTS_SHARED_PREFS_NAME, Context.MODE_PRIVATE);
-
-        mNumberOfPagesLoaded = eventsPreferences.getInt("numberOfPagesLoaded", 0);
-        mTotalNumberOfPages = eventsPreferences.getInt("totalNumberOfPages", 0);
-        String serializedEvents = eventsPreferences.getString("events", null);
-
-        //deserializes events if there are any
-        if (serializedEvents != null) {
-            Type listOfEvents = new TypeToken<ArrayList<Event>>(){}.getType();
-            mEvents = gson.fromJson(serializedEvents, listOfEvents);
         }
     }
 
@@ -286,16 +239,16 @@ public class EventsMapViewFragment extends Fragment implements OnEventsFetcherTa
             ArrayList<Event> events= new ArrayList<Event>(eventsNearby.getPageResults());
 
             //sets variable that keeps track of how many pages of results are cached
-            mNumberOfPagesLoaded = 1;
+            mEventQueryDetails.numberOfEventPagesLoaded = 1;
 
             //set variable that stores total number of pages
-            mTotalNumberOfPages = eventsNearby.getTotalPages();
+            mEventQueryDetails.totalNumberOfEventPages = eventsNearby.getTotalPages();
 
             //clears events list before adding events to it
-            mEvents.clear();
+            mEventQueryDetails.events.clear();
 
             //add events to mEvents
-            mEvents.addAll(events);
+            mEventQueryDetails.events.addAll(events);
 
             //set events adapter with new events
             displayEventsInMap();

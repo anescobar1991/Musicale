@@ -17,6 +17,7 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/MusicaleTheme" >
+
         <activity
             android:name=".activities.SplashActivity"
             android:configChanges="orientation"
@@ -35,7 +36,7 @@
             android:theme="@style/MusicaleThemeNoActionBar" >
         </activity>
         <activity
-            android:name=".activities.EventsActivity"
+            android:name=".activities.EventsListViewActivity"
             android:configChanges="orientation"
             android:parentActivityName=".activities.HomeActivity"
             android:screenOrientation="portrait"
@@ -48,7 +49,7 @@
             android:screenOrientation="portrait"
             android:label="@string/title_activity_events_map_view"
             android:theme="@style/MusicaleTheme"
-            android:parentActivityName=".activities.EventsActivity" >
+            android:parentActivityName=".activities.EventsListViewActivity" >
         </activity>
         <activity
             android:name=".activities.EventDetailsActivity"
@@ -64,6 +65,7 @@
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="@string/google_maps_key" />
+        <meta-data android:name="com.crashlytics.ApiKey" android:value="4a25a0ef7f41118ba2930c2af73141cfb60e93de"/>
 
     </application>
 
