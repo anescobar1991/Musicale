@@ -3,7 +3,7 @@ package com.anescobar.musicale.utils;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.anescobar.musicale.interfaces.EventFetcherListener;
+import com.anescobar.musicale.interfaces.OnEventsFetcherTaskCompleted;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.HashMap;
@@ -21,11 +21,11 @@ import de.umass.util.MapUtilities;
  * Performs search for Last FM events
  */
 public class EventsFinder {
-    private EventFetcherListener mListener;
+    private OnEventsFetcherTaskCompleted mListener;
     private LatLng mLocation;
     private static final String API_KEY = "824f19ce3c166a10c7b9858e3dfc3235";
 
-    public EventsFinder(EventFetcherListener listener, LatLng location) {
+    public EventsFinder(OnEventsFetcherTaskCompleted listener, LatLng location) {
         this.mListener = listener;
         this.mLocation = location;
     }
@@ -64,9 +64,9 @@ public class EventsFinder {
 
     private class EventsFetcherTask extends AsyncTask<Integer, Void, PaginatedResult<Event>> {
         private LatLng mUserLocation;
-        private EventFetcherListener mListener;
+        private OnEventsFetcherTaskCompleted mListener;
 
-        public EventsFetcherTask(LatLng userLocation, EventFetcherListener listener) {
+        public EventsFetcherTask(LatLng userLocation, OnEventsFetcherTaskCompleted listener) {
             this.mUserLocation = userLocation;
             this.mListener = listener;
         }

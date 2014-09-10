@@ -6,10 +6,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import com.anescobar.musicale.R;
 import com.anescobar.musicale.fragments.EventsMapViewFragment;
-import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.common.ConnectionResult;
 
 public class EventsMapViewActivity extends BaseActivity implements
-        EventsMapViewFragment.OnEventsMapViewFragmentInteractionListener{
+        EventsMapViewFragment.OnEventsMapViewFragmentInteractionListener {
 
     public static final String EVENTS_MAP_VIEW_FRAGMENT_TAG = "eventsMapViewFragment";
 
@@ -43,28 +43,16 @@ public class EventsMapViewActivity extends BaseActivity implements
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        // Connect the client
-        mLocationProvider.connectClient();
-    }
+    public void onConnected(Bundle bundle) {
 
-    /*
-     * Called when the Activity is no longer visible.
-     */
-    @Override
-    protected void onStop() {
-        // Disconnecting the client invalidates it.
-        mLocationProvider.disconnectClient();
-        super.onStop();
     }
 
     @Override
-    public void onConnectionResult(boolean result) {
+    public void onDisconnected() {
     }
 
     @Override
-    public LatLng getCurrentLatLng() {
-        return mLocationProvider.getCurrentLatLng();
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
     }
 }

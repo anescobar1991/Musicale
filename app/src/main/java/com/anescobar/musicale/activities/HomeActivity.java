@@ -6,6 +6,7 @@ import android.view.View;
 
 import com.anescobar.musicale.R;
 import com.anescobar.musicale.fragments.AboutMusicaleFragment;
+import com.google.android.gms.common.ConnectionResult;
 
 public class HomeActivity extends BaseActivity
         implements AboutMusicaleFragment.OnAboutMusicaleFragmentInteractionListener {
@@ -18,11 +19,20 @@ public class HomeActivity extends BaseActivity
     }
 
     public void showNearbyEvents(View view) {
-        Intent intent = new Intent(this, EventsListViewActivity.class);
+        Intent intent = new Intent(this, EventsActivity.class);
         startActivity(intent);
     }
 
     @Override
-    public void onConnectionResult(boolean result) {
+    public void onConnected(Bundle bundle) {
     }
+
+    @Override
+    public void onDisconnected() {
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+    }
+
 }
