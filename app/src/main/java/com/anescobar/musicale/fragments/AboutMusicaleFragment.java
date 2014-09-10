@@ -12,15 +12,14 @@ import com.anescobar.musicale.R;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link AboutMusicaleFragment.OnAboutMusicaleFragmentInteractionListener} interface
+ * {@link com.anescobar.musicale.fragments.AboutMusicaleFragment.AboutMusicaleFragmentInteractionListener} interface
  * to handle interaction home.
  * Use the {@link AboutMusicaleFragment#newInstance} factory method to
  * create an instance of this fragment.
  *
  */
 public class AboutMusicaleFragment extends Fragment {
-    private static final int SECTION_INDEX = 2; //index that identifies fragment for activity to display correct title
-    private OnAboutMusicaleFragmentInteractionListener mListener;
+    private AboutMusicaleFragmentInteractionListener mListener;
 
     public AboutMusicaleFragment() {
         // Required empty public constructor
@@ -51,7 +50,7 @@ public class AboutMusicaleFragment extends Fragment {
         super.onAttach(activity);
         try {
             setHasOptionsMenu(true); //sets actionbar to display this fragment's specific actionbar
-            mListener = (OnAboutMusicaleFragmentInteractionListener) activity;
+            mListener = (AboutMusicaleFragmentInteractionListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnAboutMusicaleViewFragmentInteractionListener");
@@ -70,7 +69,7 @@ public class AboutMusicaleFragment extends Fragment {
      * to the activity and potentially other fragments contained in that
      * activity.
      */
-    public interface OnAboutMusicaleFragmentInteractionListener {
+    public interface AboutMusicaleFragmentInteractionListener {
     }
 
 }

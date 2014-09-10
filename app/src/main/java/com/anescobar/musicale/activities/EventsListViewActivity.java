@@ -6,10 +6,11 @@ import android.view.MenuItem;
 
 import com.anescobar.musicale.R;
 import com.anescobar.musicale.fragments.EventsListViewFragment;
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.maps.model.LatLng;
 
-public class EventsListViewActivity extends BaseActivity implements
-        EventsListViewFragment.OnEventsListViewFragmentInteractionListener {
+public class EventsListViewActivity extends LocationAwareActivity implements
+        EventsListViewFragment.EventsListViewFragmentInteractionListener {
 
     private static final String EVENTS_LIST_VIEW_FRAGMENT_TAG = "eventsListViewFragment";
 
@@ -17,8 +18,6 @@ public class EventsListViewActivity extends BaseActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_events);
-
-        addFragmentToActivity(R.id.activity_events_container, new EventsListViewFragment(),EVENTS_LIST_VIEW_FRAGMENT_TAG);
     }
 
     @Override
@@ -31,7 +30,7 @@ public class EventsListViewActivity extends BaseActivity implements
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
+        // Handle actionbar item selection
         switch (item.getItemId()) {
             case R.id.action_refresh_events:
                 refreshEvents(getCurrentLatLng());
@@ -39,23 +38,6 @@ public class EventsListViewActivity extends BaseActivity implements
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        // Connect the client
-        mLocationProvider.connectClient();
-    }
-
-    /*
-     * Called when the Activity is no longer visible.
-     */
-    @Override
-    protected void onStop() {
-        // Disconnecting the client invalidates it.
-        mLocationProvider.disconnectClient();
-        super.onStop();
     }
 
     private void refreshEvents(LatLng userLatLng) {
@@ -69,16 +51,18 @@ public class EventsListViewActivity extends BaseActivity implements
     }
 
     @Override
-    public void onConnectionResult(boolean success) {
-//        if (success) {
-//            refreshEvents(mLocationProvider.getCurrentLatLng());
-//        } else {
-//            Toast.makeText(this, R.string.error_no_network_connectivity, Toast.LENGTH_SHORT).show();
-//        }
+    public void onConnected(Bundle bundle) {
+        //add events fragment to activity once location client is connected
+        addFragmentToActivity(R.id.activity_events_container, new EventsListViewFragment(), EVENTS_LIST_VIEW_FRAGMENT_TAG);
     }
 
     @Override
-    public LatLng getCurrentLatLng() {
-        return mLocationProvider.getCurrentLatLng();
+    public void onDisconnected() {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
     }
 }

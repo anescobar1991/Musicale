@@ -27,7 +27,7 @@ import de.umass.lastfm.ImageSize;
 import de.umass.lastfm.Venue;
 
 public class AboutEventVenueFragment extends Fragment {
-    private OnAboutEventVenueFragmentInteractionListener mListener;
+    private AboutEventVenueFragmentInteractionListener mListener;
     private static final String ARG_EVENT = "eventArg";
     private SupportMapFragment mMapFragment;
     private GoogleMap mMap;
@@ -43,7 +43,7 @@ public class AboutEventVenueFragment extends Fragment {
      * to the activity and potentially other fragments contained in that
      * activity.
      */
-    public interface OnAboutEventVenueFragmentInteractionListener {
+    public interface AboutEventVenueFragmentInteractionListener {
         public void displayErrorMessage(String message);
     }
 
@@ -153,10 +153,10 @@ public class AboutEventVenueFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mListener = (OnAboutEventVenueFragmentInteractionListener) activity;
+            mListener = (AboutEventVenueFragmentInteractionListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnAboutEventVenueFragmentInteractionListener");
+                    + " must implement AboutEventVenueFragmentInteractionListener");
         }
     }
 

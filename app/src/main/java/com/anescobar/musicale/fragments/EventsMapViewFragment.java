@@ -50,7 +50,7 @@ public class EventsMapViewFragment extends Fragment implements EventFetcherListe
     private GoogleMap mMap;
     private ProgressBar mEventsLoadingProgressbar;
     private Button mRedoSearchButton;
-    private OnEventsMapViewFragmentInteractionListener mListener;
+    private EventsMapViewFragmentInteractionListener mListener;
 
     private EventQueryDetails mEventQueryDetails = EventQueryDetails.getInstance();
 
@@ -68,7 +68,7 @@ public class EventsMapViewFragment extends Fragment implements EventFetcherListe
      * to the activity and potentially other fragments contained in that
      * activity.
      */
-    public interface OnEventsMapViewFragmentInteractionListener {
+    public interface EventsMapViewFragmentInteractionListener {
         public LatLng getCurrentLatLng();
     }
 
@@ -133,7 +133,7 @@ public class EventsMapViewFragment extends Fragment implements EventFetcherListe
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mListener = (OnEventsMapViewFragmentInteractionListener) activity;
+            mListener = (EventsMapViewFragmentInteractionListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnEventMapViewFragmentInteractionListener");

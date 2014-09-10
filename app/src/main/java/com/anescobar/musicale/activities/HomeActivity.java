@@ -8,7 +8,7 @@ import com.anescobar.musicale.R;
 import com.anescobar.musicale.fragments.AboutMusicaleFragment;
 
 public class HomeActivity extends BaseActivity
-        implements AboutMusicaleFragment.OnAboutMusicaleFragmentInteractionListener {
+        implements AboutMusicaleFragment.AboutMusicaleFragmentInteractionListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,9 +20,5 @@ public class HomeActivity extends BaseActivity
     public void showNearbyEvents(View view) {
         Intent intent = new Intent(this, EventsListViewActivity.class);
         startActivity(intent);
-    }
-
-    @Override
-    public void onConnectionResult(boolean result) {
     }
 }

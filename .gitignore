@@ -5,6 +5,9 @@
 # files for the dex VM
 *.dex
 
+# crashlytics property file
+crashlytics-build.properties
+
 # Java class files
 *.class
 

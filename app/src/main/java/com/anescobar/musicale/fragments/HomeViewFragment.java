@@ -12,7 +12,7 @@ import com.anescobar.musicale.R;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link HomeViewFragment.OnHomeFragmentInteractionListener} interface
+ * {@link com.anescobar.musicale.fragments.HomeViewFragment.HomeFragmentInteractionListener} interface
  * to handle interaction home.
  * Use the {@link HomeViewFragment#newInstance} factory method to
  * create an instance of this fragment.
@@ -20,7 +20,7 @@ import com.anescobar.musicale.R;
  */
 public class HomeViewFragment extends Fragment {
     private static final int SECTION_INDEX = 0; //index that identifies fragment for activity to display correct title
-    private OnHomeFragmentInteractionListener mListener;
+    private HomeFragmentInteractionListener mListener;
 
     public HomeViewFragment() {
         // Required empty public constructor
@@ -50,11 +50,11 @@ public class HomeViewFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mListener = (OnHomeFragmentInteractionListener) activity;
+            mListener = (HomeFragmentInteractionListener) activity;
             mListener.onAttachDisplayTitle(SECTION_INDEX); //tells activity to display correct title
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnHomeFragmentInteractionListener");
+                    + " must implement HomeFragmentInteractionListener");
         }
     }
 
@@ -70,7 +70,7 @@ public class HomeViewFragment extends Fragment {
      * to the activity and potentially other fragments contained in that
      * activity.
      */
-    public interface OnHomeFragmentInteractionListener {
+    public interface HomeFragmentInteractionListener {
         public void onAttachDisplayTitle(int sectionIndex);
     }
 

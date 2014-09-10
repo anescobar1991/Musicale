@@ -22,7 +22,7 @@ import de.umass.lastfm.Event;
 import de.umass.lastfm.ImageSize;
 
 public class EventDetailsActivity extends FragmentActivity
-        implements AboutEventVenueFragment.OnAboutEventVenueFragmentInteractionListener {
+        implements AboutEventVenueFragment.AboutEventVenueFragmentInteractionListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -33,7 +33,7 @@ import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 public class EventsListViewFragment extends Fragment implements RecyclerView.OnScrollListener,
         EventFetcherListener {
 
-    private OnEventsListViewFragmentInteractionListener mListener;
+    private EventsListViewFragmentInteractionListener mListener;
     private LinearLayoutManager mLayoutManager;
     private Button mLoadMoreEventsButton;
     private EventsAdapter mAdapter;
@@ -53,7 +53,7 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
      * to the activity and potentially other fragments contained in that
      * activity.
      */
-    public interface OnEventsListViewFragmentInteractionListener {
+    public interface EventsListViewFragmentInteractionListener {
         public LatLng getCurrentLatLng();
     }
 
@@ -116,7 +116,7 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mListener = (OnEventsListViewFragmentInteractionListener) activity;
+            mListener = (EventsListViewFragmentInteractionListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnFragmentInteractionListener");
