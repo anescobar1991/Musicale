@@ -16,7 +16,7 @@ public abstract class LocationAwareActivity extends BaseActivity implements
         GooglePlayServicesClient.OnConnectionFailedListener,
         GooglePlayServicesClient.ConnectionCallbacks {
 
-    protected LocationClient mLocationClient;
+    private LocationClient mLocationClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

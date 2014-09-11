@@ -1,6 +1,5 @@
 package com.anescobar.musicale.fragments;
 
-import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
@@ -10,8 +9,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,11 +49,12 @@ public class EventsMapViewFragment extends Fragment implements EventFetcherListe
     private MapFragment mMapFragment;
     private NetworkUtil mNetworkUtil;
     private GoogleMap mMap;
-    private ProgressBar mEventsLoadingProgressbar;
     private Button mRedoSearchButton;
-    private EventsMapViewFragmentInteractionListener mListener;
+    private RelativeLayout mLoadingOverlay;
 
     private EventQueryDetails mEventQueryDetails = EventQueryDetails.getInstance();
+
+    private LatLng mCurrentLatLng;
 
     private int mCameraChangeCount = 0; //keeps track of how many times map camera change has occurred
     private HashMap<String, Event> mMarkers = new HashMap<String, Event>();
@@ -62,19 +64,25 @@ public class EventsMapViewFragment extends Fragment implements EventFetcherListe
         // Required empty public constructor
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     */
-    public interface EventsMapViewFragmentInteractionListener {
-        public LatLng getCurrentLatLng();
+    //always use this to create new instance of this fragment
+    public static EventsMapViewFragment newInstance(LatLng currentLocation) {
+        EventsMapViewFragment eventsMapViewFragment = new EventsMapViewFragment();
+
+        final Gson gson = new Gson();
+        String serializedCurrentLatLng = gson.toJson(currentLocation, LatLng.class);
+        Bundle args = new Bundle();
+        args.putString("currentLatLng", serializedCurrentLatLng);
+        eventsMapViewFragment.setArguments(args);
+
+        return eventsMapViewFragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //creates MapFragment
+        mMapFragment = new MapFragment();
 
         //initializes networkUtil class
         mNetworkUtil = new NetworkUtil();
@@ -84,8 +92,6 @@ public class EventsMapViewFragment extends Fragment implements EventFetcherListe
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_events_map_view, container, false);
-        //creates MapFragment
-        mMapFragment = new MapFragment();
 
         //displays map fragment on screen
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
@@ -93,7 +99,7 @@ public class EventsMapViewFragment extends Fragment implements EventFetcherListe
                 .commit();
 
         mRedoSearchButton = (Button) view.findViewById(R.id.fragment_events_map_redo_search);
-        mEventsLoadingProgressbar = (ProgressBar) view.findViewById(R.id.fragment_events_map_view_events_loading);
+        mLoadingOverlay = (RelativeLayout) view.findViewById(R.id.fragment_events_map_view_loading_overlay);
 
         //sets click listener for when user taps anywhere in map
         mRedoSearchButton.setOnClickListener(new View.OnClickListener() {
@@ -115,35 +121,32 @@ public class EventsMapViewFragment extends Fragment implements EventFetcherListe
     @Override
     public void onStart(){
         super.onStart();
-        if (mEventQueryDetails.currentLatLng == null) {
-            mEventQueryDetails.currentLatLng = mListener.getCurrentLatLng();
+
+        //deserializes latLng string in bundle and stores it
+        final Gson gson = new Gson();
+        String serializedLatLng = getArguments().getString("currentLatLng", null);
+
+        if (serializedLatLng != null) {
+            mCurrentLatLng = gson.fromJson(serializedLatLng, LatLng.class);
+
+            //sets up map, with its settings, and adds event markers
+            setUpMapIfNeeded(mCurrentLatLng);
+        } else {
+            //TODO catch this error scenario
         }
-        //sets up map, with its settings, and adds event markers
-        setUpMapIfNeeded(mEventQueryDetails.currentLatLng);
+
     }
 
     @Override
     public void onResume(){
         super.onResume();
-        //sets up map, with its settings, and adds event markers
-        setUpMapIfNeeded(mEventQueryDetails.currentLatLng);
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            mListener = (EventsMapViewFragmentInteractionListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnEventMapViewFragmentInteractionListener");
+        if (mCurrentLatLng != null) {
+            //sets up map, with its settings, and adds event markers
+            setUpMapIfNeeded(mCurrentLatLng);
+        } else {
+            //TODO catch this error scenario
         }
-    }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
     }
 
     //gets events from backend
@@ -223,13 +226,8 @@ public class EventsMapViewFragment extends Fragment implements EventFetcherListe
             mRedoSearchButton.setVisibility(View.GONE);
         }
 
-        //hides map fragment on screen
-        getChildFragmentManager().beginTransaction()
-                .hide(mMapFragment)
-                .commit();
-
-        //displays progress bar before getting events
-        mEventsLoadingProgressbar.setVisibility(View.VISIBLE);
+        //display loading overlay
+        mLoadingOverlay.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -247,7 +245,7 @@ public class EventsMapViewFragment extends Fragment implements EventFetcherListe
             //clears events list before adding events to it
             mEventQueryDetails.events.clear();
 
-            //add events to mEvents
+            //add events to cache
             mEventQueryDetails.events.addAll(events);
 
             //set events adapter with new events
@@ -257,13 +255,8 @@ public class EventsMapViewFragment extends Fragment implements EventFetcherListe
             Toast.makeText(getActivity(),getString(R.string.error_generic),Toast.LENGTH_SHORT).show();
         }
 
-        //shows map fragment on screen again
-        getChildFragmentManager().beginTransaction()
-                .show(mMapFragment)
-                .commit();
-
-        //hide loading progressbar in middle of screen
-        mEventsLoadingProgressbar.setVisibility(View.GONE);
+        //hide loading overlay
+        mLoadingOverlay.setVisibility(View.GONE);
     }
 
     private void createMapMarker(LatLng latLng, Event event) {
@@ -386,6 +379,5 @@ public class EventsMapViewFragment extends Fragment implements EventFetcherListe
             //displays redo search button when user moves map camera position
             mRedoSearchButton.setVisibility(View.VISIBLE);
         }
-
     }
 }

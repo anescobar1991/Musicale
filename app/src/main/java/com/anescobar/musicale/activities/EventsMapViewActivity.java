@@ -7,8 +7,7 @@ import com.anescobar.musicale.R;
 import com.anescobar.musicale.fragments.EventsMapViewFragment;
 import com.google.android.gms.common.ConnectionResult;
 
-public class EventsMapViewActivity extends LocationAwareActivity implements
-        EventsMapViewFragment.EventsMapViewFragmentInteractionListener {
+public class EventsMapViewActivity extends LocationAwareActivity {
 
     public static final String EVENTS_MAP_VIEW_FRAGMENT_TAG = "eventsMapViewFragment";
 
@@ -36,7 +35,7 @@ public class EventsMapViewActivity extends LocationAwareActivity implements
     @Override
     public void onConnected(Bundle bundle) {
         //add map fragment to activity only when locationClient is connected
-        addFragmentToActivity(R.id.activity_events_map_view_container, new EventsMapViewFragment(), EVENTS_MAP_VIEW_FRAGMENT_TAG);
+        addFragmentToActivity(R.id.activity_events_map_view_container, EventsMapViewFragment.newInstance(getCurrentLatLng()), EVENTS_MAP_VIEW_FRAGMENT_TAG);
     }
 
     @Override

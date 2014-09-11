@@ -9,8 +9,7 @@ import com.anescobar.musicale.fragments.EventsListViewFragment;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.maps.model.LatLng;
 
-public class EventsListViewActivity extends LocationAwareActivity implements
-        EventsListViewFragment.EventsListViewFragmentInteractionListener {
+public class EventsListViewActivity extends LocationAwareActivity {
 
     private static final String EVENTS_LIST_VIEW_FRAGMENT_TAG = "eventsListViewFragment";
 
@@ -53,7 +52,13 @@ public class EventsListViewActivity extends LocationAwareActivity implements
     @Override
     public void onConnected(Bundle bundle) {
         //add events fragment to activity once location client is connected
-        addFragmentToActivity(R.id.activity_events_container, new EventsListViewFragment(), EVENTS_LIST_VIEW_FRAGMENT_TAG);
+        addFragmentToActivity(R.id.activity_events_container, EventsListViewFragment.newInstance(getCurrentLatLng()), EVENTS_LIST_VIEW_FRAGMENT_TAG);
+    }
+
+
+    @Override
+    protected void onStop() {
+        super.onStop();
     }
 
     @Override

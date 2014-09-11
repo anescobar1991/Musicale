@@ -1,6 +1,5 @@
 package com.anescobar.musicale.fragments;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -22,6 +21,7 @@ import com.anescobar.musicale.utils.EventsFinder;
 import com.anescobar.musicale.utils.NetworkUtil;
 import com.anescobar.musicale.utils.EventQueryDetails;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
@@ -33,7 +33,7 @@ import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 public class EventsListViewFragment extends Fragment implements RecyclerView.OnScrollListener,
         EventFetcherListener {
 
-    private EventsListViewFragmentInteractionListener mListener;
+//    private EventsListViewFragmentInteractionListener mListener;
     private LinearLayoutManager mLayoutManager;
     private Button mLoadMoreEventsButton;
     private EventsAdapter mAdapter;
@@ -47,17 +47,20 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
 
     private boolean mAdapterSet = false;
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     */
-    public interface EventsListViewFragmentInteractionListener {
-        public LatLng getCurrentLatLng();
+    //always use this to create new instance of this fragment
+    public static EventsListViewFragment newInstance(LatLng currentLocation) {
+        EventsListViewFragment eventsListViewFragment = new EventsListViewFragment();
+
+        final Gson gson = new Gson();
+        String serializedCurrentLatLng = gson.toJson(currentLocation, LatLng.class);
+        Bundle args = new Bundle();
+        args.putString("currentLatLng", serializedCurrentLatLng);
+        eventsListViewFragment.setArguments(args);
+
+        return eventsListViewFragment;
     }
 
-    public EventsListViewFragment() {
+        public EventsListViewFragment() {
         // Required empty public constructor
     }
 
@@ -105,28 +108,18 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
     public void onStart(){
         super.onStart();
 
-        if (mEventQueryDetails.currentLatLng == null) {
-            mEventQueryDetails.currentLatLng = mListener.getCurrentLatLng();
-        }
-        //adds events to view
-        loadEventsToView();
-    }
+        //gets serialized latlng string from bundle and deserializes it
+        final Gson gson = new Gson();
+        String serializedLatLng = getArguments().getString("currentLatLng", null);
 
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            mListener = (EventsListViewFragmentInteractionListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
+        if (serializedLatLng != null) {
+            LatLng currentLatLng = gson.fromJson(serializedLatLng, LatLng.class);
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
+            //adds events to view
+            loadEventsToView(currentLatLng);
+        } else {
+            //TODO catch this error scenario
+        }
     }
 
     //makes sure that load more vents button is only displayed when scrolled to bottom of screen
@@ -263,14 +256,13 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
     }
 
     //loads events and sets adapter that will display them in recycler view
-    private void loadEventsToView() {
+    private void loadEventsToView(LatLng latLng) {
         //if there are no events from previous saved session then fetch events from backend
         //else use events from previous saved session to populate cards
         if (mEventQueryDetails.events.isEmpty()) {
-            getEventsFromServer(1, mEventQueryDetails.currentLatLng);
+            getEventsFromServer(1, latLng);
         } else {
             setEventsAdapter();
         }
     }
-
 }
