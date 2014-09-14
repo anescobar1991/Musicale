@@ -5,7 +5,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.os.Bundle;
 
-import com.anescobar.musicale.utils.EventQueryDetails;
+import com.anescobar.musicale.models.EventQueryDetails;
 
 /**
  * Created by andres on 9/5/14.
@@ -24,7 +24,7 @@ public abstract class BaseActivity extends Activity {
     }
 
     //adds fragment to activity
-    protected void addFragmentToActivity(int container, Fragment fragment, String fragmentTag) {
+    public void addFragmentToActivity(int container, Fragment fragment, String fragmentTag) {
         FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(container, fragment, fragmentTag)

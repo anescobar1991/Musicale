@@ -3,4 +3,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
+    <!--<include layout="@layout/loading_overlay"-->
+        <!--android:id="@+id/activity_events_container_loading_overlay"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:visibility="visible" />-->
+
 </FrameLayout>

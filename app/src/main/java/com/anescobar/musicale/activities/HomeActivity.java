@@ -18,7 +18,7 @@ public class HomeActivity extends BaseActivity
     }
 
     public void showNearbyEvents(View view) {
-        Intent intent = new Intent(this, EventsListViewActivity.class);
+        Intent intent = new Intent(this, EventsActivity.class);
         startActivity(intent);
     }
 }

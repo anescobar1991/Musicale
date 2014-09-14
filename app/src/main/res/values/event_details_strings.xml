@@ -1,13 +1,12 @@
 <resources>
 
     <string name="title_activity_event_details">Event Details</string>
-    <string name="action_refresh">Refresh</string>
     <string name="event_image_accessibility_label">Event Image</string>
     <string name="event_details_get_tickets_button_text">Get tickets</string>
     <string name="event_details_show_in_map_button_text">Show in map</string>
     <string name="event_details_about_venue_tab">About venue</string>
     <string name="event_details_about_artist_tab">About artist</string>
-    <string name="event_details_social_media_tab">Social media</string>
+    <string name="event_details_social_media_tab">Event buzz</string>
     <string name="about_venue_show_other_events_button_text">Other events at this venue</string>
     <string name="about_venue_show_in_map">Show in map</string>
     <string name="about_venue_call_venue">Contact venue</string>

@@ -7,25 +7,21 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <Button
+        android:id="@+id/fragment_events_map_view_in_list"
+        android:layout_width="match_parent"
+        android:textColor="#FFFFFF"
+        android:layout_gravity="top"
+        style="@android:style/Widget.Material.Light.Button"
+        android:background="@drawable/default_raised_button"
+        android:text="@string/events_map_view_in_list_button_text"
+        android:layout_height="wrap_content" />
+
     <include layout="@layout/loading_overlay"
         android:id="@+id/fragment_events_map_view_loading_overlay"
         android:layout_height="match_parent"
         android:layout_width="match_parent"
         android:visibility="gone" />
-    <!--<View-->
-        <!--android:id="@+id/fragment_events_map_view_events_loading_layer"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:visibility="gone"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:background="#60000000"-->
-        <!--/>-->
-
-    <!--<ProgressBar-->
-        <!--android:id="@+id/fragment_events_map_view_events_loading"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:visibility="gone"-->
-        <!--android:layout_gravity="center"-->
-        <!--android:layout_height="wrap_content" />-->
 
     <Button
         android:id="@+id/fragment_events_map_redo_search"
@@ -35,7 +31,7 @@
         android:visibility="gone"
         style="@android:style/Widget.Material.Light.Button"
         android:background="@drawable/default_raised_button"
-        android:text="@string/events_map_redo_search"
+        android:text="@string/events_map_redo_search_button_text"
         android:layout_height="wrap_content" />
 
 </FrameLayout>

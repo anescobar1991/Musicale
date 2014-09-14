@@ -1,6 +1,4 @@
-package com.anescobar.musicale.utils;
-
-import com.google.android.gms.maps.model.LatLng;
+package com.anescobar.musicale.models;
 
 import java.util.ArrayList;
 
@@ -14,7 +12,6 @@ public class EventQueryDetails {
     private static EventQueryDetails sInstance = null;
 
     public ArrayList<Event> events = new ArrayList<Event>();
-    public LatLng currentLatLng;
     public int totalNumberOfEventPages = 0;
     public int numberOfEventPagesLoaded = 0;
 

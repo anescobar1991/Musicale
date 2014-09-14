@@ -1,27 +1,29 @@
 package com.anescobar.musicale.fragments;
 
+import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.anescobar.musicale.R;
 import com.anescobar.musicale.activities.EventDetailsActivity;
+import com.anescobar.musicale.activities.EventsActivity;
 import com.anescobar.musicale.interfaces.EventFetcherListener;
 import com.anescobar.musicale.utils.EventsFinder;
 import com.anescobar.musicale.utils.NetworkUtil;
-import com.anescobar.musicale.utils.EventQueryDetails;
+import com.anescobar.musicale.models.EventQueryDetails;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -51,10 +53,11 @@ public class EventsMapViewFragment extends Fragment implements EventFetcherListe
     private GoogleMap mMap;
     private Button mRedoSearchButton;
     private RelativeLayout mLoadingOverlay;
+    private EventMapViewFragmentInteractionListener mListener;
 
     private EventQueryDetails mEventQueryDetails = EventQueryDetails.getInstance();
 
-    private LatLng mCurrentLatLng;
+    private LatLng mLatLng;
 
     private int mCameraChangeCount = 0; //keeps track of how many times map camera change has occurred
     private HashMap<String, Event> mMarkers = new HashMap<String, Event>();
@@ -78,14 +81,43 @@ public class EventsMapViewFragment extends Fragment implements EventFetcherListe
     }
 
     @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mListener = (EventMapViewFragmentInteractionListener) activity;
+            mListener.setMapViewTitleInActionBar();
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement EventMapViewFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //lets it know that this fragment has its own menu implementation
+        setHasOptionsMenu(true);
 
         //creates MapFragment
         mMapFragment = new MapFragment();
 
         //initializes networkUtil class
         mNetworkUtil = new NetworkUtil();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+
+        menu.findItem(R.id.action_refresh_events).setVisible(false);
+        menu.findItem(R.id.action_search_events).setVisible(false);
     }
 
     @Override
@@ -98,20 +130,29 @@ public class EventsMapViewFragment extends Fragment implements EventFetcherListe
         transaction.add(R.id.fragment_events_map_view_container, mMapFragment)
                 .commit();
 
+        Button viewInListButton = (Button) view.findViewById(R.id.fragment_events_map_view_in_list);
         mRedoSearchButton = (Button) view.findViewById(R.id.fragment_events_map_redo_search);
         mLoadingOverlay = (RelativeLayout) view.findViewById(R.id.fragment_events_map_view_loading_overlay);
 
-        //sets click listener for when user taps anywhere in map
+        //sets click listener for when user taps redo search button
         mRedoSearchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 LatLng newLatLng = mMap.getCameraPosition().target;
 
-                //stores map center latlng
-                mEventQueryDetails.currentLatLng = newLatLng;
+                //stores new latLng
+                mLatLng = newLatLng;
 
                 //calls getEvents method, which gets events from backend and displays and stores them as needed
                 getEventsFromServer(1, newLatLng);
+            }
+        });
+
+        //sets click listener for view in list button
+        viewInListButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mListener.addFragmentToActivity(R.id.activity_events_container, EventsListViewFragment.newInstance(mLatLng), EventsActivity.EVENTS_LIST_VIEW_FRAGMENT_TAG);
             }
         });
 
@@ -127,10 +168,10 @@ public class EventsMapViewFragment extends Fragment implements EventFetcherListe
         String serializedLatLng = getArguments().getString("currentLatLng", null);
 
         if (serializedLatLng != null) {
-            mCurrentLatLng = gson.fromJson(serializedLatLng, LatLng.class);
+            mLatLng = gson.fromJson(serializedLatLng, LatLng.class);
 
             //sets up map, with its settings, and adds event markers
-            setUpMapIfNeeded(mCurrentLatLng);
+            setUpMapIfNeeded(mLatLng);
         } else {
             //TODO catch this error scenario
         }
@@ -140,9 +181,9 @@ public class EventsMapViewFragment extends Fragment implements EventFetcherListe
     @Override
     public void onResume(){
         super.onResume();
-        if (mCurrentLatLng != null) {
+        if (mLatLng != null) {
             //sets up map, with its settings, and adds event markers
-            setUpMapIfNeeded(mCurrentLatLng);
+            setUpMapIfNeeded(mLatLng);
         } else {
             //TODO catch this error scenario
         }
@@ -379,5 +420,16 @@ public class EventsMapViewFragment extends Fragment implements EventFetcherListe
             //displays redo search button when user moves map camera position
             mRedoSearchButton.setVisibility(View.VISIBLE);
         }
+    }
+
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     */
+    public interface EventMapViewFragmentInteractionListener {
+        public void addFragmentToActivity(int container, Fragment fragment, String fragmentTag);
+        public void setMapViewTitleInActionBar();
     }
 }

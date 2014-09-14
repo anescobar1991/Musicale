@@ -14,12 +14,13 @@
 
         <item name="vpiTabPageIndicatorStyle">@style/Widget.TabPageIndicator</item>
 
+        <!--<item name="android:actionMenuTextColor">@color/accent</item>-->
+        <!--<item name="android:popupMenuStyle">@style/MusicalePopUpMenu</item>-->
+
     </style>
 
     <!-- Base application theme for when no actionBar is wanted. -->
     <style name="MusicaleThemeNoActionBar" parent="android:Theme.Material.Light.NoActionBar">
-        <!-- enable window content transitions -->
-        <item name="android:windowContentTransitions">true</item>
         <!-- Main theme colors -->
         <!--   your app's branding color (for the app bar) -->
         <item name="android:colorPrimary">@color/primary</item>
@@ -57,5 +58,11 @@
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@drawable/tab_page_indicator_title_colors</item>
     </style>
+
+    <!--<style name="MusicalePopUpMenu" parent="android:Widget.Material.Light">-->
+        <!--<item name="android:popupBackground">#ffe373c8</item>-->
+        <!--<item name="android:background">#ffe373c8</item>-->
+        <!--<item name="android:textColor">@color/accent</item>-->
+    <!--</style>-->
 
 </resources>

@@ -1,11 +1,13 @@
 package com.anescobar.musicale.fragments;
 
-import android.content.Intent;
+import android.app.Activity;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -14,12 +16,12 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.anescobar.musicale.R;
-import com.anescobar.musicale.activities.EventsMapViewActivity;
+import com.anescobar.musicale.activities.EventsActivity;
 import com.anescobar.musicale.adapters.EventsAdapter;
 import com.anescobar.musicale.interfaces.EventFetcherListener;
 import com.anescobar.musicale.utils.EventsFinder;
 import com.anescobar.musicale.utils.NetworkUtil;
-import com.anescobar.musicale.utils.EventQueryDetails;
+import com.anescobar.musicale.models.EventQueryDetails;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 
@@ -33,7 +35,7 @@ import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 public class EventsListViewFragment extends Fragment implements RecyclerView.OnScrollListener,
         EventFetcherListener {
 
-//    private EventsListViewFragmentInteractionListener mListener;
+    private EventListViewFragmentInteractionListener mListener;
     private LinearLayoutManager mLayoutManager;
     private Button mLoadMoreEventsButton;
     private EventsAdapter mAdapter;
@@ -42,6 +44,8 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
     private NetworkUtil mNetworkUtil;
     private SmoothProgressBar mMoreEventsLoadingProgressBar;
     private Button mExploreInMapButton;
+
+    private LatLng mLatLng;
 
     private EventQueryDetails mEventQueryDetails = EventQueryDetails.getInstance();
 
@@ -65,8 +69,29 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
     }
 
     @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mListener = (EventListViewFragmentInteractionListener) activity;
+            mListener.setListViewTitleInActionBar();
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement EventMapViewFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //lets it know that this fragment has its own menu implementation
+        setHasOptionsMenu(true);
 
         //initializes networkUtil class
         mNetworkUtil = new NetworkUtil();
@@ -88,20 +113,29 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
         //sets on clickListener for load more events button
         mLoadMoreEventsButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                getEventsFromServer(mEventQueryDetails.numberOfEventPagesLoaded + 1, mEventQueryDetails.currentLatLng);
+                getEventsFromServer(mEventQueryDetails.numberOfEventPagesLoaded + 1, mLatLng);
             }
         });
 
         //sets on clickListener for explore in map button
         mExploreInMapButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), EventsMapViewActivity.class);
-                startActivity(intent);
+                mListener.addFragmentToActivity(R.id.activity_events_container, EventsMapViewFragment.newInstance(mLatLng), EventsActivity.EVENTS_MAP_VIEW_FRAGMENT_TAG);
+
             }
         });
 
         return view;
     }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+
+        menu.findItem(R.id.action_refresh_events).setVisible(true);
+        menu.findItem(R.id.action_search_events).setVisible(true);
+    }
+
 
     // Called at the start of the visible lifetime.
     @Override
@@ -117,6 +151,9 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
 
             //adds events to view
             loadEventsToView(currentLatLng);
+
+            //stores latLng
+            mLatLng = currentLatLng;
         } else {
             //TODO catch this error scenario
         }
@@ -264,5 +301,20 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
         } else {
             setEventsAdapter();
         }
+    }
+
+    public void setCurrentLatLng(LatLng newLatLng) {
+        mLatLng = newLatLng;
+    }
+
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     */
+    public interface EventListViewFragmentInteractionListener {
+        public void addFragmentToActivity(int container, Fragment fragment, String fragmentTag);
+        public void setListViewTitleInActionBar();
     }
 }

@@ -36,20 +36,11 @@
             android:theme="@style/MusicaleThemeNoActionBar" >
         </activity>
         <activity
-            android:name=".activities.EventsListViewActivity"
+            android:name=".activities.EventsActivity"
             android:configChanges="orientation"
-            android:parentActivityName=".activities.HomeActivity"
             android:screenOrientation="portrait"
             android:label="@string/title_events_activity"
             android:theme="@style/MusicaleTheme" >
-        </activity>
-        <activity
-            android:name=".activities.EventsMapViewActivity"
-            android:configChanges="orientation"
-            android:screenOrientation="portrait"
-            android:label="@string/title_activity_events_map_view"
-            android:theme="@style/MusicaleTheme"
-            android:parentActivityName=".activities.EventsListViewActivity" >
         </activity>
         <activity
             android:name=".activities.EventDetailsActivity"

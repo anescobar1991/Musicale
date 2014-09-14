@@ -6,12 +6,16 @@ import android.view.MenuItem;
 
 import com.anescobar.musicale.R;
 import com.anescobar.musicale.fragments.EventsListViewFragment;
+import com.anescobar.musicale.fragments.EventsMapViewFragment;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.maps.model.LatLng;
 
-public class EventsListViewActivity extends LocationAwareActivity {
+public class EventsActivity extends LocationAwareActivity implements
+        EventsListViewFragment.EventListViewFragmentInteractionListener,
+        EventsMapViewFragment.EventMapViewFragmentInteractionListener {
 
-    private static final String EVENTS_LIST_VIEW_FRAGMENT_TAG = "eventsListViewFragment";
+    public static final String EVENTS_LIST_VIEW_FRAGMENT_TAG = "eventsListViewFragment";
+    public static final String EVENTS_MAP_VIEW_FRAGMENT_TAG = "eventsMapViewFragment";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +47,7 @@ public class EventsListViewActivity extends LocationAwareActivity {
         EventsListViewFragment eventsListViewFragment = (EventsListViewFragment) getFragmentManager().findFragmentByTag(EVENTS_LIST_VIEW_FRAGMENT_TAG);
 
         //stores new current location
-        mEventQueryDetails.currentLatLng = userLatLng;
+        eventsListViewFragment.setCurrentLatLng(userLatLng);
 
         //calls eventsListViewFragment's getEvents method, which gets events from backend and displays and stores them as needed
         eventsListViewFragment.getEventsFromServer(1,userLatLng);
@@ -68,6 +72,13 @@ public class EventsListViewActivity extends LocationAwareActivity {
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
+    }
 
+    public void setMapViewTitleInActionBar() {
+        getActionBar().setTitle(R.string.title_events_map_view);
+    }
+
+    public void setListViewTitleInActionBar() {
+        getActionBar().setTitle(R.string.title_events_activity);
     }
 }
