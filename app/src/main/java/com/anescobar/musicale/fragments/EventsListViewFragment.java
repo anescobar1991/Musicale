@@ -81,12 +81,6 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -159,6 +153,12 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
         }
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
     //makes sure that load more vents button is only displayed when scrolled to bottom of screen
     //and when there are more pages left of events
     @Override
@@ -211,7 +211,7 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
         if (mNetworkUtil.isNetworkAvailable(getActivity())) {
             mEventQueryDetails.numberOfEventPagesLoaded = pageNumber;
 
-            new EventsFinder(this, userLocation).getEvents(pageNumber);
+            new EventsFinder().getEvents(pageNumber, userLocation, this);
         } else {
             Toast.makeText(getActivity(),getString(R.string.error_no_network_connectivity),Toast.LENGTH_SHORT).show();
         }
@@ -233,7 +233,7 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
 
     //called onPreExecute of eventsFetcherTask
     @Override
-    public void onTaskAboutToStart() {
+    public void onEventFetcherTaskAboutToStart() {
         //display loading progressbar at bottom of screen if it is loading more events after first page
         if (mEventQueryDetails.numberOfEventPagesLoaded > 1) {
             mLoadMoreEventsButton.setVisibility(View.GONE);
@@ -251,7 +251,7 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
 
     //called onPostExecute of eventsFetcherTask
     @Override
-    public void onTaskCompleted(PaginatedResult<Event> eventsNearby) {
+    public void onEventFetcherTaskCompleted(PaginatedResult<Event> eventsNearby) {
         //display explore in map button
         mExploreInMapButton.setVisibility(View.VISIBLE);
 

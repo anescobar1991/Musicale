@@ -59,7 +59,7 @@ public class SplashActivity extends LocationAwareActivity implements EventFetche
     @Override
     public void onConnected(Bundle bundle) {
         if (mNetworkUtil.isNetworkAvailable(this)) {
-            new EventsFinder(this, getCurrentLatLng()).getEvents(1);
+            new EventsFinder().getEvents(1, getCurrentLatLng(), this);
         } else {
             Toast.makeText(this, getString(R.string.error_no_network_connectivity), Toast.LENGTH_SHORT).show();
         }
@@ -75,11 +75,11 @@ public class SplashActivity extends LocationAwareActivity implements EventFetche
     }
 
     @Override
-    public void onTaskAboutToStart() {
+    public void onEventFetcherTaskAboutToStart() {
     }
 
     @Override
-    public void onTaskCompleted(PaginatedResult<Event> eventsNearby) {
+    public void onEventFetcherTaskCompleted(PaginatedResult<Event> eventsNearby) {
         //if last call was successful then load events to screen
         if (Caller.getInstance().getLastResult().isSuccessful()) {
             ArrayList<Event> events= new ArrayList<Event>(eventsNearby.getPageResults());

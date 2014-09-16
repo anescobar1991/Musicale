@@ -11,5 +11,6 @@
     <string name="about_venue_show_in_map">Show in map</string>
     <string name="about_venue_call_venue">Contact venue</string>
     <string name="about_venue_visit_venue_website">Visit venue website</string>
+    <string name="other_events_title_text">Other upcoming events at this venue</string>
 
 </resources>

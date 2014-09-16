@@ -194,7 +194,7 @@ public class EventsMapViewFragment extends Fragment implements EventFetcherListe
     public void getEventsFromServer(Integer pageNumber, LatLng userLocation) {
 
         if (mNetworkUtil.isNetworkAvailable(getActivity())) {
-            new EventsFinder(this, userLocation).getEvents(pageNumber);
+            new EventsFinder().getEvents(pageNumber, userLocation, this);
         } else {
             Toast.makeText(getActivity(),getString(R.string.error_no_network_connectivity),Toast.LENGTH_SHORT).show();
         }
@@ -261,7 +261,7 @@ public class EventsMapViewFragment extends Fragment implements EventFetcherListe
     }
 
     @Override
-    public void onTaskAboutToStart() {
+    public void onEventFetcherTaskAboutToStart() {
         //hides redo search button if visible
         if (mRedoSearchButton.getVisibility() == View.VISIBLE) {
             mRedoSearchButton.setVisibility(View.GONE);
@@ -272,7 +272,7 @@ public class EventsMapViewFragment extends Fragment implements EventFetcherListe
     }
 
     @Override
-    public void onTaskCompleted(PaginatedResult<Event> eventsNearby) {
+    public void onEventFetcherTaskCompleted(PaginatedResult<Event> eventsNearby) {
         //if last call was successful then load events to screen
         if (Caller.getInstance().getLastResult().isSuccessful()) {
             ArrayList<Event> events= new ArrayList<Event>(eventsNearby.getPageResults());

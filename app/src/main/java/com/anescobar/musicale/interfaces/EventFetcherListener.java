@@ -8,6 +8,6 @@ import de.umass.lastfm.PaginatedResult;
  * Interface to be used as callback for EventsFetcher asynctask
  */
 public interface EventFetcherListener {
-    void onTaskAboutToStart();
-    void onTaskCompleted(PaginatedResult<Event> events);
+    void onEventFetcherTaskAboutToStart();
+    void onEventFetcherTaskCompleted(PaginatedResult<Event> events);
 }

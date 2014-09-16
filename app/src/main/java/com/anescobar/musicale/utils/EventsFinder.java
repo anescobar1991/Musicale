@@ -4,8 +4,10 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.anescobar.musicale.interfaces.EventFetcherListener;
+import com.anescobar.musicale.interfaces.VenueEventsFetcherListener;
 import com.google.android.gms.maps.model.LatLng;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,6 +16,7 @@ import de.umass.lastfm.Event;
 import de.umass.lastfm.PaginatedResult;
 import de.umass.lastfm.ResponseBuilder;
 import de.umass.lastfm.Result;
+import de.umass.lastfm.Venue;
 import de.umass.util.MapUtilities;
 
 /**
@@ -21,18 +24,19 @@ import de.umass.util.MapUtilities;
  * Performs search for Last FM events
  */
 public class EventsFinder {
-    private EventFetcherListener mListener;
-    private LatLng mLocation;
     private static final String API_KEY = "824f19ce3c166a10c7b9858e3dfc3235";
 
-    public EventsFinder(EventFetcherListener listener, LatLng location) {
-        this.mListener = listener;
-        this.mLocation = location;
+    public EventsFinder() {
     }
 
     //publicly accessible method which is called to get Events back from backend
-    public void getEvents(Integer pageNumber) {
-        new EventsFetcherTask(mLocation, mListener).execute(pageNumber);
+    public void getEvents(Integer pageNumber, LatLng location, EventFetcherListener eventFetcherListener) {
+        new EventsFetcherTask(location, eventFetcherListener).execute(pageNumber);
+    }
+
+    //publicly accessible method which is called to get upcoming events at venue
+    public void getUpcomingEventsAtVenue(String venueId, VenueEventsFetcherListener venueEventsFetcherListener) {
+        new VenueEventsFetcherTask(venueEventsFetcherListener).execute(venueId);
     }
 
     /**
@@ -84,7 +88,7 @@ public class EventsFinder {
 
         @Override
         protected void onPreExecute() {
-            mListener.onTaskAboutToStart();
+            mListener.onEventFetcherTaskAboutToStart();
 
         }
 
@@ -93,7 +97,38 @@ public class EventsFinder {
             Result response = Caller.getInstance().getLastResult();
             Log.w("events_finder_response", response.toString());
 
-            mListener.onTaskCompleted(events);
+            mListener.onEventFetcherTaskCompleted(events);
+        }
+    }
+
+    private class VenueEventsFetcherTask extends AsyncTask<String, Void, Collection<Event>> {
+        private VenueEventsFetcherListener mListener;
+
+        public VenueEventsFetcherTask(VenueEventsFetcherListener listener) {
+            this.mListener = listener;
+        }
+
+        @Override
+        protected Collection<Event> doInBackground(String... venueIds) {
+            //necessary to fix bug in last fm library
+            Caller.getInstance().setCache(null);
+
+            //send server request to get upcoming events for given venue
+            return Venue.getEvents(venueIds[0], false, API_KEY);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            mListener.onVenueEventsFetcherTaskAboutToStart();
+
+        }
+
+        @Override
+        protected void onPostExecute(Collection<Event> events) {
+            Result response = Caller.getInstance().getLastResult();
+            Log.w("events_finder_response", response.toString());
+
+            mListener.onVenueEventsFetcherTaskCompleted(events);
         }
     }
 

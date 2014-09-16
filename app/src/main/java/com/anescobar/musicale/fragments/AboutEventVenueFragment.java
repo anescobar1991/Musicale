@@ -1,6 +1,7 @@
 package com.anescobar.musicale.fragments;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,10 +11,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.anescobar.musicale.R;
+import com.anescobar.musicale.activities.EventDetailsActivity;
+import com.anescobar.musicale.interfaces.VenueEventsFetcherListener;
+import com.anescobar.musicale.utils.EventsFinder;
+import com.anescobar.musicale.utils.NetworkUtil;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -23,15 +31,24 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
+import java.util.Collection;
+
+import de.umass.lastfm.Event;
 import de.umass.lastfm.ImageSize;
 import de.umass.lastfm.Venue;
 
-public class AboutEventVenueFragment extends Fragment {
+public class AboutEventVenueFragment extends Fragment implements VenueEventsFetcherListener {
+
     private AboutEventVenueFragmentInteractionListener mListener;
     private static final String ARG_EVENT = "eventArg";
     private SupportMapFragment mMapFragment;
     private GoogleMap mMap;
     private Venue mVenue;
+    private NetworkUtil mNetworkUtil;
+    private LinearLayout mOtherEventsContainer;
+    private ProgressBar mLoadingProgressbar;
+    private EventsFinder mEventsFinder;
+    private Button mShowOtherEventsButton;
 
     public AboutEventVenueFragment() {
         // Required empty public constructor
@@ -77,6 +94,13 @@ public class AboutEventVenueFragment extends Fragment {
 
         String serializedEvent = args.getString(ARG_EVENT, null);
 
+        //gets new instance of EventsFinder
+        mEventsFinder = new EventsFinder();
+
+        //instantiates new networkUtil
+        mNetworkUtil = new NetworkUtil();
+
+        //gets MapFragment
         mMapFragment = new SupportMapFragment();
 
         //displays map fragment on screen
@@ -160,19 +184,29 @@ public class AboutEventVenueFragment extends Fragment {
         }
     }
 
-    private void setUpView(final Venue venue, View view) {
+    private void setUpView(final Venue venue, final View view) {
+        mOtherEventsContainer = (LinearLayout) view.findViewById(R.id.fragment_about_venue_other_events_container);
+        mLoadingProgressbar = (ProgressBar) view.findViewById(R.id.fragment_about_venue_other_events_loading);
+        mShowOtherEventsButton = (Button) view.findViewById(R.id.fragment_about_venue_venue_show_other_events);
         TextView venueName = (TextView) view.findViewById(R.id.fragment_about_venue_venue_name);
         TextView venuePhoneNumberTextView = (TextView) view.findViewById(R.id.fragment_about_venue_phone_number);
         TextView venueUrlTextView = (TextView) view.findViewById(R.id.fragment_about_venue_url);
         TextView venueAddress = (TextView) view.findViewById(R.id.fragment_about_venue_address);
         ImageView venueImage = (ImageView) view.findViewById(R.id.fragment_about_venue_image);
-        Button showOtherEventsButton = (Button) view.findViewById(R.id.fragment_about_venue_venue_show_other_events);
         RelativeLayout venueUrlContainer = (RelativeLayout) view.findViewById(R.id.fragment_about_venue_url_container);
         RelativeLayout venuePhoneNumberContainer = (RelativeLayout) view.findViewById(R.id.fragment_about_venue_phone_number_container);
 
         String venuePhoneNumber = venue.getPhonenumber();
         String venueUrl = venue.getWebsite();
         String venueImageUrl = venue.getImageURL(ImageSize.EXTRALARGE);
+
+        //sets on clickListener for view other events at venue button
+        mShowOtherEventsButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                //displays other events section
+                displayOtherEventsAtVenue(view);
+            }
+        });
 
         //-------------loads all dynamic data into view-----------------
 
@@ -216,6 +250,93 @@ public class AboutEventVenueFragment extends Fragment {
         if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
             getActivity().startActivity(intent);
         }
+    }
+
+    private void displayOtherEventsAtVenue(View view) {
+        if (mNetworkUtil.isNetworkAvailable(getActivity())) {
+            LinearLayout otherEventsContainer = (LinearLayout) view.findViewById(R.id.fragment_about_venue_other_events_container);
+
+            //hide show other events button
+            mShowOtherEventsButton.setVisibility(View.GONE);
+
+            //sets other Events area visible
+            otherEventsContainer.setVisibility(View.VISIBLE);
+
+            //gets venue Events from backend
+            getVenueEvents(mVenue.getId());
+        } else {
+            Toast.makeText(getActivity(), R.string.error_no_network_connectivity, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void setUpEventCard(final Event event, final LinearLayout parentView) {
+        LayoutInflater vi = (LayoutInflater) getActivity().getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = vi.inflate(R.layout.event_card, parentView, false);
+
+        ImageView eventImage = (ImageView) view.findViewById(R.id.event_card_event_image);
+        TextView eventTitleTextView = (TextView) view.findViewById(R.id.event_card_event_title_textfield);
+        TextView eventDateTextView = (TextView) view.findViewById(R.id.event_card_event_date_textfield);
+        TextView eventVenueNameTextView = (TextView) view.findViewById(R.id.event_card_venue_name_textfield);
+        TextView venueLocationTextView = (TextView) view.findViewById(R.id.event_card_venue_location_textfield);
+        Button viewInMapButton = (Button) view.findViewById(R.id.event_card_show_in_map_button);
+        Button moreDetailsButton = (Button) view.findViewById(R.id.event_card_more_details_button);
+
+        //hides view in map button as it is not necessary in this case
+        viewInMapButton.setVisibility(View.GONE);
+
+        //padding padding must differ from default to account for view in map button not being displayed
+        moreDetailsButton.setPadding(0, 0, 0, 0);
+
+        //sets event card details
+        eventTitleTextView.setText(event.getTitle());
+        //gets event date as Date object but only needs MMDDYYYY, not the timestamp
+        eventDateTextView.setText(event.getStartDate().toLocaleString().substring(0, 12));
+        eventVenueNameTextView.setText("@ " + event.getVenue().getName());
+        venueLocationTextView.setText(event.getVenue().getCity() + " " + event.getVenue().getCountry());
+        String eventImageUrl = event.getImageURL(ImageSize.EXTRALARGE);
+        // if there is an image for the event load it into view. Else load placeholder into view
+        if (eventImageUrl.length() > 0) {
+            Picasso.with(getActivity())
+                    .load(eventImageUrl)
+                    .placeholder(R.drawable.placeholder)
+                    .into(eventImage);
+        } else {
+            eventImage.setImageResource(R.drawable.placeholder);
+        }
+
+        //sets onClickListener for moreDetails button
+        moreDetailsButton.setOnClickListener(new Button.OnClickListener() {
+            public void onClick(View v) {
+                Gson gson = new Gson();
+
+                //serialize event using GSON
+                String serializedEvent = gson.toJson(event, Event.class);
+
+                //starts EventDetailsActivity
+                Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
+                intent.putExtra("EVENT", serializedEvent);
+                getActivity().startActivity(intent);
+            }
+        });
+
+        parentView.addView(view);
+    }
+
+    @Override
+    public void onVenueEventsFetcherTaskAboutToStart() {
+    }
+
+    @Override
+    public void onVenueEventsFetcherTaskCompleted(Collection<Event> events) {
+        mLoadingProgressbar.setVisibility(View.GONE);
+
+        for (Event event : events) {
+            setUpEventCard(event, mOtherEventsContainer);
+        }
+    }
+
+    private void getVenueEvents(String venueId) {
+        mEventsFinder.getUpcomingEventsAtVenue(venueId, this);
     }
 
 }
