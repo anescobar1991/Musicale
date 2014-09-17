@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import com.anescobar.musicale.R;
 import com.anescobar.musicale.adapters.EventDetailsPagerAdapter;
+import com.anescobar.musicale.fragments.AboutEventArtistFragment;
 import com.anescobar.musicale.fragments.AboutEventVenueFragment;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
@@ -22,7 +23,8 @@ import de.umass.lastfm.Event;
 import de.umass.lastfm.ImageSize;
 
 public class EventDetailsActivity extends FragmentActivity
-        implements AboutEventVenueFragment.AboutEventVenueFragmentInteractionListener {
+        implements AboutEventVenueFragment.AboutEventVenueFragmentInteractionListener,
+        AboutEventArtistFragment.AboutEventArtistFragmentInteractionListener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

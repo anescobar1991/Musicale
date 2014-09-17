@@ -28,7 +28,7 @@ public class EventDetailsPagerAdapter extends FragmentPagerAdapter {
         //add fragments and corresponding titles to lists
         fragments.add(AboutEventVenueFragment.newInstance(event.getVenue()));
         titles.add(context.getString(R.string.event_details_about_venue_tab));
-        fragments.add(new AboutEventArtistFragment());
+        fragments.add(AboutEventArtistFragment.newInstance(event.getHeadliner()));
         titles.add(context.getString(R.string.event_details_about_artist_tab));
         fragments.add(new AboutEventBuzzFragment());
         titles.add(context.getString(R.string.event_details_social_media_tab));
