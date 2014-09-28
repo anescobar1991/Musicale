@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -153,16 +154,17 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
         }
 
         //sets map's initial state
-        mMap.setBuildingsEnabled(true);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(venueLocation, 14));
+        mMap.setBuildingsEnabled(true);
+        mMap.setIndoorEnabled(false);
+
+        //disables user interaction
+        mMap.getUiSettings().setAllGesturesEnabled(false);
 
         //adds marker for venue location
         mMap.addMarker(new MarkerOptions()
                         .position(venueLocation)
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.music_live))
         );
-        //disables user interaction
-        mMap.getUiSettings().setAllGesturesEnabled(false);
 
         //sets click listener for when user taps anywhere in map
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
@@ -204,7 +206,7 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
         mShowOtherEventsButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 //displays other events section
-                displayOtherEventsAtVenue(view);
+                displayOtherEventsAtVenue();
             }
         });
 
@@ -252,15 +254,14 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
         }
     }
 
-    private void displayOtherEventsAtVenue(View view) {
+    private void displayOtherEventsAtVenue() {
         if (mNetworkUtil.isNetworkAvailable(getActivity())) {
-            LinearLayout otherEventsContainer = (LinearLayout) view.findViewById(R.id.fragment_about_venue_other_events_container);
 
             //hide show other events button
             mShowOtherEventsButton.setVisibility(View.GONE);
 
-            //sets other Events area visible
-            otherEventsContainer.setVisibility(View.VISIBLE);
+            //show events loading progress bar
+            mLoadingProgressbar.setVisibility(View.VISIBLE);
 
             //gets venue Events from backend
             getVenueEvents(mVenue.getId());
@@ -273,19 +274,12 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
         LayoutInflater vi = (LayoutInflater) getActivity().getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = vi.inflate(R.layout.event_card, parentView, false);
 
+        CardView eventCard = (CardView) view.findViewById(R.id.event_card);
         ImageView eventImage = (ImageView) view.findViewById(R.id.event_card_event_image);
         TextView eventTitleTextView = (TextView) view.findViewById(R.id.event_card_event_title_textfield);
         TextView eventDateTextView = (TextView) view.findViewById(R.id.event_card_event_date_textfield);
         TextView eventVenueNameTextView = (TextView) view.findViewById(R.id.event_card_venue_name_textfield);
         TextView venueLocationTextView = (TextView) view.findViewById(R.id.event_card_venue_location_textfield);
-        Button viewInMapButton = (Button) view.findViewById(R.id.event_card_show_in_map_button);
-        Button moreDetailsButton = (Button) view.findViewById(R.id.event_card_more_details_button);
-
-        //hides view in map button as it is not necessary in this case
-        viewInMapButton.setVisibility(View.GONE);
-
-        //padding padding must differ from default to account for view in map button not being displayed
-        moreDetailsButton.setPadding(0, 0, 0, 0);
 
         //sets event card details
         eventTitleTextView.setText(event.getTitle());
@@ -305,7 +299,7 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
         }
 
         //sets onClickListener for moreDetails button
-        moreDetailsButton.setOnClickListener(new Button.OnClickListener() {
+        eventCard.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
                 Gson gson = new Gson();
 
@@ -329,6 +323,9 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
     @Override
     public void onVenueEventsFetcherTaskCompleted(Collection<Event> events) {
         mLoadingProgressbar.setVisibility(View.GONE);
+
+        //sets other Events area visible
+       mOtherEventsContainer.setVisibility(View.VISIBLE);
 
         for (Event event : events) {
             setUpEventCard(event, mOtherEventsContainer);

@@ -308,13 +308,11 @@ public class EventsMapViewFragment extends Fragment implements EventFetcherListe
             eventMarker = mMap.addMarker(new MarkerOptions()
                     .position(new LatLng(latLng.latitude * (Math.random() * (1.000001 - .999999) + .999999),
                             latLng.longitude * (Math.random() * (1.000001 - .999999) + .999999)))
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.music_live))
 
             );
         } else {
             eventMarker = mMap.addMarker(new MarkerOptions()
                             .position(latLng)
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.music_live))
             );
         }
         //mMarkers keeps track of all Event markers that have been put down on map

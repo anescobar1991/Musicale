@@ -5,6 +5,7 @@
     <color name="flat_button_disabled">#ffbbbbbb</color>
     <color name="accent">#1a237e</color>
     <color name="light_background">#ffd5d5d5</color>
+    <color name="white">#FFFFFF</color>
 
     <color name="raised_button_disabled">#ccc</color>
     <color name="raised_button_default">#1a237e</color>

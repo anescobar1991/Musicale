@@ -56,7 +56,7 @@ public class ArtistInfoSeeker {
         @Override
         protected void onPostExecute(Artist artist) {
             Result response = Caller.getInstance().getLastResult();
-            Log.w("events_finder_response", response.toString());
+            Log.w("artist_info_seeker_response", response.toString());
 
             mListener.onArtistInfoFetcherTaskCompleted(artist);
         }

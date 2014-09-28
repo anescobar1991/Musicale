@@ -120,20 +120,34 @@
 
         </RelativeLayout>
 
-        <Button
-            android:id="@+id/fragment_about_venue_venue_show_other_events"
+        <FrameLayout
+            android:id="@+id/fragment_about_venue_venue_show_other_event_layout"
             android:layout_width="match_parent"
-            android:textColor="#FFFFFF"
             android:layout_below="@+id/fragment_about_venue_location_container"
-            style="@android:style/Widget.Material.Light.Button"
-            android:background="@drawable/default_raised_button"
-            android:text="@string/about_venue_show_other_events_button_text"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/fragment_about_venue_venue_show_other_events"
+                android:layout_width="match_parent"
+                android:textColor="#FFFFFF"
+                style="@android:style/Widget.Material.Light.Button"
+                android:background="@drawable/default_raised_button"
+                android:text="@string/about_venue_show_other_events_button_text"
+                android:layout_height="wrap_content" />
+
+            <ProgressBar
+                android:id="@+id/fragment_about_venue_other_events_loading"
+                android:layout_width="wrap_content"
+                android:visibility="gone"
+                android:layout_gravity="center"
+                android:layout_height="wrap_content" />
+
+        </FrameLayout>
 
         <LinearLayout
             android:id="@+id/fragment_about_venue_other_events_container"
             android:layout_width="match_parent"
-            android:layout_below="@+id/fragment_about_venue_venue_show_other_events"
+            android:layout_below="@+id/fragment_about_venue_venue_show_other_event_layout"
             android:visibility="gone"
             android:orientation="vertical"
             android:layout_height="wrap_content">
@@ -155,12 +169,6 @@
                 android:layout_marginTop="4dp"
                 android:layout_marginBottom="16dp"
                 android:background="#ffb9b9b9"/>
-
-            <ProgressBar
-                android:id="@+id/fragment_about_venue_other_events_loading"
-                android:layout_width="wrap_content"
-                android:layout_gravity="center"
-                android:layout_height="wrap_content" />
 
         </LinearLayout>
 

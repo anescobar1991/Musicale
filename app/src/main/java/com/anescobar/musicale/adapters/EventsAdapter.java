@@ -2,12 +2,11 @@ package com.anescobar.musicale.adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -66,8 +65,8 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
             holder.mEventImage.setImageResource(R.drawable.placeholder);
         }
 
-        //sets onClickListener for moreDetails button
-        holder.mMoreDetailsButton.setOnClickListener(new Button.OnClickListener() {
+//        sets onClickListener for moreDetails button
+        holder.mEventCard.setOnClickListener(new CardView.OnClickListener() {
             public void onClick(View v) {
                 Gson gson = new Gson();
 
@@ -78,17 +77,6 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
                 Intent intent = new Intent(mContext, EventDetailsActivity.class);
                 intent.putExtra("EVENT", serializedEvent);
                 mContext.startActivity(intent);
-            }
-        });
-        //sets onClickListener for view in map button
-        holder.mViewInMapButton.setOnClickListener(new Button.OnClickListener() {
-            public void onClick(View v) {
-                //shows venue location in maps app for now
-                //TODO link to map view if possible
-                Float venueLat = mEvents.get(position).getVenue().getLatitude();
-                Float venueLng = mEvents.get(position).getVenue().getLongitude();
-                String venueName = mEvents.get(position).getVenue().getName();
-                showMap(Uri.parse("geo:0,0?q=" + venueLat +"," + venueLng + "(" + venueName + ")"));
             }
         });
     }
@@ -102,14 +90,12 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
 
     // Create the ViewHolder class to keep references to your views
     public static class ViewHolder extends RecyclerView.ViewHolder {
+        public CardView mEventCard;
         public ImageView mEventImage;
         public TextView mEventTitleTextView;
         public TextView mEventDateTextView;
         public TextView mEventVenueNameTextView;
         public TextView mVenueLocationTextView;
-        public Button mViewInMapButton;
-        public Button mMoreDetailsButton;
-
         /**
          * Constructor
          * @param view The container view which holds the elements from the row item xml
@@ -117,23 +103,14 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         public ViewHolder(View view) {
             super(view);
 
+            mEventCard = (CardView) view.findViewById(R.id.event_card);
             mEventImage = (ImageView) view.findViewById(R.id.event_card_event_image);
             mEventTitleTextView = (TextView) view.findViewById(R.id.event_card_event_title_textfield);
             mEventDateTextView = (TextView) view.findViewById(R.id.event_card_event_date_textfield);
             mEventVenueNameTextView = (TextView) view.findViewById(R.id.event_card_venue_name_textfield);
             mVenueLocationTextView = (TextView) view.findViewById(R.id.event_card_venue_location_textfield);
-            mViewInMapButton = (Button) view.findViewById(R.id.event_card_show_in_map_button);
-            mMoreDetailsButton = (Button) view.findViewById(R.id.event_card_more_details_button);
         }
 
     }
 
-    //opens Maps app with URI parameters
-    private void showMap(Uri geoLocation) {
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(geoLocation);
-        if (intent.resolveActivity(mContext.getPackageManager()) != null) {
-            mContext.startActivity(intent);
-        }
-    }
 }
