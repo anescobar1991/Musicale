@@ -75,7 +75,7 @@ public class EventDetailsActivity extends FragmentActivity
         pager.setAdapter(new EventDetailsPagerAdapter(getSupportFragmentManager(), this, event));
         pager.setOffscreenPageLimit(3);
         //Bind the title indicator to the adapter
-        TabPageIndicator titleIndicator = (TabPageIndicator)findViewById(R.id.activity_event_details_view_pager_title);
+        TabPageIndicator titleIndicator = (TabPageIndicator) findViewById(R.id.activity_event_details_view_pager_title);
         titleIndicator.setViewPager(pager);
 
         Collection<String> artistList = event.getArtists();

@@ -1,6 +1,5 @@
 package com.anescobar.musicale.fragments;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,7 +15,6 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.anescobar.musicale.R;
-import com.anescobar.musicale.activities.EventsActivity;
 import com.anescobar.musicale.adapters.EventsAdapter;
 import com.anescobar.musicale.interfaces.EventFetcherListener;
 import com.anescobar.musicale.utils.EventsFinder;
@@ -35,7 +33,6 @@ import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 public class EventsListViewFragment extends Fragment implements RecyclerView.OnScrollListener,
         EventFetcherListener {
 
-    private EventListViewFragmentInteractionListener mListener;
     private LinearLayoutManager mLayoutManager;
     private Button mLoadMoreEventsButton;
     private EventsAdapter mAdapter;
@@ -43,7 +40,6 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
     private ProgressBar mEventsLoadingProgressBar;
     private NetworkUtil mNetworkUtil;
     private SmoothProgressBar mMoreEventsLoadingProgressBar;
-    private Button mExploreInMapButton;
 
     private LatLng mLatLng;
 
@@ -69,18 +65,6 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            mListener = (EventListViewFragmentInteractionListener) activity;
-            mListener.setListViewTitleInActionBar();
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement EventMapViewFragmentInteractionListener");
-        }
-    }
-
-    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -101,21 +85,12 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
         mEventsLoadingProgressBar = (ProgressBar) view.findViewById(R.id.fragment_events_list_view_loading);
         mMoreEventsLoadingProgressBar = (SmoothProgressBar) view.findViewById(R.id.fragment_events_list_view_more_events_loading);
         mLayoutManager = new LinearLayoutManager(getActivity());
-        mExploreInMapButton = (Button) view.findViewById(R.id.fragment_events_list_view_explore_in_map);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         //sets on clickListener for load more events button
         mLoadMoreEventsButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 getEventsFromServer(mEventQueryDetails.numberOfEventPagesLoaded + 1, mLatLng);
-            }
-        });
-
-        //sets on clickListener for explore in map button
-        mExploreInMapButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                mListener.addFragmentToActivity(R.id.activity_events_container, EventsMapViewFragment.newInstance(mLatLng), EventsActivity.EVENTS_MAP_VIEW_FRAGMENT_TAG);
-
             }
         });
 
@@ -151,12 +126,6 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
         } else {
             //TODO catch this error scenario
         }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
     }
 
     //makes sure that load more vents button is only displayed when scrolled to bottom of screen
@@ -240,9 +209,6 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
             mMoreEventsLoadingProgressBar.setVisibility(View.VISIBLE);
             //display loading progressbar in middle of screen if it is loading first page of events
         } else {
-            //hide explore in map button
-            mExploreInMapButton.setVisibility(View.GONE);
-
             displayLoadMoreEventsButton(false);
             mRecyclerView.setVisibility(View.INVISIBLE);
             mEventsLoadingProgressBar.setVisibility(View.VISIBLE);
@@ -252,9 +218,6 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
     //called onPostExecute of eventsFetcherTask
     @Override
     public void onEventFetcherTaskCompleted(PaginatedResult<Event> eventsNearby) {
-        //display explore in map button
-        mExploreInMapButton.setVisibility(View.VISIBLE);
-
         //if last call was successful then load events to screen
         if (Caller.getInstance().getLastResult().isSuccessful()) {
             ArrayList<Event> events= new ArrayList<Event>(eventsNearby.getPageResults());
@@ -303,18 +266,4 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
         }
     }
 
-    public void setCurrentLatLng(LatLng newLatLng) {
-        mLatLng = newLatLng;
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     */
-    public interface EventListViewFragmentInteractionListener {
-        public void addFragmentToActivity(int container, Fragment fragment, String fragmentTag);
-        public void setListViewTitleInActionBar();
-    }
 }

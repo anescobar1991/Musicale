@@ -3,7 +3,6 @@ package com.anescobar.musicale.fragments;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,9 +23,7 @@ public class AboutEventArtistFragment extends Fragment implements ArtistInfoFetc
     private AboutEventArtistFragmentInteractionListener mListener;
     private View mView;
 
-    public AboutEventArtistFragment() {
-
-    }
+    public AboutEventArtistFragment() {}
 
     /**
      * This interface must be implemented by activities that contain this
@@ -99,7 +96,7 @@ public class AboutEventArtistFragment extends Fragment implements ArtistInfoFetc
         TextView artistBio = (TextView) mView.findViewById(R.id.fragment_about_artist_bio);
 
         //-------------Loads dynamic data into view------------------
-//        artistName.setText(artist.getName());
+        artistName.setText(artist.getName());
 //        artistBio.setText(Html.fromHtml(artist.getWikiSummary()));
 ////        System.out.println(artist.getWikiSummary());
 

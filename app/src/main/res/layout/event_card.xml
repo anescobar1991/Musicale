@@ -32,7 +32,7 @@
             android:paddingRight="8dp"
             android:layout_toEndOf="@+id/event_card_event_image"
             android:textSize="20sp"
-            android:textColor="#ff2f2f2f"
+            android:textColor="@color/default_text_grey"
             android:ellipsize="end"
             android:maxLines="1"
             android:layout_height="wrap_content" />

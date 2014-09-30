@@ -6,15 +6,6 @@
     android:background="@color/light_background"
     android:weightSum="24" >
 
-    <Button
-        android:id="@+id/fragment_events_list_view_explore_in_map"
-        android:layout_width="match_parent"
-        android:textColor="#FFFFFF"
-        style="@android:style/Widget.Material.Light.Button"
-        android:background="@drawable/default_raised_button"
-        android:text="@string/events_explore_in_map_button_text"
-        android:layout_height="wrap_content" />
-
     <FrameLayout
         android:id="@+id/fragment_events_list_view_list_container"
         android:layout_width="match_parent"
@@ -62,7 +53,6 @@
             android:layout_width="match_parent"
             style="@android:style/Widget.Material.Light.Button"
             android:background="@drawable/default_raised_button"
-            android:minHeight="0dp"
             android:minWidth="0dp"
             android:visibility="gone"
             android:layout_height="match_parent"

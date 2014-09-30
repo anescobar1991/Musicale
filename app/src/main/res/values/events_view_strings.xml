@@ -6,7 +6,7 @@
     <string name="event_list_view_load_more_button_text">Load more events</string>
     <string name="events_explore_in_map_button_text">Explore in map</string>
     <string name="events_map_redo_search_button_text">Redo search in this area</string>
-    <string name="events_map_view_in_list_button_text">View in list</string>
-    <string name="title_events_map_view">Explore in map</string>
+    <string name="view_in_list_tab_text">View in list</string>
+    <string name="explore_in_map_tab_text">Explore in map</string>
 
 </resources>

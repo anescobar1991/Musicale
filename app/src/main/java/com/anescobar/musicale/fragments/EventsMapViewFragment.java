@@ -19,7 +19,6 @@ import android.widget.Toast;
 
 import com.anescobar.musicale.R;
 import com.anescobar.musicale.activities.EventDetailsActivity;
-import com.anescobar.musicale.activities.EventsActivity;
 import com.anescobar.musicale.interfaces.EventFetcherListener;
 import com.anescobar.musicale.utils.EventsFinder;
 import com.anescobar.musicale.utils.NetworkUtil;
@@ -28,7 +27,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.UiSettings;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -49,16 +47,13 @@ public class EventsMapViewFragment extends Fragment implements EventFetcherListe
         GoogleMap.OnInfoWindowClickListener, GoogleMap.OnCameraChangeListener {
 
     private MapFragment mMapFragment;
+    private EventsMapViewFragmentInteractionListener mListener;
     private NetworkUtil mNetworkUtil;
     private GoogleMap mMap;
     private Button mRedoSearchButton;
     private RelativeLayout mLoadingOverlay;
-    private EventMapViewFragmentInteractionListener mListener;
-
     private EventQueryDetails mEventQueryDetails = EventQueryDetails.getInstance();
-
     private LatLng mLatLng;
-
     private int mCameraChangeCount = 0; //keeps track of how many times map camera change has occurred
     private HashMap<String, Event> mMarkers = new HashMap<String, Event>();
     private ArrayList<LatLng> mMarkerPositions = new ArrayList<LatLng>();
@@ -78,24 +73,6 @@ public class EventsMapViewFragment extends Fragment implements EventFetcherListe
         eventsMapViewFragment.setArguments(args);
 
         return eventsMapViewFragment;
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            mListener = (EventMapViewFragmentInteractionListener) activity;
-            mListener.setMapViewTitleInActionBar();
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement EventMapViewFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
     }
 
     @Override
@@ -130,7 +107,6 @@ public class EventsMapViewFragment extends Fragment implements EventFetcherListe
         transaction.add(R.id.fragment_events_map_view_container, mMapFragment)
                 .commit();
 
-        Button viewInListButton = (Button) view.findViewById(R.id.fragment_events_map_view_in_list);
         mRedoSearchButton = (Button) view.findViewById(R.id.fragment_events_map_redo_search);
         mLoadingOverlay = (RelativeLayout) view.findViewById(R.id.fragment_events_map_view_loading_overlay);
 
@@ -143,16 +119,10 @@ public class EventsMapViewFragment extends Fragment implements EventFetcherListe
                 //stores new latLng
                 mLatLng = newLatLng;
 
+                mListener.storeCurrentLatLng(newLatLng);
+
                 //calls getEvents method, which gets events from backend and displays and stores them as needed
                 getEventsFromServer(1, newLatLng);
-            }
-        });
-
-        //sets click listener for view in list button
-        viewInListButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mListener.addFragmentToActivity(R.id.activity_events_container, EventsListViewFragment.newInstance(mLatLng), EventsActivity.EVENTS_LIST_VIEW_FRAGMENT_TAG);
             }
         });
 
@@ -190,6 +160,23 @@ public class EventsMapViewFragment extends Fragment implements EventFetcherListe
 
     }
 
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mListener = (EventsMapViewFragmentInteractionListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement EventsMapViewFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
     //gets events from backend
     public void getEventsFromServer(Integer pageNumber, LatLng userLocation) {
 
@@ -219,7 +206,6 @@ public class EventsMapViewFragment extends Fragment implements EventFetcherListe
     private void setUpMap(LatLng userLocation) {
         //sets map's initial state
         UiSettings mapSettings = mMap.getUiSettings();
-
         mMap.setMyLocationEnabled(true);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 10));
         mMap.setMyLocationEnabled(true);
@@ -426,8 +412,8 @@ public class EventsMapViewFragment extends Fragment implements EventFetcherListe
      * to the activity and potentially other fragments contained in that
      * activity.
      */
-    public interface EventMapViewFragmentInteractionListener {
-        public void addFragmentToActivity(int container, Fragment fragment, String fragmentTag);
-        public void setMapViewTitleInActionBar();
+    public interface EventsMapViewFragmentInteractionListener {
+        public void storeCurrentLatLng(LatLng latLng);
     }
+
 }

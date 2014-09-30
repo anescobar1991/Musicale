@@ -7,7 +7,7 @@
     <RelativeLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
 
         <TextView
@@ -15,14 +15,13 @@
             android:textColor="@color/accent"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:text="Blink 182"
             android:gravity="center_horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
         <ImageView
             android:id="@+id/fragment_about_artist_artist_image"
-            android:contentDescription="null"
+            android:contentDescription="@null"
             android:layout_below="@+id/fragment_about_artist_artist_name"
             android:src="@drawable/ic_launcher"
             android:layout_gravity="center_horizontal"

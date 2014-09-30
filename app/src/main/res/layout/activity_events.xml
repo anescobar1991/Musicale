@@ -1,12 +1,37 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/activity_events_container"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
 
-    <!--<include layout="@layout/loading_overlay"-->
-        <!--android:id="@+id/activity_events_container_loading_overlay"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:visibility="visible" />-->
+    <LinearLayout
+        android:id="@+id/activity_events_tabs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-</FrameLayout>
+        <Button
+            android:id="@+id/activity_event_list_tab"
+            android:layout_width="0dp"
+            android:background="@drawable/unselected_tab_button"
+            android:text="@string/view_in_list_tab_text"
+            android:textColor="@color/default_text_grey"
+            android:layout_weight="1"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/activity_event_map_tab"
+            android:layout_width="0dp"
+            android:textColor="@color/default_text_grey"
+            android:background="@drawable/unselected_tab_button"
+            android:text="@string/explore_in_map_tab_text"
+            android:layout_weight="1"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/activity_events_container"
+        android:layout_below="@+id/activity_events_tabs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+    </FrameLayout>
+
+</RelativeLayout>
