@@ -3,6 +3,7 @@ package com.anescobar.musicale.fragments;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,8 @@ import com.anescobar.musicale.R;
 import com.anescobar.musicale.interfaces.ArtistInfoFetcherTaskListener;
 import com.anescobar.musicale.utils.ArtistInfoSeeker;
 import com.squareup.picasso.Picasso;
+
+import java.util.Collection;
 
 import de.umass.lastfm.Artist;
 import de.umass.lastfm.ImageSize;
@@ -94,11 +97,27 @@ public class AboutEventArtistFragment extends Fragment implements ArtistInfoFetc
         TextView artistName = (TextView) mView.findViewById(R.id.fragment_about_artist_artist_name);
         ImageView artistImage = (ImageView) mView.findViewById(R.id.fragment_about_artist_artist_image);
         TextView artistBio = (TextView) mView.findViewById(R.id.fragment_about_artist_bio);
+        TextView artistTags = (TextView) mView.findViewById(R.id.fragment_about_artist_tags);
 
         //-------------Loads dynamic data into view------------------
         artistName.setText(artist.getName());
-//        artistBio.setText(Html.fromHtml(artist.getWikiSummary()));
-////        System.out.println(artist.getWikiSummary());
+        artistBio.setText(Html.fromHtml(artist.getWikiSummary()));
+
+        Collection<String> tags = artist.getTags();
+
+        String formattedTags = "";
+
+        //add tags to formattedTags string
+        for(String tag : tags) {
+            formattedTags += tag + ", ";
+        }
+
+        //remove last comma from formatted tags string
+        formattedTags = formattedTags.substring(0, formattedTags.length()-2);
+
+        //sets artistTags textview to display formatted tags string
+        artistTags.setText(formattedTags);
+
 
         String artistImageUrl = artist.getImageURL(ImageSize.EXTRALARGE);
 
@@ -107,7 +126,7 @@ public class AboutEventArtistFragment extends Fragment implements ArtistInfoFetc
             Picasso.with(getActivity()).load(artistImageUrl)
                     .placeholder(R.drawable.placeholder)
                     .centerInside()
-                    .resize(400, 300)
+                    .resize(400, 400)
                     .into(artistImage);
             //else will load placeholder image into view
         } else {
