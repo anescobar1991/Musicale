@@ -12,7 +12,6 @@
         <ImageView
             android:id="@+id/fragment_about_artist_artist_image"
             android:contentDescription="@null"
-            android:layout_marginStart="4dp"
             android:layout_marginTop="4dp"
             android:layout_marginEnd="4dp"
             android:layout_width="wrap_content"
