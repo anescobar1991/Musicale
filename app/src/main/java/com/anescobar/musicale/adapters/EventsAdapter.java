@@ -22,8 +22,8 @@ import de.umass.lastfm.ImageSize;
 
 /**
  * Created by Andres Escobar on 8/3/14.
- * Adapter for EventList view. Gets arrayList of events and populates recycleView with them
- * Also handles view logic for event cards
+ * Adapter for EventList view. Gets arrayList of events and populates events cards that are placed into
+ * recycleView
  */
 public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder> {
     private ArrayList<Event> mEvents;
@@ -33,6 +33,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
     public EventsAdapter(Context context, ArrayList<Event> events) {
         mEvents = events;
         mContext = context;
+        System.out.println(events.toString());
     }
 
     // Create new views. This is invoked by the layout manager.
@@ -65,7 +66,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
             holder.mEventImage.setImageResource(R.drawable.placeholder);
         }
 
-//        sets onClickListener for moreDetails button
+//        sets onClickListener for entire card
         holder.mEventCard.setOnClickListener(new CardView.OnClickListener() {
             public void onClick(View v) {
                 Gson gson = new Gson();
@@ -110,7 +111,6 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
             mEventVenueNameTextView = (TextView) view.findViewById(R.id.event_card_venue_name_textfield);
             mVenueLocationTextView = (TextView) view.findViewById(R.id.event_card_venue_location_textfield);
         }
-
     }
 
 }

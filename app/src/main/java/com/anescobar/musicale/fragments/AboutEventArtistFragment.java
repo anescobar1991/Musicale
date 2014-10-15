@@ -1,13 +1,19 @@
 package com.anescobar.musicale.fragments;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.anescobar.musicale.R;
@@ -25,6 +31,8 @@ public class AboutEventArtistFragment extends Fragment implements ArtistInfoFetc
     private static final String ARG_ARTIST = "artistArg";
     private AboutEventArtistFragmentInteractionListener mListener;
     private View mView;
+    private Button mSimilarArtistsButton;
+    private LinearLayout mSimilarArtistsContainer;
 
     public AboutEventArtistFragment() {}
 
@@ -93,15 +101,25 @@ public class AboutEventArtistFragment extends Fragment implements ArtistInfoFetc
         mListener = null;
     }
 
-    private void setUpView(Artist artist) {
+    private void setUpView(final Artist artist) {
         TextView artistName = (TextView) mView.findViewById(R.id.fragment_about_artist_artist_name);
         ImageView artistImage = (ImageView) mView.findViewById(R.id.fragment_about_artist_artist_image);
         TextView artistBio = (TextView) mView.findViewById(R.id.fragment_about_artist_bio);
         TextView artistTags = (TextView) mView.findViewById(R.id.fragment_about_artist_tags);
+        mSimilarArtistsButton = (Button) mView.findViewById(R.id.fragment_about_artist_show_related_artists_button);
+        mSimilarArtistsContainer = (LinearLayout) mView.findViewById(R.id.fragment_about_artist_similar_artists_container);
+
+
+        //-------------Sets similarArtists button on click listener----------------
+        mSimilarArtistsButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                displaySimilarArtists(artist.getSimilar());
+            }
+        });
 
         //-------------Loads dynamic data into view------------------
         artistName.setText(artist.getName());
-        artistBio.setText(Html.fromHtml(artist.getWikiSummary()));
+        artistBio.setText(Html.fromHtml(artist.getWikiSummary()).toString());
 
         Collection<String> tags = artist.getTags();
 
@@ -111,13 +129,13 @@ public class AboutEventArtistFragment extends Fragment implements ArtistInfoFetc
         for(String tag : tags) {
             formattedTags += tag + ", ";
         }
+        if (formattedTags.length() > 0) {
+            //remove last comma from formatted tags string
+            formattedTags = formattedTags.substring(0, formattedTags.length()-2);
 
-        //remove last comma from formatted tags string
-        formattedTags = formattedTags.substring(0, formattedTags.length()-2);
-
-        //sets artistTags textview to display formatted tags string
-        artistTags.setText(formattedTags);
-
+            //sets artistTags textview to display formatted tags string
+            artistTags.setText(formattedTags);
+        }
 
         String artistImageUrl = artist.getImageURL(ImageSize.EXTRALARGE);
 
@@ -142,5 +160,51 @@ public class AboutEventArtistFragment extends Fragment implements ArtistInfoFetc
     @Override
     public void onArtistInfoFetcherTaskCompleted(Artist artist) {
         setUpView(artist);
+    }
+
+    private void setUpArtistCard(final Artist artist, final LinearLayout parentView) {
+        LayoutInflater vi = (LayoutInflater) getActivity().getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = vi.inflate(R.layout.artist_card, parentView, false);
+
+        CardView artistCard = (CardView) view.findViewById(R.id.artist_card);
+        ImageView artistImageView = (ImageView) view.findViewById(R.id.artist_card_image);
+        TextView artistTitleTextView = (TextView) view.findViewById(R.id.artist_card_image_text_field);
+
+        //sets artist card details
+        artistTitleTextView.setText(artist.getName());
+
+        String eventImageUrl = artist.getImageURL(ImageSize.EXTRALARGE);
+        // if there is an image for the artist load it into view. Else load placeholder into view
+        if (eventImageUrl.length() > 0) {
+            Picasso.with(getActivity())
+                    .load(eventImageUrl)
+                    .resize(120, 120)
+                    .placeholder(R.drawable.placeholder)
+                    .into(artistImageView);
+        } else {
+            artistImageView.setImageResource(R.drawable.placeholder);
+        }
+
+        //sets onClickListener for entire card
+        artistCard.setOnClickListener(new Button.OnClickListener() {
+            public void onClick(View v) {
+                Intent i = new Intent(Intent.ACTION_VIEW,
+                        Uri.parse(artist.getUrl()));
+                startActivity(i);
+            }
+        });
+
+        parentView.addView(view);
+    }
+
+    private void displaySimilarArtists(Collection<Artist> artists) {
+        mSimilarArtistsButton.setVisibility(View.GONE);
+
+        for (Artist artist : artists) {
+            setUpArtistCard(artist, mSimilarArtistsContainer);
+        }
+
+        //sets other Events area visible
+        mSimilarArtistsContainer.setVisibility(View.VISIBLE);
     }
 }

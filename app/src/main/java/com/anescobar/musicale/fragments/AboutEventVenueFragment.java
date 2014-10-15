@@ -26,7 +26,6 @@ import com.anescobar.musicale.utils.NetworkUtil;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
@@ -324,12 +323,12 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
     public void onVenueEventsFetcherTaskCompleted(Collection<Event> events) {
         mLoadingProgressbar.setVisibility(View.GONE);
 
-        //sets other Events area visible
-       mOtherEventsContainer.setVisibility(View.VISIBLE);
-
         for (Event event : events) {
             setUpEventCard(event, mOtherEventsContainer);
         }
+
+        //sets other Events area visible
+       mOtherEventsContainer.setVisibility(View.VISIBLE);
     }
 
     private void getVenueEvents(String venueId) {
