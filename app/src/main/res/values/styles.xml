@@ -1,30 +1,26 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="MusicaleTheme" parent="android:Theme.Material.Light.DarkActionBar">
+    <style name="MusicaleTheme" parent="android:Theme.Holo.Light.DarkActionBar">
         <!-- Main theme colors -->
-        <!--   your app's branding color (for the app bar) -->
-        <item name="android:colorPrimary">@color/primary</item>
-        <!--   darker variant of colorPrimary (for status bar, contextual app bars) -->
-        <item name="android:colorPrimaryDark">@color/primary_dark</item>
-        <!--   theme UI controls like checkboxes and text fields -->
-        <item name="android:colorAccent">@color/accent</item>
+        <item name="android:colorActivatedHighlight">@color/accent</item>
+
+        <item name="android:color">@color/primary</item>
 
         <item name="android:dropDownListViewStyle">@style/actionBarSpinnerStyle</item>
 
         <item name="vpiTabPageIndicatorStyle">@style/Widget.TabPageIndicator</item>
 
+        <item name="android:actionBarStyle">@style/MusicaleActionBar</item>
+
     </style>
 
     <!-- Base application theme for when no actionBar is wanted. -->
-    <style name="MusicaleThemeNoActionBar" parent="android:Theme.Material.Light.NoActionBar">
+    <style name="MusicaleThemeNoActionBar" parent="android:Theme.Holo.Light.NoActionBar">
         <!-- Main theme colors -->
-        <!--   your app's branding color (for the app bar) -->
-        <item name="android:colorPrimary">@color/primary</item>
-        <!--   darker variant of colorPrimary (for status bar, contextual app bars) -->
-        <item name="android:colorPrimaryDark">@color/primary_dark</item>
-        <!--   theme UI controls like checkboxes and text fields -->
-        <item name="android:colorAccent">@color/accent</item>
+        <item name="android:color">@color/primary</item>
+
+        <item name="android:colorActivatedHighlight">@color/accent</item>
 
         <item name="vpiTabPageIndicatorStyle">@style/Widget.TabPageIndicator</item>
 
@@ -54,6 +50,10 @@
         <item name="android:textSize">14sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@drawable/tab_page_indicator_title_colors</item>
+    </style>
+
+    <style name="MusicaleActionBar" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
+        <item name="android:background">@color/primary</item>
     </style>
 
 </resources>

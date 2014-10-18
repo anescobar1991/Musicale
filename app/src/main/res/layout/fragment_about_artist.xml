@@ -55,7 +55,7 @@
             android:id="@+id/fragment_about_artist_show_related_artists_button"
             android:layout_width="match_parent"
             android:textColor="#FFFFFF"
-            style="@android:style/Widget.Material.Light.Button"
+            android:textAllCaps="true"
             android:background="@drawable/default_raised_button"
             android:text="@string/about_artist_show_related_artists_text"
             android:layout_below="@+id/fragment_about_artist_bio_container"
@@ -85,7 +85,7 @@
                 android:layout_height="1dp"
                 android:layout_marginTop="4dp"
                 android:layout_marginBottom="16dp"
-                android:background="#ffb9b9b9"/>
+                android:background="@color/border_default_grey"/>
 
         </LinearLayout>
 

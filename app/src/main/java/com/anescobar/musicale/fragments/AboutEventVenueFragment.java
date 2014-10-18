@@ -240,6 +240,7 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
         }
 
         venueName.setText(venue.getName());
+
         venueAddress.setText(venue.getStreet() + " • " + venue.getCity() + " • " + venue.getCountry());
 
     }

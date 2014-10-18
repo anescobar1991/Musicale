@@ -30,8 +30,7 @@ import de.umass.lastfm.Event;
 import de.umass.lastfm.PaginatedResult;
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 
-public class EventsListViewFragment extends Fragment implements RecyclerView.OnScrollListener,
-        EventFetcherListener {
+public class EventsListViewFragment extends Fragment implements EventFetcherListener {
 
     private LinearLayoutManager mLayoutManager;
     private Button mLoadMoreEventsButton;
@@ -128,32 +127,32 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
         }
     }
 
-    //makes sure that load more vents button is only displayed when scrolled to bottom of screen
-    //and when there are more pages left of events
-    @Override
-    public void onScrollStateChanged(int state) {
-        //if scroll state is settled or settling then check if load more button should be displayed
-        //checking both for better responsiveness
-        if (state == RecyclerView.SCROLL_STATE_SETTLING || state == RecyclerView.SCROLL_STATE_IDLE ) {
-            int itemCount = mAdapter.getItemCount() - 1;
-
-            //if user has scrolled to bottom of recycle view and there are still pages of events left
-            if (mLayoutManager.findLastCompletelyVisibleItemPosition() == itemCount && mEventQueryDetails.totalNumberOfEventPages > mEventQueryDetails.numberOfEventPagesLoaded) {
-                //scroll to last item to fix bug of button being on top of last item
-                mRecyclerView.scrollToPosition(itemCount);
-
-                //display load more events Button
-                displayLoadMoreEventsButton(true);
-            } else if (mLayoutManager.findFirstCompletelyVisibleItemPosition() != itemCount) {
-                //hide load more events button
-                displayLoadMoreEventsButton(false);
-            }
-        }
-    }
-
-    @Override
-    public void onScrolled(int i, int i2) {
-    }
+//    //makes sure that load more vents button is only displayed when scrolled to bottom of screen
+//    //and when there are more pages left of events
+//    @Override
+//    public void onScrollStateChanged(int state) {
+//        //if scroll state is settled or settling then check if load more button should be displayed
+//        //checking both for better responsiveness
+//        if (state == RecyclerView.SCROLL_STATE_SETTLING || state == RecyclerView.SCROLL_STATE_IDLE ) {
+//            int itemCount = mAdapter.getItemCount() - 1;
+//
+//            //if user has scrolled to bottom of recycle view and there are still pages of events left
+//            if (mLayoutManager.findLastCompletelyVisibleItemPosition() == itemCount && mEventQueryDetails.totalNumberOfEventPages > mEventQueryDetails.numberOfEventPagesLoaded) {
+//                //scroll to last item to fix bug of button being on top of last item
+//                mRecyclerView.scrollToPosition(itemCount);
+//
+//                //display load more events Button
+//                displayLoadMoreEventsButton(true);
+//            } else if (mLayoutManager.findFirstCompletelyVisibleItemPosition() != itemCount) {
+//                //hide load more events button
+//                displayLoadMoreEventsButton(false);
+//            }
+//        }
+//    }
+//
+//    @Override
+//    public void onScrolled(int i, int i2) {
+//    }
 
     private void setEventsAdapter() {
         // only sets up adapter if it hasnt been setup already
@@ -165,7 +164,35 @@ public class EventsListViewFragment extends Fragment implements RecyclerView.OnS
             mRecyclerView.setAdapter(mAdapter);
 
             //sets the onScrollListener that will inform us of when user has scrolled to bottom of recycleView
-            mRecyclerView.setOnScrollListener(this);
+            mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+
+                //makes sure that load more vents button is only displayed when scrolled to bottom of screen
+                //and when there are more pages left of events
+                @Override
+                public void onScrollStateChanged(RecyclerView recyclerView,int state) {
+                    //if scroll state is settled or settling then check if load more button should be displayed
+                    //checking both for better responsiveness
+                    if (state == RecyclerView.SCROLL_STATE_SETTLING || state == RecyclerView.SCROLL_STATE_IDLE ) {
+                        int itemCount = mAdapter.getItemCount() - 1;
+
+                        //if user has scrolled to bottom of recycle view and there are still pages of events left
+                        if (mLayoutManager.findLastCompletelyVisibleItemPosition() == itemCount && mEventQueryDetails.totalNumberOfEventPages > mEventQueryDetails.numberOfEventPagesLoaded) {
+                            //scroll to last item to fix bug of button being on top of last item
+                            mRecyclerView.scrollToPosition(itemCount);
+
+                            //display load more events Button
+                            displayLoadMoreEventsButton(true);
+                        } else if (mLayoutManager.findFirstCompletelyVisibleItemPosition() != itemCount) {
+                            //hide load more events button
+                            displayLoadMoreEventsButton(false);
+                        }
+                    }
+                }
+                @Override
+                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                }
+
+            });
 
             mAdapterSet = true;
         } else {

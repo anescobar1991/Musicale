@@ -19,7 +19,7 @@
         android:textColor="#FFFFFF"
         android:layout_gravity="bottom"
         android:visibility="gone"
-        style="@android:style/Widget.Material.Light.Button"
+        android:textAllCaps="true"
         android:background="@drawable/default_raised_button"
         android:text="@string/events_map_redo_search_button_text"
         android:layout_height="wrap_content" />

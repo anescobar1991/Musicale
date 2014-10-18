@@ -51,9 +51,9 @@
         <Button
             android:id="@+id/fragment_events_list_view_load_more_button"
             android:layout_width="match_parent"
-            style="@android:style/Widget.Material.Light.Button"
             android:background="@drawable/default_raised_button"
             android:minWidth="0dp"
+            android:textAllCaps="true"
             android:visibility="gone"
             android:layout_height="match_parent"
             android:text="@string/event_list_view_load_more_button_text"

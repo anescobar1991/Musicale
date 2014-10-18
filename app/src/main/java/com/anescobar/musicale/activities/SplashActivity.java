@@ -2,7 +2,6 @@ package com.anescobar.musicale.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.widget.Toast;
 
 import com.anescobar.musicale.R;

@@ -166,6 +166,7 @@ public class AboutEventArtistFragment extends Fragment implements ArtistInfoFetc
         LayoutInflater vi = (LayoutInflater) getActivity().getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = vi.inflate(R.layout.artist_card, parentView, false);
 
+
         CardView artistCard = (CardView) view.findViewById(R.id.artist_card);
         ImageView artistImageView = (ImageView) view.findViewById(R.id.artist_card_image);
         TextView artistTitleTextView = (TextView) view.findViewById(R.id.artist_card_image_text_field);
