@@ -51,26 +51,50 @@
 
         </RelativeLayout>
 
-        <Button
-            android:id="@+id/fragment_about_artist_show_related_artists_button"
+        <LinearLayout
+            android:id="@+id/fragment_about_artist_top_tracks_container"
             android:layout_width="match_parent"
-            android:textColor="#FFFFFF"
-            android:textAllCaps="true"
-            android:background="@drawable/default_raised_button"
-            android:text="@string/about_artist_show_related_artists_text"
             android:layout_below="@+id/fragment_about_artist_bio_container"
-            android:layout_height="wrap_content" />
+            android:orientation="vertical"
+            android:layout_marginBottom="16dp"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/fragment_about_artist_top_tracks_title"
+                android:layout_width="wrap_content"
+                android:textSize="20sp"
+                android:text="@string/about_artist_top_tracks_text"
+                android:textStyle="bold"
+                android:layout_gravity="center_horizontal"
+                android:textColor="@color/accent"
+                android:layout_height="wrap_content" />
+
+            <View
+                android:id="@+id/fragment_about_artist_separator2"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="16dp"
+                android:background="@color/border_default_grey"/>
+
+            <ProgressBar
+                android:id="@+id/fragment_about_artist_tracks_loading_progressbar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                />
+
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/fragment_about_artist_similar_artists_container"
             android:layout_width="match_parent"
-            android:layout_below="@+id/fragment_about_artist_show_related_artists_button"
-            android:visibility="gone"
+            android:layout_below="@+id/fragment_about_artist_top_tracks_container"
             android:orientation="vertical"
             android:layout_height="wrap_content">
 
             <TextView
-                android:id="@+id/fragment_about_venue_other_events_title"
+                android:id="@+id/fragment_about_artist_related_artists_title"
                 android:layout_width="wrap_content"
                 android:textSize="20sp"
                 android:text="@string/about_artist_show_related_artists_text"
@@ -80,7 +104,7 @@
                 android:layout_height="wrap_content" />
 
             <View
-                android:id="@+id/fragment_about_venue_separator2"
+                android:id="@+id/fragment_about_artist_separator3"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginTop="4dp"

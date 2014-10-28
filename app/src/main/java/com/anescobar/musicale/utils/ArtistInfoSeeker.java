@@ -4,13 +4,17 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.anescobar.musicale.interfaces.ArtistInfoFetcherTaskListener;
+import com.anescobar.musicale.interfaces.ArtistTopTracksFetcherTaskListener;
 import com.anescobar.musicale.interfaces.ArtistUpcomingEventsFetcherTaskListener;
+
+import java.util.Collection;
 
 import de.umass.lastfm.Artist;
 import de.umass.lastfm.Caller;
 import de.umass.lastfm.Event;
 import de.umass.lastfm.PaginatedResult;
 import de.umass.lastfm.Result;
+import de.umass.lastfm.Track;
 
 /**
  * Created by Andres Escobar on 9/16/14.
@@ -29,6 +33,10 @@ public class ArtistInfoSeeker {
 
     public void getArtistUpcomingEvents(String artist, ArtistUpcomingEventsFetcherTaskListener listener) {
         new ArtistUpcomingEventsFetcherTask(listener).execute(artist);
+    }
+
+    public void getArtistTopTracks(String artist, ArtistTopTracksFetcherTaskListener listener) {
+        new ArtistTopTracksFetcherListener(listener).execute(artist);
     }
 
     private class ArtistInfoFetcherTask extends AsyncTask<String, Void, Artist> {
@@ -90,6 +98,32 @@ public class ArtistInfoSeeker {
             Log.w("events_finder_response", response.toString());
 
             mListener.onArtistUpcomingEventsFetcherTaskCompleted(events);
+        }
+    }
+
+    private class ArtistTopTracksFetcherListener extends AsyncTask<String, Void, Collection<Track>> {
+        private ArtistTopTracksFetcherTaskListener mListener;
+
+        public ArtistTopTracksFetcherListener(ArtistTopTracksFetcherTaskListener listener) {
+            this.mListener = listener;
+        }
+
+        @Override
+        protected Collection<Track> doInBackground(String... artists) {
+            return Artist.getTopTracks(artists[0], API_KEY);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            mListener.onArtistTopTrackFetcherTaskAboutToStart();
+        }
+
+        @Override
+        protected void onPostExecute(Collection<Track> tracks) {
+            Result response = Caller.getInstance().getLastResult();
+            Log.w("top_tracks_response", response.toString());
+
+            mListener.onArtistTopTrackFetcherTaskCompleted(tracks);
         }
     }
 }

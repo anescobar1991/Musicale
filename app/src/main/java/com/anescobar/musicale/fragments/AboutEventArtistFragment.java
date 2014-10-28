@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.CardView;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,10 +13,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.anescobar.musicale.R;
 import com.anescobar.musicale.interfaces.ArtistInfoFetcherTaskListener;
+import com.anescobar.musicale.interfaces.ArtistTopTracksFetcherTaskListener;
 import com.anescobar.musicale.utils.ArtistInfoSeeker;
 import com.squareup.picasso.Picasso;
 
@@ -25,14 +26,17 @@ import java.util.Collection;
 
 import de.umass.lastfm.Artist;
 import de.umass.lastfm.ImageSize;
+import de.umass.lastfm.Track;
 
-public class AboutEventArtistFragment extends Fragment implements ArtistInfoFetcherTaskListener{
+public class AboutEventArtistFragment extends Fragment implements ArtistInfoFetcherTaskListener,
+        ArtistTopTracksFetcherTaskListener {
 
     private static final String ARG_ARTIST = "artistArg";
     private AboutEventArtistFragmentInteractionListener mListener;
     private View mView;
-    private Button mSimilarArtistsButton;
     private LinearLayout mSimilarArtistsContainer;
+    private LinearLayout mTopTracksContainer;
+    private ProgressBar mTracksLoadingProgressBar;
 
     public AboutEventArtistFragment() {}
 
@@ -106,16 +110,9 @@ public class AboutEventArtistFragment extends Fragment implements ArtistInfoFetc
         ImageView artistImage = (ImageView) mView.findViewById(R.id.fragment_about_artist_artist_image);
         TextView artistBio = (TextView) mView.findViewById(R.id.fragment_about_artist_bio);
         TextView artistTags = (TextView) mView.findViewById(R.id.fragment_about_artist_tags);
-        mSimilarArtistsButton = (Button) mView.findViewById(R.id.fragment_about_artist_show_related_artists_button);
         mSimilarArtistsContainer = (LinearLayout) mView.findViewById(R.id.fragment_about_artist_similar_artists_container);
-
-
-        //-------------Sets similarArtists button on click listener----------------
-        mSimilarArtistsButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                displaySimilarArtists(artist.getSimilar());
-            }
-        });
+        mTopTracksContainer = (LinearLayout) mView.findViewById(R.id.fragment_about_artist_top_tracks_container);
+        mTracksLoadingProgressBar = (ProgressBar) mView.findViewById(R.id.fragment_about_artist_tracks_loading_progressbar);
 
         //-------------Loads dynamic data into view------------------
         artistName.setText(artist.getName());
@@ -148,8 +145,11 @@ public class AboutEventArtistFragment extends Fragment implements ArtistInfoFetc
                     .into(artistImage);
             //else will load placeholder image into view
         } else {
-            artistImage.setVisibility(View.GONE);
+            artistImage.setImageResource(R.drawable.placeholder);
         }
+
+        //display similar artists on screen
+        displaySimilarArtists(artist.getSimilar());
     }
 
     @Override
@@ -159,6 +159,8 @@ public class AboutEventArtistFragment extends Fragment implements ArtistInfoFetc
 
     @Override
     public void onArtistInfoFetcherTaskCompleted(Artist artist) {
+        new ArtistInfoSeeker().getArtistTopTracks(artist.getName(), this);
+
         setUpView(artist);
     }
 
@@ -167,7 +169,7 @@ public class AboutEventArtistFragment extends Fragment implements ArtistInfoFetc
         View view = vi.inflate(R.layout.artist_card, parentView, false);
 
 
-        CardView artistCard = (CardView) view.findViewById(R.id.artist_card);
+        LinearLayout artistCard = (LinearLayout) view.findViewById(R.id.artist_card);
         ImageView artistImageView = (ImageView) view.findViewById(R.id.artist_card_image);
         TextView artistTitleTextView = (TextView) view.findViewById(R.id.artist_card_image_text_field);
 
@@ -198,14 +200,50 @@ public class AboutEventArtistFragment extends Fragment implements ArtistInfoFetc
         parentView.addView(view);
     }
 
-    private void displaySimilarArtists(Collection<Artist> artists) {
-        mSimilarArtistsButton.setVisibility(View.GONE);
+    private void addTopTrackLink(final Track track, final LinearLayout parentView) {
+        LayoutInflater vi = (LayoutInflater) getActivity().getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = vi.inflate(R.layout.track_link_view, parentView, false);
 
+        LinearLayout trackLayout = (LinearLayout) view.findViewById(R.id.track_view_layout);
+        TextView trackTextView = (TextView) view.findViewById(R.id.track_link_view);
+
+        //sets click listener for when user taps on layout
+        trackLayout.setOnClickListener(new LinearLayout.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //opens track link in browser
+                Intent i = new Intent(Intent.ACTION_VIEW,
+                Uri.parse(track.getUrl()));
+                startActivity(i);
+            }
+        });
+
+        trackTextView.setText(track.getName());
+
+        parentView.addView(view);
+    }
+
+
+    @Override
+    public void onArtistTopTrackFetcherTaskAboutToStart() {
+    }
+
+    @Override
+    public void onArtistTopTrackFetcherTaskCompleted(Collection<Track> tracks) {
+        //displays first 7 top tracks
+        int counter = 0;
+        for(Track track : tracks) {
+            if (counter < 7) {
+                counter ++;
+                addTopTrackLink(track, mTopTracksContainer);
+            }
+        }
+        mTracksLoadingProgressBar.setVisibility(View.GONE);
+    }
+
+    private void displaySimilarArtists(Collection<Artist> artists) {
         for (Artist artist : artists) {
             setUpArtistCard(artist, mSimilarArtistsContainer);
         }
-
-        //sets other Events area visible
-        mSimilarArtistsContainer.setVisibility(View.VISIBLE);
     }
 }

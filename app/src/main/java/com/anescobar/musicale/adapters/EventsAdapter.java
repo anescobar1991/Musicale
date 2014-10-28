@@ -33,7 +33,6 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
     public EventsAdapter(Context context, ArrayList<Event> events) {
         mEvents = events;
         mContext = context;
-        System.out.println(events.toString());
     }
 
     // Create new views. This is invoked by the layout manager.

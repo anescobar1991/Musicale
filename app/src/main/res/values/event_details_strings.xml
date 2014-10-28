@@ -1,7 +1,7 @@
 <resources>
 
     <string name="title_activity_event_details">Event details</string>
-    <string name="event_image_accessibility_label">Event Image</string>
+    <string name="event_image_accessibility_label">Event image</string>
     <string name="event_details_show_in_map_button_text">Show in map</string>
     <string name="event_details_about_venue_tab">About venue</string>
     <string name="event_details_about_artist_tab">About headliner</string>
@@ -12,5 +12,6 @@
     <string name="about_venue_visit_venue_website">Visit venue website</string>
     <string name="other_events_title_text">Upcoming events at this venue</string>
     <string name="about_artist_show_related_artists_text">Similar artists</string>
+    <string name="about_artist_top_tracks_text">Top tracks</string>
 
 </resources>
