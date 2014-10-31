@@ -1,0 +1,7 @@
+<resources>
+
+    <string name="about_artist_show_related_artists_text">Similar artists</string>
+    <string name="about_artist_top_tracks_text">Top tracks</string>
+    <string name="title_artist_details_activity">Artist details</string>
+
+</resources>

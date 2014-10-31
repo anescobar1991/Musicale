@@ -6,7 +6,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import com.anescobar.musicale.R;
-import com.anescobar.musicale.fragments.AboutEventArtistFragment;
+import com.anescobar.musicale.fragments.AboutArtistFragment;
 import com.anescobar.musicale.fragments.AboutEventBuzzFragment;
 import com.anescobar.musicale.fragments.AboutEventVenueFragment;
 
@@ -28,7 +28,7 @@ public class EventDetailsPagerAdapter extends FragmentPagerAdapter {
         //add fragments and corresponding titles to lists
         fragments.add(AboutEventVenueFragment.newInstance(event.getVenue()));
         titles.add(context.getString(R.string.event_details_about_venue_tab));
-        fragments.add(AboutEventArtistFragment.newInstance(event.getHeadliner()));
+        fragments.add(AboutArtistFragment.newInstance(event.getHeadliner()));
         titles.add(context.getString(R.string.event_details_about_artist_tab));
         fragments.add(new AboutEventBuzzFragment());
         titles.add(context.getString(R.string.event_details_social_media_tab));

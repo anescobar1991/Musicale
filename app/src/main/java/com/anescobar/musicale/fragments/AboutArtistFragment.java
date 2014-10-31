@@ -10,13 +10,13 @@ import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.anescobar.musicale.R;
+import com.anescobar.musicale.activities.ArtistDetailsActivity;
 import com.anescobar.musicale.interfaces.ArtistInfoFetcherTaskListener;
 import com.anescobar.musicale.interfaces.ArtistTopTracksFetcherTaskListener;
 import com.anescobar.musicale.utils.ArtistInfoSeeker;
@@ -28,7 +28,7 @@ import de.umass.lastfm.Artist;
 import de.umass.lastfm.ImageSize;
 import de.umass.lastfm.Track;
 
-public class AboutEventArtistFragment extends Fragment implements ArtistInfoFetcherTaskListener,
+public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTaskListener,
         ArtistTopTracksFetcherTaskListener {
 
     private static final String ARG_ARTIST = "artistArg";
@@ -38,7 +38,7 @@ public class AboutEventArtistFragment extends Fragment implements ArtistInfoFetc
     private LinearLayout mTopTracksContainer;
     private ProgressBar mTracksLoadingProgressBar;
 
-    public AboutEventArtistFragment() {}
+    public AboutArtistFragment() {}
 
     /**
      * This interface must be implemented by activities that contain this
@@ -50,8 +50,8 @@ public class AboutEventArtistFragment extends Fragment implements ArtistInfoFetc
         public void displayErrorMessage(String message);
     }
 
-    public static AboutEventArtistFragment newInstance(String artist) {
-        AboutEventArtistFragment fragment = new AboutEventArtistFragment();
+    public static AboutArtistFragment newInstance(String artist) {
+        AboutArtistFragment fragment = new AboutArtistFragment();
 
         //creates new Bundle
         Bundle args = new Bundle();
@@ -189,11 +189,11 @@ public class AboutEventArtistFragment extends Fragment implements ArtistInfoFetc
         }
 
         //sets onClickListener for entire card
-        artistCard.setOnClickListener(new Button.OnClickListener() {
+        artistCard.setOnClickListener(new LinearLayout.OnClickListener() {
             public void onClick(View v) {
-                Intent i = new Intent(Intent.ACTION_VIEW,
-                        Uri.parse(artist.getUrl()));
-                startActivity(i);
+                Intent intent = new Intent(getActivity(), ArtistDetailsActivity.class);
+                intent.putExtra("ARTIST", artist.getName());
+                startActivity(intent);
             }
         });
 
@@ -213,7 +213,7 @@ public class AboutEventArtistFragment extends Fragment implements ArtistInfoFetc
             public void onClick(View view) {
                 //opens track link in browser
                 Intent i = new Intent(Intent.ACTION_VIEW,
-                Uri.parse(track.getUrl()));
+                        Uri.parse(track.getUrl()));
                 startActivity(i);
             }
         });
@@ -230,20 +230,28 @@ public class AboutEventArtistFragment extends Fragment implements ArtistInfoFetc
 
     @Override
     public void onArtistTopTrackFetcherTaskCompleted(Collection<Track> tracks) {
-        //displays first 7 top tracks
-        int counter = 0;
-        for(Track track : tracks) {
-            if (counter < 7) {
-                counter ++;
-                addTopTrackLink(track, mTopTracksContainer);
+        //if activity has been killed then no need to attempt to populate view with tracks
+        if (getActivity() != null) {
+            //displays first 7 top tracks
+            int counter = 0;
+            for(Track track : tracks) {
+                if (counter < 7) {
+                    counter ++;
+                    addTopTrackLink(track, mTopTracksContainer);
+                }
             }
+            mTracksLoadingProgressBar.setVisibility(View.GONE);
         }
-        mTracksLoadingProgressBar.setVisibility(View.GONE);
+
     }
 
     private void displaySimilarArtists(Collection<Artist> artists) {
-        for (Artist artist : artists) {
-            setUpArtistCard(artist, mSimilarArtistsContainer);
+        //only populates view with similar artists if activity hasnt been killed
+        if (getActivity() != null) {
+            for (Artist artist : artists) {
+                setUpArtistCard(artist, mSimilarArtistsContainer);
+            }
         }
+
     }
 }

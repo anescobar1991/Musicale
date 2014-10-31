@@ -11,7 +11,5 @@
     <string name="about_venue_call_venue">Contact venue</string>
     <string name="about_venue_visit_venue_website">Visit venue website</string>
     <string name="other_events_title_text">Upcoming events at this venue</string>
-    <string name="about_artist_show_related_artists_text">Similar artists</string>
-    <string name="about_artist_top_tracks_text">Top tracks</string>
 
 </resources>
