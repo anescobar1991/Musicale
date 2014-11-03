@@ -11,8 +11,7 @@ import com.anescobar.musicale.R;
 import com.anescobar.musicale.fragments.AboutArtistFragment;
 
 
-public class ArtistDetailsActivity extends FragmentActivity implements
-        AboutArtistFragment.AboutEventArtistFragmentInteractionListener {
+public class ArtistDetailsActivity extends FragmentActivity {
 
     public static final String ABOUT_ARTIST_FRAGMENT = "aboutArtistFragment";
 
@@ -56,12 +55,4 @@ public class ArtistDetailsActivity extends FragmentActivity implements
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void displayErrorMessage(String message) {
-        TextView errorMessageContainer = (TextView) findViewById(R.id.activity_about_artist_error_message_container);
-
-        //sets error message container to given message and makes it visible
-        errorMessageContainer.setText(message);
-        errorMessageContainer.setVisibility(View.VISIBLE);
-    }
 }

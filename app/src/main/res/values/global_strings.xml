@@ -4,8 +4,14 @@
     <string name="info_powered_by">Powered by</string>
     <string name="accessibility_lastFmLogo">Last.fm</string>
     <string name="error_generic">Oops! This one is on us, we\'re having issues communicating with our server. Try again later.</string>
+    <string name="error_location_services_disabled">Couldn\'t find your location. Do you have location services enabled?</string>
     <string name="error_no_network_connectivity">No internet connection found. Are you connected to a network?</string>
     <string name="copyright_text">© Andres Escobar. All rights reserved.</string>
     <string name="action_about_musicale">About Musicale</string>
+
+    <!-- Error dialog strings -->
+    <string name="exit">Exit</string>
+    <string name="retry">Try again</string>
+
 
 </resources>

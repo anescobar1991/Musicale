@@ -1,5 +1,7 @@
 package com.anescobar.musicale.utils;
 
+import android.content.Context;
+import android.net.Network;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -25,18 +27,26 @@ import de.umass.util.MapUtilities;
  */
 public class EventsFinder {
     private static final String API_KEY = "824f19ce3c166a10c7b9858e3dfc3235";
-
+    private NetworkUtil mNetworkUtil = new NetworkUtil();
     public EventsFinder() {
     }
 
     //publicly accessible method which is called to get Events back from backend
-    public void getEvents(Integer pageNumber, LatLng location, EventFetcherListener eventFetcherListener) {
-        new EventsFetcherTask(location, eventFetcherListener).execute(pageNumber);
+    public void getEvents(Integer pageNumber, LatLng location, EventFetcherListener eventFetcherListener, Context context) throws NetworkNotAvailableException {
+        if (mNetworkUtil.isNetworkAvailable(context)) {
+            new EventsFetcherTask(location, eventFetcherListener).execute(pageNumber);
+        } else {
+            throw new NetworkNotAvailableException("Not connected to network...");
+        }
     }
 
     //publicly accessible method which is called to get upcoming events at venue
-    public void getUpcomingEventsAtVenue(String venueId, VenueEventsFetcherListener venueEventsFetcherListener) {
-        new VenueEventsFetcherTask(venueEventsFetcherListener).execute(venueId);
+    public void getUpcomingEventsAtVenue(String venueId, VenueEventsFetcherListener venueEventsFetcherListener, Context context) throws NetworkNotAvailableException {
+        if (mNetworkUtil.isNetworkAvailable(context)) {
+            new VenueEventsFetcherTask(venueEventsFetcherListener).execute(venueId);
+        } else {
+            throw new NetworkNotAvailableException("Not connected to network...");
+        }
     }
 
     /**

@@ -5,10 +5,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.anescobar.musicale.R;
 import com.anescobar.musicale.fragments.EventsListViewFragment;
 import com.anescobar.musicale.fragments.EventsMapViewFragment;
+import com.anescobar.musicale.utils.LocationNotAvailableException;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -61,7 +63,12 @@ public class EventsActivity extends LocationAwareActivity implements
         // Handle actionbar item selection
         switch (item.getItemId()) {
             case R.id.action_refresh_events:
-                refreshEvents(getCurrentLatLng());
+                try {
+                    refreshEvents(getCurrentLatLng());
+                } catch (LocationNotAvailableException e) {
+                    e.printStackTrace();
+                    Toast.makeText(this, getString(R.string.error_location_services_disabled), Toast.LENGTH_SHORT).show();
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -81,7 +88,11 @@ public class EventsActivity extends LocationAwareActivity implements
     @Override
     public void onConnected(Bundle bundle) {
         //gets latLng and stores it once location client is connected
-        mLatLng = getCurrentLatLng();
+        try {
+            mLatLng = getCurrentLatLng();
+        } catch (LocationNotAvailableException e) {
+            e.printStackTrace();
+        }
 
         //add events fragment to activity once location client is connected
         displayEventsListView();

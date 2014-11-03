@@ -12,13 +12,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.anescobar.musicale.R;
 import com.anescobar.musicale.adapters.EventsAdapter;
 import com.anescobar.musicale.interfaces.EventFetcherListener;
 import com.anescobar.musicale.utils.EventsFinder;
-import com.anescobar.musicale.utils.NetworkUtil;
+import com.anescobar.musicale.utils.NetworkNotAvailableException;
 import com.anescobar.musicale.models.EventQueryDetails;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
@@ -37,8 +38,8 @@ public class EventsListViewFragment extends Fragment implements EventFetcherList
     private EventsAdapter mAdapter;
     private RecyclerView mRecyclerView;
     private ProgressBar mEventsLoadingProgressBar;
-    private NetworkUtil mNetworkUtil;
     private SmoothProgressBar mMoreEventsLoadingProgressBar;
+    private TextView mErrorMessageContainer;
 
     private LatLng mLatLng;
 
@@ -69,9 +70,6 @@ public class EventsListViewFragment extends Fragment implements EventFetcherList
 
         //lets it know that this fragment has its own menu implementation
         setHasOptionsMenu(true);
-
-        //initializes networkUtil class
-        mNetworkUtil = new NetworkUtil();
     }
 
     @Override
@@ -85,6 +83,7 @@ public class EventsListViewFragment extends Fragment implements EventFetcherList
         mMoreEventsLoadingProgressBar = (SmoothProgressBar) view.findViewById(R.id.fragment_events_list_view_more_events_loading);
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
+        mErrorMessageContainer = (TextView) view.findViewById(R.id.fragment_events_list_view_error_message_container);
 
         //sets on clickListener for load more events button
         mLoadMoreEventsButton.setOnClickListener(new View.OnClickListener() {
@@ -126,33 +125,6 @@ public class EventsListViewFragment extends Fragment implements EventFetcherList
             //TODO catch this error scenario
         }
     }
-
-//    //makes sure that load more vents button is only displayed when scrolled to bottom of screen
-//    //and when there are more pages left of events
-//    @Override
-//    public void onScrollStateChanged(int state) {
-//        //if scroll state is settled or settling then check if load more button should be displayed
-//        //checking both for better responsiveness
-//        if (state == RecyclerView.SCROLL_STATE_SETTLING || state == RecyclerView.SCROLL_STATE_IDLE ) {
-//            int itemCount = mAdapter.getItemCount() - 1;
-//
-//            //if user has scrolled to bottom of recycle view and there are still pages of events left
-//            if (mLayoutManager.findLastCompletelyVisibleItemPosition() == itemCount && mEventQueryDetails.totalNumberOfEventPages > mEventQueryDetails.numberOfEventPagesLoaded) {
-//                //scroll to last item to fix bug of button being on top of last item
-//                mRecyclerView.scrollToPosition(itemCount);
-//
-//                //display load more events Button
-//                displayLoadMoreEventsButton(true);
-//            } else if (mLayoutManager.findFirstCompletelyVisibleItemPosition() != itemCount) {
-//                //hide load more events button
-//                displayLoadMoreEventsButton(false);
-//            }
-//        }
-//    }
-//
-//    @Override
-//    public void onScrolled(int i, int i2) {
-//    }
 
     private void setEventsAdapter() {
         // only sets up adapter if it hasnt been setup already
@@ -203,13 +175,16 @@ public class EventsListViewFragment extends Fragment implements EventFetcherList
 
     //gets events from backend, keeps track of how many pages are already loaded and cached
     public void getEventsFromServer(Integer pageNumber, LatLng userLocation) {
-
-        if (mNetworkUtil.isNetworkAvailable(getActivity())) {
+        try {
             mEventQueryDetails.numberOfEventPagesLoaded = pageNumber;
-
-            new EventsFinder().getEvents(pageNumber, userLocation, this);
-        } else {
-            Toast.makeText(getActivity(),getString(R.string.error_no_network_connectivity),Toast.LENGTH_SHORT).show();
+            new EventsFinder().getEvents(pageNumber, userLocation, this, getActivity());
+        } catch (NetworkNotAvailableException e) {
+            e.printStackTrace();
+            if (pageNumber == 1) {
+                setErrorMessage(getString(R.string.error_no_network_connectivity));
+            } else {
+                Toast.makeText(getActivity(),getString(R.string.error_no_network_connectivity),Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -230,6 +205,8 @@ public class EventsListViewFragment extends Fragment implements EventFetcherList
     //called onPreExecute of eventsFetcherTask
     @Override
     public void onEventFetcherTaskAboutToStart() {
+        mErrorMessageContainer.setVisibility(View.GONE);
+
         //display loading progressbar at bottom of screen if it is loading more events after first page
         if (mEventQueryDetails.numberOfEventPagesLoaded > 1) {
             mLoadMoreEventsButton.setVisibility(View.GONE);
@@ -262,8 +239,7 @@ public class EventsListViewFragment extends Fragment implements EventFetcherList
             //set events adapter with new events
             setEventsAdapter();
         } else {
-            //if call to backend was not successful
-            Toast.makeText(getActivity(),getString(R.string.error_generic),Toast.LENGTH_SHORT).show();
+            setErrorMessage(getString(R.string.error_generic));
         }
 
         if (mEventQueryDetails.numberOfEventPagesLoaded == 1) {
@@ -291,6 +267,12 @@ public class EventsListViewFragment extends Fragment implements EventFetcherList
         } else {
             setEventsAdapter();
         }
+    }
+
+    private void setErrorMessage(String message) {
+        mRecyclerView.setVisibility(View.GONE);
+        mErrorMessageContainer.setText(message);
+        mErrorMessageContainer.setVisibility(View.VISIBLE);
     }
 
 }

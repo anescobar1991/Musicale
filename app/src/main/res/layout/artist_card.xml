@@ -1,6 +1,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/artist_card"
     android:layout_width="match_parent"
+    android:orientation="vertical"
     android:layout_height="wrap_content"
     android:layout_marginBottom="1dp"
     android:clickable="true"
@@ -12,7 +13,7 @@
         android:paddingTop="4dp"
         android:paddingBottom="4dp"
         android:paddingRight="4dp"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <ImageView
             android:id="@+id/artist_card_image"
@@ -34,5 +35,12 @@
             android:layout_height="wrap_content" />
 
     </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="16dp"
+        android:background="@color/border_default_grey"/>
 
 </LinearLayout>

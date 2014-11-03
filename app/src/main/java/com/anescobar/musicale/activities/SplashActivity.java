@@ -1,5 +1,7 @@
 package com.anescobar.musicale.activities;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
@@ -7,7 +9,8 @@ import android.widget.Toast;
 import com.anescobar.musicale.R;
 import com.anescobar.musicale.interfaces.EventFetcherListener;
 import com.anescobar.musicale.utils.EventsFinder;
-import com.anescobar.musicale.utils.NetworkUtil;
+import com.anescobar.musicale.utils.LocationNotAvailableException;
+import com.anescobar.musicale.utils.NetworkNotAvailableException;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.common.ConnectionResult;
 
@@ -24,12 +27,9 @@ import de.umass.lastfm.PaginatedResult;
  */
 public class SplashActivity extends LocationAwareActivity implements EventFetcherListener {
 
-    private NetworkUtil mNetworkUtil;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        mNetworkUtil = new NetworkUtil();
 
         setContentView(R.layout.activity_splash);
 
@@ -37,14 +37,14 @@ public class SplashActivity extends LocationAwareActivity implements EventFetche
         Crashlytics.start(this);
     }
 
-    /**
-     * sends intent to start home activity
-     */
-    private void startHomeActivity() {
-        Intent intent = new Intent(this, HomeActivity.class);
-        startActivity(intent);
-        finish();
-    }
+//    /**
+//     * sends intent to start home activity
+//     */
+//    private void startHomeActivity() {
+//        Intent intent = new Intent(this, HomeActivity.class);
+//        startActivity(intent);
+//        finish();
+//    }
 
     /**
      * sends intent to start events activity
@@ -57,11 +57,7 @@ public class SplashActivity extends LocationAwareActivity implements EventFetche
 
     @Override
     public void onConnected(Bundle bundle) {
-        if (mNetworkUtil.isNetworkAvailable(this)) {
-            new EventsFinder().getEvents(1, getCurrentLatLng(), this);
-        } else {
-            Toast.makeText(this, getString(R.string.error_no_network_connectivity), Toast.LENGTH_SHORT).show();
-        }
+        initializeApp();
     }
 
     @Override
@@ -95,9 +91,53 @@ public class SplashActivity extends LocationAwareActivity implements EventFetche
             //start events activity
             startEventsActivity();
         } else {
-            //if call to backend was not successful
-            Toast.makeText(this,getString(R.string.error_generic),Toast.LENGTH_SHORT).show();
+            initializeApp();
         }
+    }
 
+    public void initializeApp() {
+        try {
+            new EventsFinder().getEvents(1, getCurrentLatLng(), this, this);
+        } catch (LocationNotAvailableException e) {
+            e.printStackTrace();
+
+            //create dialog
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            // Add the buttons
+            builder.setPositiveButton(R.string.retry, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    initializeApp();
+                }
+            });
+            builder.setNegativeButton(R.string.exit, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    finish();
+                }
+            });
+            // Set dialog's message
+            builder.setMessage(R.string.error_location_services_disabled);
+            // Create the AlertDialog
+            builder.show();
+        } catch (NetworkNotAvailableException e) {
+            e.printStackTrace();
+
+            //create dialog
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            // Add the buttons
+            builder.setPositiveButton(R.string.retry, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    initializeApp();
+                }
+            });
+            builder.setNegativeButton(R.string.exit, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    finish();
+                }
+            });
+            // Set dialog's message
+            builder.setMessage(R.string.error_no_network_connectivity);
+            // Create the AlertDialog
+            builder.show();
+        }
     }
 }

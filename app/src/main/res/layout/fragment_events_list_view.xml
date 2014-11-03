@@ -19,6 +19,14 @@
             android:visibility="gone"
             android:layout_height="wrap_content" />
 
+        <TextView
+            android:id="@+id/fragment_events_list_view_error_message_container"
+            android:layout_width="match_parent"
+            android:gravity="center"
+            android:textAlignment="center"
+            android:visibility="gone"
+            android:layout_height="match_parent" />
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/fragment_events_listView_event_cards_holder"
             android:scrollbars="vertical"

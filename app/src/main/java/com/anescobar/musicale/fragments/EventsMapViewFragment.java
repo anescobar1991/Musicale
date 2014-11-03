@@ -21,7 +21,7 @@ import com.anescobar.musicale.R;
 import com.anescobar.musicale.activities.EventDetailsActivity;
 import com.anescobar.musicale.interfaces.EventFetcherListener;
 import com.anescobar.musicale.utils.EventsFinder;
-import com.anescobar.musicale.utils.NetworkUtil;
+import com.anescobar.musicale.utils.NetworkNotAvailableException;
 import com.anescobar.musicale.models.EventQueryDetails;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -48,7 +48,6 @@ public class EventsMapViewFragment extends Fragment implements EventFetcherListe
 
     private MapFragment mMapFragment;
     private EventsMapViewFragmentInteractionListener mListener;
-    private NetworkUtil mNetworkUtil;
     private GoogleMap mMap;
     private Button mRedoSearchButton;
     private RelativeLayout mLoadingOverlay;
@@ -84,9 +83,6 @@ public class EventsMapViewFragment extends Fragment implements EventFetcherListe
 
         //creates MapFragment
         mMapFragment = new MapFragment();
-
-        //initializes networkUtil class
-        mNetworkUtil = new NetworkUtil();
     }
 
     @Override
@@ -180,10 +176,12 @@ public class EventsMapViewFragment extends Fragment implements EventFetcherListe
     //gets events from backend
     public void getEventsFromServer(Integer pageNumber, LatLng userLocation) {
 
-        if (mNetworkUtil.isNetworkAvailable(getActivity())) {
-            new EventsFinder().getEvents(pageNumber, userLocation, this);
-        } else {
-            Toast.makeText(getActivity(),getString(R.string.error_no_network_connectivity),Toast.LENGTH_SHORT).show();
+        try {
+            new EventsFinder().getEvents(pageNumber, userLocation, this, getActivity());
+        } catch (NetworkNotAvailableException e) {
+            e.printStackTrace();
+
+            Toast.makeText(getActivity(), getString(R.string.error_no_network_connectivity), Toast.LENGTH_SHORT).show();
         }
     }
 

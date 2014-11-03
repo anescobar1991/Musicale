@@ -1,6 +1,5 @@
 package com.anescobar.musicale.fragments;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -13,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.anescobar.musicale.R;
@@ -20,6 +20,7 @@ import com.anescobar.musicale.activities.ArtistDetailsActivity;
 import com.anescobar.musicale.interfaces.ArtistInfoFetcherTaskListener;
 import com.anescobar.musicale.interfaces.ArtistTopTracksFetcherTaskListener;
 import com.anescobar.musicale.utils.ArtistInfoSeeker;
+import com.anescobar.musicale.utils.NetworkNotAvailableException;
 import com.squareup.picasso.Picasso;
 
 import java.util.Collection;
@@ -32,23 +33,13 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
         ArtistTopTracksFetcherTaskListener {
 
     private static final String ARG_ARTIST = "artistArg";
-    private AboutEventArtistFragmentInteractionListener mListener;
     private View mView;
     private LinearLayout mSimilarArtistsContainer;
     private LinearLayout mTopTracksContainer;
-    private ProgressBar mTracksLoadingProgressBar;
+    private RelativeLayout mContainer;
+    private ProgressBar mContentLoadingProgressBar;
 
     public AboutArtistFragment() {}
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     */
-    public interface AboutEventArtistFragmentInteractionListener {
-        public void displayErrorMessage(String message);
-    }
 
     public static AboutArtistFragment newInstance(String artist) {
         AboutArtistFragment fragment = new AboutArtistFragment();
@@ -68,41 +59,22 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
                              Bundle savedInstanceState) {
 
         mView = inflater.inflate(R.layout.fragment_about_artist, container, false);
-
+        mContainer = (RelativeLayout) mView.findViewById(R.id.fragment_about_artist_content);
+        mContentLoadingProgressBar = (ProgressBar) mView.findViewById(R.id.fragment_about_artist_loading_progressbar);
         Bundle args = getArguments();
 
         String artist = args.getString(ARG_ARTIST, null);
 
-
-        // if there was an artist passed to fragment
-        if (artist != null) {
-
+        try {
             //gets artist info
-            new ArtistInfoSeeker().getArtistInfo(artist, this);
+            new ArtistInfoSeeker().getArtistInfo(artist, this, getActivity());
+        } catch (NetworkNotAvailableException e) {
+            e.printStackTrace();
 
-            // should never happen but just in case...
-        } else {
-            mListener.displayErrorMessage(getActivity().getString(R.string.error_generic));
+            displayErrorMessage(getString(R.string.error_no_network_connectivity));
         }
 
         return mView;
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            mListener = (AboutEventArtistFragmentInteractionListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement AboutEventArtistFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
     }
 
     private void setUpView(final Artist artist) {
@@ -112,7 +84,6 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
         TextView artistTags = (TextView) mView.findViewById(R.id.fragment_about_artist_tags);
         mSimilarArtistsContainer = (LinearLayout) mView.findViewById(R.id.fragment_about_artist_similar_artists_container);
         mTopTracksContainer = (LinearLayout) mView.findViewById(R.id.fragment_about_artist_top_tracks_container);
-        mTracksLoadingProgressBar = (ProgressBar) mView.findViewById(R.id.fragment_about_artist_tracks_loading_progressbar);
 
         //-------------Loads dynamic data into view------------------
         artistName.setText(artist.getName());
@@ -159,7 +130,11 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
 
     @Override
     public void onArtistInfoFetcherTaskCompleted(Artist artist) {
-        new ArtistInfoSeeker().getArtistTopTracks(artist.getName(), this);
+        try {
+            new ArtistInfoSeeker().getArtistTopTracks(artist.getName(), this, getActivity());
+        } catch (NetworkNotAvailableException e) {
+            displayErrorMessage(getString(R.string.error_no_network_connectivity));
+        }
 
         setUpView(artist);
     }
@@ -240,7 +215,8 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
                     addTopTrackLink(track, mTopTracksContainer);
                 }
             }
-            mTracksLoadingProgressBar.setVisibility(View.GONE);
+            mContainer.setVisibility(View.VISIBLE);
+            mContentLoadingProgressBar.setVisibility(View.GONE);
         }
 
     }
@@ -251,7 +227,17 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
             for (Artist artist : artists) {
                 setUpArtistCard(artist, mSimilarArtistsContainer);
             }
+            if (artists.isEmpty()) {
+                mSimilarArtistsContainer.setVisibility(View.GONE);
+            }
         }
+    }
 
+    private void displayErrorMessage(String message) {
+        TextView errorMessageContainer = (TextView) mView.findViewById(R.id.fragment_about_artist_error_message_container);
+
+        mContentLoadingProgressBar.setVisibility(View.GONE);
+        errorMessageContainer.setText(message);
+        errorMessageContainer.setVisibility(View.VISIBLE);
     }
 }

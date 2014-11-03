@@ -1,118 +1,135 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
+    android:fillViewport="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <RelativeLayout
-        android:orientation="vertical"
-        android:padding="4dp"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <ImageView
-            android:id="@+id/fragment_about_artist_artist_image"
-            android:contentDescription="@null"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="4dp"
+        <ProgressBar
+            android:id="@+id/fragment_about_artist_loading_progressbar"
             android:layout_width="wrap_content"
+            android:layout_gravity="center"
             android:layout_height="wrap_content" />
 
         <TextView
-            android:id="@+id/fragment_about_artist_artist_name"
-            android:textColor="@color/accent"
-            android:layout_toEndOf="@+id/fragment_about_artist_artist_image"
-            android:textSize="24sp"
-            android:textStyle="bold"
+            android:id="@+id/fragment_about_artist_error_message_container"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:id="@+id/fragment_about_artist_tags"
-            android:layout_width="match_parent"
-            android:layout_toEndOf="@+id/fragment_about_artist_artist_image"
-            android:layout_below="@+id/fragment_about_artist_artist_name"
+            android:visibility="gone"
+            android:gravity="center"
+            android:layout_gravity="center"
             android:layout_height="wrap_content" />
 
         <RelativeLayout
-            android:id="@+id/fragment_about_artist_bio_container"
-            android:layout_width="match_parent"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"
-            android:background="@drawable/layout_border"
+            android:id="@+id/fragment_about_artist_content"
+            android:visibility="gone"
+            android:orientation="vertical"
             android:padding="4dp"
-            android:layout_below="@+id/fragment_about_artist_artist_image"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/fragment_about_artist_bio"
-                android:layout_width="match_parent"
-                android:padding="4dp"
+            <ImageView
+                android:id="@+id/fragment_about_artist_artist_image"
+                android:contentDescription="@null"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="4dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/fragment_about_artist_artist_name"
+                android:textColor="@color/accent"
+                android:layout_toEndOf="@+id/fragment_about_artist_artist_image"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/fragment_about_artist_tags"
+                android:layout_width="match_parent"
+                android:layout_toEndOf="@+id/fragment_about_artist_artist_image"
+                android:layout_below="@+id/fragment_about_artist_artist_name"
+                android:layout_height="wrap_content" />
+
+            <RelativeLayout
+                android:id="@+id/fragment_about_artist_bio_container"
+                android:layout_width="match_parent"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/layout_border"
+                android:padding="4dp"
+                android:layout_below="@+id/fragment_about_artist_artist_image"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/fragment_about_artist_bio"
+                    android:layout_width="match_parent"
+                    android:padding="4dp"
+                    android:layout_height="wrap_content" />
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/fragment_about_artist_top_tracks_container"
+                android:layout_width="match_parent"
+                android:layout_below="@+id/fragment_about_artist_bio_container"
+                android:orientation="vertical"
+                android:layout_marginBottom="16dp"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/fragment_about_artist_top_tracks_title"
+                    android:layout_width="wrap_content"
+                    android:textSize="20sp"
+                    android:text="@string/about_artist_top_tracks_text"
+                    android:textStyle="bold"
+                    android:layout_gravity="center_horizontal"
+                    android:textColor="@color/accent"
+                    android:layout_height="wrap_content" />
+
+                <View
+                    android:id="@+id/fragment_about_artist_separator2"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="16dp"
+                    android:background="@color/border_default_grey"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/fragment_about_artist_similar_artists_container"
+                android:layout_width="match_parent"
+                android:layout_below="@+id/fragment_about_artist_top_tracks_container"
+                android:orientation="vertical"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/fragment_about_artist_related_artists_title"
+                    android:layout_width="wrap_content"
+                    android:textSize="20sp"
+                    android:text="@string/about_artist_show_related_artists_text"
+                    android:textStyle="bold"
+                    android:layout_gravity="center_horizontal"
+                    android:textColor="@color/accent"
+                    android:layout_height="wrap_content" />
+
+                <View
+                    android:id="@+id/fragment_about_artist_separator3"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="12dp"
+                    android:background="@color/border_default_grey"/>
+
+            </LinearLayout>
 
         </RelativeLayout>
 
-        <LinearLayout
-            android:id="@+id/fragment_about_artist_top_tracks_container"
-            android:layout_width="match_parent"
-            android:layout_below="@+id/fragment_about_artist_bio_container"
-            android:orientation="vertical"
-            android:layout_marginBottom="16dp"
-            android:layout_height="wrap_content">
+    </FrameLayout>
 
-            <TextView
-                android:id="@+id/fragment_about_artist_top_tracks_title"
-                android:layout_width="wrap_content"
-                android:textSize="20sp"
-                android:text="@string/about_artist_top_tracks_text"
-                android:textStyle="bold"
-                android:layout_gravity="center_horizontal"
-                android:textColor="@color/accent"
-                android:layout_height="wrap_content" />
-
-            <View
-                android:id="@+id/fragment_about_artist_separator2"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginBottom="16dp"
-                android:background="@color/border_default_grey"/>
-
-            <ProgressBar
-                android:id="@+id/fragment_about_artist_tracks_loading_progressbar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/fragment_about_artist_similar_artists_container"
-            android:layout_width="match_parent"
-            android:layout_below="@+id/fragment_about_artist_top_tracks_container"
-            android:orientation="vertical"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:id="@+id/fragment_about_artist_related_artists_title"
-                android:layout_width="wrap_content"
-                android:textSize="20sp"
-                android:text="@string/about_artist_show_related_artists_text"
-                android:textStyle="bold"
-                android:layout_gravity="center_horizontal"
-                android:textColor="@color/accent"
-                android:layout_height="wrap_content" />
-
-            <View
-                android:id="@+id/fragment_about_artist_separator3"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginBottom="16dp"
-                android:background="@color/border_default_grey"/>
-
-        </LinearLayout>
-
-    </RelativeLayout>
 
 </ScrollView>

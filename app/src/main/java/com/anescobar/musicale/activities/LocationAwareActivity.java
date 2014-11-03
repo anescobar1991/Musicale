@@ -1,8 +1,8 @@
 package com.anescobar.musicale.activities;
 
-import android.location.Location;
 import android.os.Bundle;
 
+import com.anescobar.musicale.utils.LocationNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.maps.model.LatLng;
@@ -40,8 +40,16 @@ public abstract class LocationAwareActivity extends BaseActivity implements
         super.onStop();
     }
 
-    public LatLng getCurrentLatLng() {
-        Location currentLocation = mLocationClient.getLastLocation();
-        return new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude());
+    public LatLng getCurrentLatLng() throws LocationNotAvailableException {
+        LatLng currentLatLng;
+
+        if (mLocationClient.getLastLocation() == null) {
+            throw new LocationNotAvailableException("LastLocation not available");
+        } else {
+            currentLatLng = new LatLng(mLocationClient.getLastLocation().getLatitude(),
+                    mLocationClient.getLastLocation().getLongitude());
+        }
+        return currentLatLng;
     }
 }
+

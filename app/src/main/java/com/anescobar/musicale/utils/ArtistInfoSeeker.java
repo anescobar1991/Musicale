@@ -1,5 +1,6 @@
 package com.anescobar.musicale.utils;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -21,22 +22,34 @@ import de.umass.lastfm.Track;
  * Handles all server calls to get artist details from Last.Fm API
  */
 public class ArtistInfoSeeker {
-
+    private NetworkUtil mNetworkUtil = new NetworkUtil();
     private static final String API_KEY = "824f19ce3c166a10c7b9858e3dfc3235";
 
     public ArtistInfoSeeker() {
     }
 
-    public void getArtistInfo(String artist, ArtistInfoFetcherTaskListener listener) {
-        new ArtistInfoFetcherTask(listener).execute(artist);
+    public void getArtistInfo(String artist, ArtistInfoFetcherTaskListener listener, Context context) throws NetworkNotAvailableException {
+        if (mNetworkUtil.isNetworkAvailable(context)) {
+            new ArtistInfoFetcherTask(listener).execute(artist);
+        } else {
+            throw new NetworkNotAvailableException("Not connected to network...");
+        }
     }
 
-    public void getArtistUpcomingEvents(String artist, ArtistUpcomingEventsFetcherTaskListener listener) {
-        new ArtistUpcomingEventsFetcherTask(listener).execute(artist);
+    public void getArtistUpcomingEvents(String artist, ArtistUpcomingEventsFetcherTaskListener listener, Context context) throws NetworkNotAvailableException {
+        if (mNetworkUtil.isNetworkAvailable(context)) {
+            new ArtistUpcomingEventsFetcherTask(listener).execute(artist);
+        } else {
+            throw new NetworkNotAvailableException("Not connected to network...");
+        }
     }
 
-    public void getArtistTopTracks(String artist, ArtistTopTracksFetcherTaskListener listener) {
-        new ArtistTopTracksFetcherListener(listener).execute(artist);
+    public void getArtistTopTracks(String artist, ArtistTopTracksFetcherTaskListener listener, Context context) throws NetworkNotAvailableException{
+        if (mNetworkUtil.isNetworkAvailable(context)) {
+            new ArtistTopTracksFetcherListener(listener).execute(artist);
+        } else {
+            throw new NetworkNotAvailableException("Not connected to network...");
+        }
     }
 
     private class ArtistInfoFetcherTask extends AsyncTask<String, Void, Artist> {
