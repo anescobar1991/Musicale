@@ -13,4 +13,8 @@
     <color name="raised_button_disabled">#ccc</color>
     <color name="raised_button_default">#1a237e</color>
     <color name="raised_button_pressed">#ff1a1d69</color>
+
+    <!--For shadow view-->
+    <color name="drop_start">#66060d0a</color>
+    <color name="drop_end">#00000000</color>
 </resources>

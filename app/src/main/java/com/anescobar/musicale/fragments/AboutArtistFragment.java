@@ -102,7 +102,7 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
             formattedTags = formattedTags.substring(0, formattedTags.length()-2);
 
             //sets artistTags textview to display formatted tags string
-            artistTags.setText(formattedTags);
+            artistTags.setText(formattedTags.toUpperCase());
         }
 
         String artistImageUrl = artist.getImageURL(ImageSize.EXTRALARGE);

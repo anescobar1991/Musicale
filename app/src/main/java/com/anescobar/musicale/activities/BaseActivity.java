@@ -30,5 +30,4 @@ public abstract class BaseActivity extends Activity {
                 .replace(container, fragment, fragmentTag)
                 .commit();
     }
-
 }

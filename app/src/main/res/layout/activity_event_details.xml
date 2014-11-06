@@ -64,7 +64,7 @@
 
     </RelativeLayout>
 
-    <FrameLayout
+    <RelativeLayout
         android:id="@+id/activity_event_details_pager_title_container"
         android:layout_width="match_parent"
         android:background="#ffd5d5d5"
@@ -76,7 +76,14 @@
             android:layout_height="wrap_content"
             android:layout_width="match_parent" />
 
-    </FrameLayout>
+        <View
+            android:id="@+id/activity_event_details_view_pager_title_shadow"
+            android:layout_width="match_parent"
+            android:layout_below="@+id/activity_event_details_view_pager_title"
+            android:layout_height="3dp"
+            android:background="@drawable/drop_shadow" />
+
+    </RelativeLayout>
 
     <FrameLayout
         android:id="@+id/activity_event_details_view_pager_container"

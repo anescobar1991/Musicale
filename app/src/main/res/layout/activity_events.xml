@@ -5,31 +5,40 @@
     <LinearLayout
         android:id="@+id/activity_events_tabs"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="48dp">
 
         <Button
             android:id="@+id/activity_event_list_tab"
             android:layout_width="0dp"
             android:background="@drawable/unselected_tab_button"
             android:text="@string/view_in_list_tab_text"
+            android:textSize="14sp"
             android:textColor="@color/default_text_grey"
             android:layout_weight="1"
-            android:layout_height="wrap_content" />
+            android:layout_height="match_parent" />
 
         <Button
             android:id="@+id/activity_event_map_tab"
             android:layout_width="0dp"
             android:textColor="@color/default_text_grey"
+            android:textSize="14sp"
             android:background="@drawable/unselected_tab_button"
             android:text="@string/explore_in_map_tab_text"
             android:layout_weight="1"
-            android:layout_height="wrap_content" />
+            android:layout_height="match_parent" />
 
     </LinearLayout>
 
+    <View
+        android:id="@+id/activity_events_tabs_shadow"
+        android:layout_width="match_parent"
+        android:layout_below="@+id/activity_events_tabs"
+        android:layout_height="3dp"
+        android:background="@drawable/drop_shadow" />
+
     <FrameLayout
         android:id="@+id/activity_events_container"
-        android:layout_below="@+id/activity_events_tabs"
+        android:layout_below="@+id/activity_events_tabs_shadow"
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
     </FrameLayout>

@@ -114,15 +114,15 @@ public class EventsActivity extends LocationAwareActivity implements
             mMapViewDisplayed = false;
             mListViewDisplayed = true;
 
-            //will add new events list view fragment if it hasnt already been added
-            addFragmentToActivity(R.id.activity_events_container, EventsListViewFragment.newInstance(mLatLng), EVENTS_LIST_VIEW_FRAGMENT_TAG);
-
             //handles tabs' appearance to convey to user that list view is currently displayed view
             mListViewTab.setBackground(getResources().getDrawable(R.drawable.default_raised_button));
             mListViewTab.setTextColor(getResources().getColor(R.color.white));
 
             mMapViewTab.setBackground(getResources().getDrawable(R.drawable.unselected_tab_button));
             mMapViewTab.setTextColor(getResources().getColor(R.color.default_text_grey));
+
+            //will add new events list view fragment if it hasnt already been added
+            addFragmentToActivity(R.id.activity_events_container, EventsListViewFragment.newInstance(mLatLng), EVENTS_LIST_VIEW_FRAGMENT_TAG);
         }
 
     }
@@ -133,14 +133,14 @@ public class EventsActivity extends LocationAwareActivity implements
             mListViewDisplayed = false;
             mMapViewDisplayed = true;
 
-            addFragmentToActivity(R.id.activity_events_container, EventsMapViewFragment.newInstance(mLatLng), EventsActivity.EVENTS_MAP_VIEW_FRAGMENT_TAG);
-
             //handles tabs' appearance to conveny to user that map view is currently displayed view
             mMapViewTab.setBackground(getResources().getDrawable(R.drawable.default_raised_button));
             mMapViewTab.setTextColor(getResources().getColor(R.color.white));
 
             mListViewTab.setBackground(getResources().getDrawable(R.drawable.unselected_tab_button));
             mListViewTab.setTextColor(getResources().getColor(R.color.default_text_grey));
+
+            addFragmentToActivity(R.id.activity_events_container, EventsMapViewFragment.newInstance(mLatLng), EventsActivity.EVENTS_MAP_VIEW_FRAGMENT_TAG);
         }
     }
 

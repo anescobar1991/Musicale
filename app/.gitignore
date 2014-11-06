@@ -8,6 +8,7 @@
 # crashlytics files
 crashlytics-build.properties
 com_crashlytics_export_strings.xml
+crashlytics.properties
 
 # Java class files
 *.class
