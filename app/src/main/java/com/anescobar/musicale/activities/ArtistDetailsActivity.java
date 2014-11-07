@@ -3,8 +3,6 @@ package com.anescobar.musicale.activities;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.anescobar.musicale.R;

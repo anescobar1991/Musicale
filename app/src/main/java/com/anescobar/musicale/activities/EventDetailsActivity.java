@@ -53,11 +53,6 @@ public class EventDetailsActivity extends FragmentActivity {
     //sets up header with event details and loads first tab with venue details
     private void setUpView(Event event) {
         ViewPager pager = (ViewPager) findViewById(R.id.activity_event_details_view_pager);
-        TextView eventTitleTextView = (TextView) findViewById(R.id.activity_event_details_event_title);
-        TextView eventArtistsTextView = (TextView) findViewById(R.id.activity_event_details_event_artists);
-        TextView venueNameTextView = (TextView) findViewById(R.id.activity_event_details_venue_name);
-        TextView eventDateTextView = (TextView) findViewById(R.id.activity_event_details_event_date);
-        ImageView eventImageView = (ImageView) findViewById(R.id.activity_event_details_event_image);
 
         //Set the pager with an adapter
         pager.setAdapter(new EventDetailsPagerAdapter(getSupportFragmentManager(), this, event));
@@ -65,6 +60,12 @@ public class EventDetailsActivity extends FragmentActivity {
         //Bind the title indicator to the adapter
         TabPageIndicator titleIndicator = (TabPageIndicator) findViewById(R.id.activity_event_details_view_pager_title);
         titleIndicator.setViewPager(pager);
+
+        TextView eventTitleTextView = (TextView) findViewById(R.id.activity_event_details_event_title);
+        TextView eventArtistsTextView = (TextView) findViewById(R.id.activity_event_details_event_artists);
+        TextView venueNameTextView = (TextView) findViewById(R.id.activity_event_details_venue_name);
+        TextView eventDateTextView = (TextView) findViewById(R.id.activity_event_details_event_date);
+        ImageView eventImageView = (ImageView) findViewById(R.id.activity_event_details_event_image);
 
         Collection<String> artistList = event.getArtists();
 

@@ -37,7 +37,7 @@ public class EventsListViewFragment extends Fragment implements EventFetcherList
     private ProgressBar mMoreEventsLoadingProgressBar;
     private TextView mErrorMessageContainer;
 
-    private boolean gettingEvents = false;
+    private boolean currentlyGettingEvents = false;
 
     private LatLng mLatLng;
 
@@ -139,7 +139,7 @@ public class EventsListViewFragment extends Fragment implements EventFetcherList
                         //if user has scrolled to bottom of recycle view and there are still pages of events left
                         if (mLayoutManager.findLastCompletelyVisibleItemPosition() == itemCount && mEventQueryDetails.totalNumberOfEventPages > mEventQueryDetails.numberOfEventPagesLoaded) {
                             //fetch next page of events only if there is not already a request to get next page
-                            if (!gettingEvents) {
+                            if (!currentlyGettingEvents) {
                                 getEventsFromServer(mEventQueryDetails.numberOfEventPagesLoaded + 1, mLatLng);
                             }
                         }
@@ -176,10 +176,7 @@ public class EventsListViewFragment extends Fragment implements EventFetcherList
     //called onPreExecute of eventsFetcherTask
     @Override
     public void onEventFetcherTaskAboutToStart() {
-        //scroll to last item to ensure that progress bar is not on top of last item
-        mRecyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
-
-        gettingEvents = true;
+        currentlyGettingEvents = true;
         mErrorMessageContainer.setVisibility(View.GONE);
 
         //display loading progressbar at bottom of screen if it is loading more events after first page
@@ -195,7 +192,7 @@ public class EventsListViewFragment extends Fragment implements EventFetcherList
     //called onPostExecute of eventsFetcherTask
     @Override
     public void onEventFetcherTaskCompleted(PaginatedResult<Event> eventsNearby) {
-        gettingEvents = false;
+        currentlyGettingEvents = false;
         //if last call was successful then load events to screen
         if (Caller.getInstance().getLastResult().isSuccessful()) {
             ArrayList<Event> events= new ArrayList<Event>(eventsNearby.getPageResults());

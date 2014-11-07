@@ -42,5 +42,5 @@ dependencies {
 
     compile 'com.android.support:recyclerview-v7:21.0.0'
     compile 'com.squareup.picasso:picasso:2.3.3'
-    compile 'com.crashlytics.android:crashlytics:1.1.13'
+    compile 'com.crashlytics.android:crashlytics:1.+'
 }
