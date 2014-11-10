@@ -1,6 +1,5 @@
 package com.anescobar.musicale.fragments;
 
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -246,7 +245,7 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
     }
 
     private void setUpEventCard(final Event event, final LinearLayout parentView) {
-        LayoutInflater vi = (LayoutInflater) getActivity().getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater vi = LayoutInflater.from(getActivity());
         View view = vi.inflate(R.layout.event_card, parentView, false);
 
         CardView eventCard = (CardView) view.findViewById(R.id.event_card);

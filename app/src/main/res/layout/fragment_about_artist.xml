@@ -98,7 +98,6 @@
                     android:layout_height="wrap_content" />
 
                 <View
-                    android:id="@+id/fragment_about_artist_separator2"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_marginTop="4dp"
@@ -125,7 +124,6 @@
                     android:layout_height="wrap_content" />
 
                 <View
-                    android:id="@+id/fragment_about_artist_separator3"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_marginTop="4dp"
@@ -134,9 +132,35 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/fragment_about_artist_upcoming_events_container"
+                android:layout_width="match_parent"
+                android:layout_below="@+id/fragment_about_artist_similar_artists_container"
+                android:orientation="vertical"
+                android:layout_marginBottom="16dp"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/fragment_about_artist_upcoming_events_title"
+                    android:layout_width="wrap_content"
+                    android:textSize="20sp"
+                    android:text="@string/artist_upcoming_events_title"
+                    android:textStyle="bold"
+                    android:layout_gravity="center_horizontal"
+                    android:textColor="@color/accent"
+                    android:layout_height="wrap_content" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="16dp"
+                    android:background="@color/border_default_grey"/>
+
+            </LinearLayout>
+
         </RelativeLayout>
 
     </FrameLayout>
-
 
 </ScrollView>

@@ -1,6 +1,5 @@
 package com.anescobar.musicale.fragments;
 
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,6 +8,7 @@ import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -17,20 +17,25 @@ import android.widget.TextView;
 
 import com.anescobar.musicale.R;
 import com.anescobar.musicale.activities.ArtistDetailsActivity;
+import com.anescobar.musicale.activities.EventDetailsActivity;
 import com.anescobar.musicale.interfaces.ArtistInfoFetcherTaskListener;
 import com.anescobar.musicale.interfaces.ArtistTopTracksFetcherTaskListener;
+import com.anescobar.musicale.interfaces.ArtistUpcomingEventsFetcherTaskListener;
 import com.anescobar.musicale.utils.ArtistInfoSeeker;
 import com.anescobar.musicale.utils.NetworkNotAvailableException;
+import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
 import java.util.Collection;
 
 import de.umass.lastfm.Artist;
+import de.umass.lastfm.Event;
 import de.umass.lastfm.ImageSize;
+import de.umass.lastfm.PaginatedResult;
 import de.umass.lastfm.Track;
 
 public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTaskListener,
-        ArtistTopTracksFetcherTaskListener {
+        ArtistTopTracksFetcherTaskListener, ArtistUpcomingEventsFetcherTaskListener {
 
     private static final String ARG_ARTIST = "artistArg";
     private View mView;
@@ -38,6 +43,7 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
     private LinearLayout mTopTracksContainer;
     private RelativeLayout mContainer;
     private ProgressBar mContentLoadingProgressBar;
+    private LinearLayout mUpcomingEventsContainer;
 
     public AboutArtistFragment() {}
 
@@ -61,6 +67,7 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
         mView = inflater.inflate(R.layout.fragment_about_artist, container, false);
         mContainer = (RelativeLayout) mView.findViewById(R.id.fragment_about_artist_content);
         mContentLoadingProgressBar = (ProgressBar) mView.findViewById(R.id.fragment_about_artist_loading_progressbar);
+        mUpcomingEventsContainer = (LinearLayout) mView.findViewById(R.id.fragment_about_artist_upcoming_events_container);
         Bundle args = getArguments();
 
         String artist = args.getString(ARG_ARTIST, null);
@@ -68,6 +75,8 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
         try {
             //gets artist info
             new ArtistInfoSeeker().getArtistInfo(artist, this, getActivity());
+            new ArtistInfoSeeker().getArtistUpcomingEvents(artist, this, getActivity());
+
         } catch (NetworkNotAvailableException e) {
             e.printStackTrace();
 
@@ -140,11 +149,11 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
     }
 
     private void setUpArtistCard(final Artist artist, final LinearLayout parentView) {
-        LayoutInflater vi = (LayoutInflater) getActivity().getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater vi = LayoutInflater.from(getActivity());
         View view = vi.inflate(R.layout.artist_card, parentView, false);
 
 
-        LinearLayout artistCard = (LinearLayout) view.findViewById(R.id.artist_card);
+        RelativeLayout artistCard = (RelativeLayout) view.findViewById(R.id.artist_card);
         ImageView artistImageView = (ImageView) view.findViewById(R.id.artist_card_image);
         TextView artistTitleTextView = (TextView) view.findViewById(R.id.artist_card_image_text_field);
 
@@ -176,7 +185,7 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
     }
 
     private void addTopTrackLink(final Track track, final LinearLayout parentView) {
-        LayoutInflater vi = (LayoutInflater) getActivity().getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater vi = LayoutInflater.from(getActivity());
         View view = vi.inflate(R.layout.track_link_view, parentView, false);
 
         LinearLayout trackLayout = (LinearLayout) view.findViewById(R.id.track_view_layout);
@@ -210,7 +219,7 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
             //displays first 7 top tracks
             int counter = 0;
             for(Track track : tracks) {
-                if (counter < 7) {
+                if (counter < 5) {
                     counter ++;
                     addTopTrackLink(track, mTopTracksContainer);
                 }
@@ -239,5 +248,69 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
         mContentLoadingProgressBar.setVisibility(View.GONE);
         errorMessageContainer.setText(message);
         errorMessageContainer.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onArtistUpcomingEventsFetcherTaskAboutToStart() {
+
+    }
+
+    @Override
+    public void onArtistUpcomingEventsFetcherTaskCompleted(PaginatedResult<Event> events) {
+        if (!events.isEmpty()) {
+            for (Event event : events) {
+                setUpEventCard(event, mUpcomingEventsContainer);
+            }
+
+            //sets other Events area visible
+            mUpcomingEventsContainer.setVisibility(View.VISIBLE);
+        }
+
+    }
+
+    private void setUpEventCard(final Event event, final LinearLayout parentView) {
+        LayoutInflater vi = LayoutInflater.from(getActivity());
+        View view = vi.inflate(R.layout.artist_upcoming_event, parentView, false);
+
+        RelativeLayout upcomingEventCard = (RelativeLayout) view.findViewById(R.id.artist_upcoming_event_card);
+        ImageView venueImageImageView = (ImageView) view.findViewById(R.id.artist_upcoming_event_venue_image);
+        TextView venueNameTextView = (TextView) view.findViewById(R.id.artist_upcoming_event_venue_name);
+        TextView venueLocationTextView = (TextView) view.findViewById(R.id.artist_upcoming_event_venue_location);
+        TextView eventDateTextView = (TextView) view.findViewById(R.id.artist_upcoming_event_date);
+
+        eventDateTextView.setText(event.getStartDate().toLocaleString().substring(0, 12));
+        venueNameTextView.setText("@ " + event.getVenue().getName());
+        venueLocationTextView.setText(event.getVenue().getCity() + " " + event.getVenue().getCountry());
+
+
+        String eventImageUrl = event.getVenue().getImageURL(ImageSize.EXTRALARGE);
+
+        // if there is an image for the event load it into view. Else dont show image at all
+        if (eventImageUrl.length() > 0) {
+            Picasso.with(getActivity())
+                    .load(eventImageUrl)
+                    .resize(120, 120)
+                    .placeholder(R.drawable.placeholder)
+                    .into(venueImageImageView);
+        } else {
+            venueImageImageView.setImageResource(R.drawable.placeholder);
+        }
+
+        //sets onClickListener for moreDetails button
+        upcomingEventCard.setOnClickListener(new Button.OnClickListener() {
+            public void onClick(View v) {
+                Gson gson = new Gson();
+
+                //serialize event using GSON
+                String serializedEvent = gson.toJson(event, Event.class);
+
+                //starts EventDetailsActivity
+                Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
+                intent.putExtra("EVENT", serializedEvent);
+                getActivity().startActivity(intent);
+            }
+        });
+
+        parentView.addView(view);
     }
 }

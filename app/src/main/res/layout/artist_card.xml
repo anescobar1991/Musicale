@@ -1,46 +1,31 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/artist_card"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:orientation="vertical"
-    android:layout_height="wrap_content"
-    android:layout_marginBottom="1dp"
+    android:id="@+id/artist_card"
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp"
+    android:layout_margin="2dp"
+    android:paddingEnd="4dp"
     android:clickable="true"
-    android:foreground="?android:attr/selectableItemBackground" >
+    android:foreground="?android:attr/selectableItemBackground"
+    android:layout_height="wrap_content">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:paddingLeft="4dp"
-        android:paddingTop="4dp"
-        android:paddingBottom="4dp"
-        android:paddingRight="4dp"
-        android:layout_height="wrap_content">
+    <ImageView
+        android:id="@+id/artist_card_image"
+        android:layout_width="60dp"
+        android:adjustViewBounds="true"
+        android:layout_height="wrap_content"
+        android:contentDescription="@null" />
 
-        <ImageView
-            android:id="@+id/artist_card_image"
-            android:layout_width="60dp"
-            android:adjustViewBounds="true"
-            android:layout_height="wrap_content"
-            android:contentDescription="@null" />
+    <TextView
+        android:id="@+id/artist_card_image_text_field"
+        android:layout_width="wrap_content"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:layout_toEndOf="@+id/artist_card_image"
+        android:textSize="20sp"
+        android:textColor="@color/default_text_grey"
+        android:ellipsize="end"
+        android:layout_centerVertical="true"
+        android:layout_height="wrap_content" />
 
-        <TextView
-            android:id="@+id/artist_card_image_text_field"
-            android:layout_width="wrap_content"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
-            android:layout_toEndOf="@+id/artist_card_image"
-            android:textSize="20sp"
-            android:textColor="@color/default_text_grey"
-            android:ellipsize="end"
-            android:layout_centerVertical="true"
-            android:layout_height="wrap_content" />
-
-    </RelativeLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="16dp"
-        android:background="@color/border_default_grey"/>
-
-</LinearLayout>
+</RelativeLayout>
