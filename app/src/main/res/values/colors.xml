@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!--app branding colors-->
     <color name="primary">#ff5722</color>
-    <color name="border_default_grey">#ffa7a7a7</color>
     <color name="primary_dark">#e64a19</color>
-    <color name="flat_button_disabled">#ffbbbbbb</color>
     <color name="accent">#1a237e</color>
+    <color name="accent_dark">#ff1a2069</color>
+
+    <color name="border_default_grey">#ffa7a7a7</color>
+    <color name="flat_button_disabled">#ffbbbbbb</color>
+    <color name="card_selected">#ffd3d3d3</color>
     <color name="light_background">#fff2f2f2</color>
     <color name="white">#FFFFFF</color>
     <color name="default_text_grey">#ff2f2f2f</color>
@@ -16,5 +20,5 @@
 
     <!--For shadow view-->
     <color name="drop_start">#66060d0a</color>
-    <color name="drop_end">#00000000</color>
+    <color name="drop_end">#fff4f4f4</color>
 </resources>

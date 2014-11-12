@@ -2,12 +2,12 @@ package com.anescobar.musicale.adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.anescobar.musicale.R;
@@ -66,7 +66,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         }
 
 //        sets onClickListener for entire card
-        holder.mEventCard.setOnClickListener(new CardView.OnClickListener() {
+        holder.mEventCard.setOnClickListener(new RelativeLayout.OnClickListener() {
             public void onClick(View v) {
                 Gson gson = new Gson();
 
@@ -90,7 +90,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
 
     // Create the ViewHolder class to keep references to your views
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        public CardView mEventCard;
+        public RelativeLayout mEventCard;
         public ImageView mEventImage;
         public TextView mEventTitleTextView;
         public TextView mEventDateTextView;
@@ -103,7 +103,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         public ViewHolder(View view) {
             super(view);
 
-            mEventCard = (CardView) view.findViewById(R.id.event_card);
+            mEventCard = (RelativeLayout) view.findViewById(R.id.event_card);
             mEventImage = (ImageView) view.findViewById(R.id.event_card_event_image);
             mEventTitleTextView = (TextView) view.findViewById(R.id.event_card_event_title_textfield);
             mEventDateTextView = (TextView) view.findViewById(R.id.event_card_event_date_textfield);

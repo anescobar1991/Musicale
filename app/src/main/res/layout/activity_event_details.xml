@@ -85,7 +85,7 @@
             android:id="@+id/activity_event_details_view_pager_title_shadow"
             android:layout_width="match_parent"
             android:layout_below="@+id/activity_event_details_view_pager_title"
-            android:layout_height="3dp"
+            android:layout_height="4dp"
             android:background="@drawable/drop_shadow" />
 
     </RelativeLayout>

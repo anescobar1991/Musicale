@@ -6,11 +6,9 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -239,7 +237,7 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
         LayoutInflater vi = LayoutInflater.from(getActivity());
         View view = vi.inflate(R.layout.event_card, parentView, false);
 
-        CardView eventCard = (CardView) view.findViewById(R.id.event_card);
+        RelativeLayout eventCard = (RelativeLayout) view.findViewById(R.id.event_card);
         ImageView eventImage = (ImageView) view.findViewById(R.id.event_card_event_image);
         TextView eventTitleTextView = (TextView) view.findViewById(R.id.event_card_event_title_textfield);
         TextView eventDateTextView = (TextView) view.findViewById(R.id.event_card_event_date_textfield);
@@ -263,8 +261,8 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
             eventImage.setImageResource(R.drawable.placeholder);
         }
 
-        //sets onClickListener for moreDetails button
-        eventCard.setOnClickListener(new Button.OnClickListener() {
+        //sets onClickListener for event card button
+        eventCard.setOnClickListener(new RelativeLayout.OnClickListener() {
             public void onClick(View v) {
                 Gson gson = new Gson();
 

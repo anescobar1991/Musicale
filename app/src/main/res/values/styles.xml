@@ -14,7 +14,7 @@
         <item name="windowActionBar">false</item>
     </style>
 
-    <style name="AlertDialogTheme" parent="Base.Theme.AppCompat.Light.Dialog.FixedSize"/>
+    <style name="AlertDialogTheme" parent="Base.Theme.AppCompat.Light.Dialog"/>
 
     <style name="Widget.TabPageIndicator" parent="Widget">
         <item name="android:gravity">center</item>
