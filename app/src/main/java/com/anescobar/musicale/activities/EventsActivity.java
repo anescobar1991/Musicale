@@ -1,6 +1,7 @@
 package com.anescobar.musicale.activities;
 
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,6 +30,11 @@ public class EventsActivity extends LocationAwareActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_events);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.musicale_toolbar);
+        if (toolbar != null) {
+            setSupportActionBar(toolbar);
+        }
 
         mListViewTab = (Button) findViewById(R.id.activity_event_list_tab);
         mMapViewTab = (Button) findViewById(R.id.activity_event_map_tab);

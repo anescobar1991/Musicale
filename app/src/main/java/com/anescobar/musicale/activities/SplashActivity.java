@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Toast;
 
 import com.anescobar.musicale.R;
 import com.anescobar.musicale.interfaces.EventFetcherListener;
@@ -37,15 +36,6 @@ public class SplashActivity extends LocationAwareActivity implements EventFetche
         Crashlytics.start(this);
     }
 
-//    /**
-//     * sends intent to start home activity
-//     */
-//    private void startHomeActivity() {
-//        Intent intent = new Intent(this, HomeActivity.class);
-//        startActivity(intent);
-//        finish();
-//    }
-
     /**
      * sends intent to start events activity
      */
@@ -66,7 +56,23 @@ public class SplashActivity extends LocationAwareActivity implements EventFetche
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        Toast.makeText(this, R.string.error_no_network_connectivity, Toast.LENGTH_SHORT).show();
+        //create dialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        // Add the buttons
+        builder.setPositiveButton(R.string.retry, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                initializeApp();
+            }
+        });
+        builder.setNegativeButton(R.string.exit, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                finish();
+            }
+        });
+        // Set dialog's message
+        builder.setMessage(R.string.error_no_network_connectivity);
+        // Create the AlertDialog
+        builder.show();
     }
 
     @Override
@@ -140,4 +146,5 @@ public class SplashActivity extends LocationAwareActivity implements EventFetche
             builder.show();
         }
     }
+
 }

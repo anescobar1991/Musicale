@@ -134,7 +134,6 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
 
     @Override
     public void onArtistInfoFetcherTaskAboutToStart() {
-
     }
 
     @Override
@@ -216,7 +215,7 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
     public void onArtistTopTrackFetcherTaskCompleted(Collection<Track> tracks) {
         //if activity has been killed then no need to attempt to populate view with tracks
         if (getActivity() != null) {
-            //displays first 7 top tracks
+            //displays first 5 top tracks
             int counter = 0;
             for(Track track : tracks) {
                 if (counter < 5) {
@@ -257,7 +256,8 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
 
     @Override
     public void onArtistUpcomingEventsFetcherTaskCompleted(PaginatedResult<Event> events) {
-        if (!events.isEmpty()) {
+        //if activity is null(b/c user navigated away from screen) then shouldnt load events to screen
+        if (getActivity() != null && !events.isEmpty()) {
             for (Event event : events) {
                 setUpEventCard(event, mUpcomingEventsContainer);
             }
@@ -265,7 +265,6 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
             //sets other Events area visible
             mUpcomingEventsContainer.setVisibility(View.VISIBLE);
         }
-
     }
 
     private void setUpEventCard(final Event event, final LinearLayout parentView) {

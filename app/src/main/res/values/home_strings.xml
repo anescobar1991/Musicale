@@ -1,9 +1,0 @@
-<resources>
-
-    <string name="home_view_shows_nearby_button_text">Shows nearby</string>
-    <string name="title_about_musicale_section">About Musicale</string>
-    <string name="action_about_app">About Musicale</string>
-    <string name="action_events_search">Search for events</string>
-    <string name="action_refresh_events">Refresh events</string>
-
-</resources>

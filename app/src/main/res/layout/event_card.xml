@@ -33,7 +33,6 @@
             android:paddingRight="8dp"
             android:layout_toEndOf="@+id/event_card_event_image"
             android:textSize="20sp"
-            android:textColor="@color/default_text_grey"
             android:ellipsize="end"
             android:maxLines="1"
             android:layout_height="wrap_content" />
@@ -43,7 +42,6 @@
             android:layout_width="wrap_content"
             android:paddingLeft="8dp"
             android:paddingRight="8dp"
-            android:textColor="@color/common_signin_btn_text_light"
             android:layout_below="@+id/event_card_event_title_textfield"
             android:layout_toEndOf="@+id/event_card_event_image"
             android:textSize="14sp"
@@ -58,7 +56,6 @@
             android:layout_below="@+id/event_card_event_date_textfield"
             android:layout_toEndOf="@+id/event_card_event_image"
             android:textSize="14sp"
-            android:textColor="@color/common_signin_btn_text_light"
             android:layout_width="wrap_content"
             android:maxLength="33"
             android:layout_height="wrap_content" />
@@ -69,7 +66,6 @@
             android:paddingLeft="8dp"
             android:paddingRight="8dp"
             android:textSize="14sp"
-            android:textColor="@color/common_signin_btn_text_light"
             android:layout_below="@+id/event_card_venue_name_textfield"
             android:layout_width="wrap_content"
             android:ellipsize="end"

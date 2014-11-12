@@ -1,39 +1,20 @@
 <resources>
 
-    <!-- Base application theme. -->
-    <style name="MusicaleTheme" parent="android:Theme.Holo.Light.DarkActionBar">
-        <!-- Main theme colors -->
-        <item name="android:colorActivatedHighlight">@color/accent</item>
+    <style name="MusicaleTheme" parent="MusicaleTheme.Base"/>
 
-        <item name="android:color">@color/primary</item>
-
-        <item name="android:dropDownListViewStyle">@style/actionBarSpinnerStyle</item>
-
+    <style name="MusicaleTheme.Base" parent="Theme.AppCompat">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@color/white</item>
+        <item name="colorAccent">@color/accent</item>
+        <item name="android:textColor">@color/default_text_grey</item>
+        <item name="android:alertDialogTheme">@style/AlertDialogTheme</item>
         <item name="vpiTabPageIndicatorStyle">@style/Widget.TabPageIndicator</item>
-
-        <item name="android:actionBarStyle">@style/MusicaleActionBar</item>
-
+        <item name="windowActionBar">false</item>
     </style>
 
-    <!-- Base application theme for when no actionBar is wanted. -->
-    <style name="MusicaleThemeNoActionBar" parent="android:Theme.Holo.Light.NoActionBar">
-        <!-- Main theme colors -->
-        <item name="android:color">@color/primary</item>
-
-        <item name="android:colorActivatedHighlight">@color/accent</item>
-
-        <item name="vpiTabPageIndicatorStyle">@style/Widget.TabPageIndicator</item>
-
-    </style>
-
-    <style name="actionBarSpinnerStyle" parent="android:style/Widget.ListView.DropDown">
-        <item name="android:divider">#ffe4e4e4</item>
-        <item name="android:dividerHeight">.25dp</item>
-        <item name="android:paddingLeft">8dp</item>
-        <item name="android:width">168dp</item>
-        <item name="android:background">#FFFFFF</item>
-        <item name="android:textColor">@drawable/events_view_selector</item>
-    </style>
+    <style name="AlertDialogTheme" parent="Base.Theme.AppCompat.Light.Dialog.FixedSize"/>
 
     <style name="Widget.TabPageIndicator" parent="Widget">
         <item name="android:gravity">center</item>
@@ -50,10 +31,6 @@
         <item name="android:textSize">14sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@drawable/tab_page_indicator_title_colors</item>
-    </style>
-
-    <style name="MusicaleActionBar" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
-        <item name="android:background">@color/primary</item>
     </style>
 
 </resources>

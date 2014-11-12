@@ -5,6 +5,7 @@
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/fragment_events_map_view_container"
         android:layout_width="match_parent"
+        android:clipToPadding="false"
         android:layout_height="match_parent" />
 
     <include layout="@layout/loading_overlay"
@@ -16,7 +17,7 @@
     <Button
         android:id="@+id/fragment_events_map_redo_search"
         android:layout_width="match_parent"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/white"
         android:layout_gravity="bottom"
         android:visibility="gone"
         android:textAllCaps="true"

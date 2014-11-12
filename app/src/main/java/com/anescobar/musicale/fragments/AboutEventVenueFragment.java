@@ -1,5 +1,7 @@
 package com.anescobar.musicale.fragments;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -14,14 +16,12 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.anescobar.musicale.R;
 import com.anescobar.musicale.activities.EventDetailsActivity;
 import com.anescobar.musicale.interfaces.VenueEventsFetcherListener;
 import com.anescobar.musicale.utils.EventsFinder;
 import com.anescobar.musicale.utils.NetworkNotAvailableException;
-import com.anescobar.musicale.utils.NetworkUtil;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -42,12 +42,11 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
     private SupportMapFragment mMapFragment;
     private GoogleMap mMap;
     private Venue mVenue;
-    private NetworkUtil mNetworkUtil;
     private LinearLayout mOtherEventsContainer;
-    private ProgressBar mLoadingOtherEventsProgressbar;
+    private ProgressBar mLoadingProgressbar;
     private TextView mErrorMessageContainer;
     private EventsFinder mEventsFinder;
-    private Button mShowOtherEventsButton;
+    private RelativeLayout mAboutVenueContainer;
 
     public AboutEventVenueFragment() {
         // Required empty public constructor
@@ -79,17 +78,12 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
         View view = inflater.inflate(
                 R.layout.fragment_about_venue, container, false);
 
-        mErrorMessageContainer = (TextView) view.findViewById(R.id.fragment_about_venue_error_message_container);
-
         Bundle args = getArguments();
 
         String serializedEvent = args.getString(ARG_EVENT, null);
 
         //gets new instance of EventsFinder
         mEventsFinder = new EventsFinder();
-
-        //instantiates new networkUtil
-        mNetworkUtil = new NetworkUtil();
 
         //gets MapFragment
         mMapFragment = new SupportMapFragment();
@@ -154,15 +148,33 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
-                showVenueInMap(venue.getLatitude(), venue.getLongitude(), venue.getName());
+            //create dialog
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            // Add the buttons
+            builder.setPositiveButton(R.string.open_in_map, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    showVenueInMap(venue.getLatitude(), venue.getLongitude(), venue.getName());
+                }
+            });
+            builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                }
+            });
+
+            // Set dialog's message
+            builder.setMessage(R.string.open_in_map_question);
+            // Create the AlertDialog
+            builder.show();
             }
         });
     }
 
     private void setUpView(final Venue venue, final View view) {
         mOtherEventsContainer = (LinearLayout) view.findViewById(R.id.fragment_about_venue_other_events_container);
-        mLoadingOtherEventsProgressbar = (ProgressBar) view.findViewById(R.id.fragment_about_venue_other_events_loading);
-        mShowOtherEventsButton = (Button) view.findViewById(R.id.fragment_about_venue_venue_show_other_events);
+        mLoadingProgressbar = (ProgressBar) view.findViewById(R.id.fragment_about_venue_loading_progressbar);
+        mAboutVenueContainer = (RelativeLayout) view.findViewById(R.id.fragment_about_venue_content);
+        mErrorMessageContainer = (TextView) view.findViewById(R.id.fragment_about_venue_error_message_container);
+
         TextView venueName = (TextView) view.findViewById(R.id.fragment_about_venue_venue_name);
         TextView venuePhoneNumberTextView = (TextView) view.findViewById(R.id.fragment_about_venue_phone_number);
         TextView venueUrlTextView = (TextView) view.findViewById(R.id.fragment_about_venue_url);
@@ -171,17 +183,13 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
         RelativeLayout venueUrlContainer = (RelativeLayout) view.findViewById(R.id.fragment_about_venue_url_container);
         RelativeLayout venuePhoneNumberContainer = (RelativeLayout) view.findViewById(R.id.fragment_about_venue_phone_number_container);
 
+
         String venuePhoneNumber = venue.getPhonenumber();
         String venueUrl = venue.getWebsite();
         String venueImageUrl = venue.getImageURL(ImageSize.EXTRALARGE);
 
-        //sets on clickListener for view other events at venue button
-        mShowOtherEventsButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                //displays other events section
-                displayOtherEventsAtVenue();
-            }
-        });
+        //gets venue Events from backend
+        getVenueEvents(mVenue.getId());
 
         //-------------loads all dynamic data into view-----------------
 
@@ -216,7 +224,6 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
         venueName.setText(venue.getName());
 
         venueAddress.setText(venue.getStreet() + " • " + venue.getCity() + " • " + venue.getCountry());
-
     }
 
     //sends intent to open Google maps application at specified location with specified label
@@ -225,22 +232,6 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
         intent.setData(Uri.parse("geo:0,0?q=" + venueLat + "," + venueLng + "(" + venueName + ")"));
         if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
             getActivity().startActivity(intent);
-        }
-    }
-
-    private void displayOtherEventsAtVenue() {
-        if (mNetworkUtil.isNetworkAvailable(getActivity())) {
-
-            //hide show other events button
-            mShowOtherEventsButton.setVisibility(View.GONE);
-
-            //show events loading progress bar
-            mLoadingOtherEventsProgressbar.setVisibility(View.VISIBLE);
-
-            //gets venue Events from backend
-            getVenueEvents(mVenue.getId());
-        } else {
-            Toast.makeText(getActivity(), R.string.error_no_network_connectivity, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -296,14 +287,17 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
 
     @Override
     public void onVenueEventsFetcherTaskCompleted(Collection<Event> events) {
-        mLoadingOtherEventsProgressbar.setVisibility(View.GONE);
+        //if activity is null(b/c user navigated away from screen) then shouldnt load events to screen
+        if (getActivity() != null) {
+            mLoadingProgressbar.setVisibility(View.GONE);
 
-        for (Event event : events) {
-            setUpEventCard(event, mOtherEventsContainer);
+            for (Event event : events) {
+                setUpEventCard(event, mOtherEventsContainer);
+            }
+
+            //sets content area visible
+            mAboutVenueContainer.setVisibility(View.VISIBLE);
         }
-
-        //sets other Events area visible
-       mOtherEventsContainer.setVisibility(View.VISIBLE);
     }
 
     private void getVenueEvents(String venueId) {
@@ -317,6 +311,8 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
     }
 
     private void displayErrorMessage(String message) {
+        mLoadingProgressbar.setVisibility(View.GONE);
+
         mErrorMessageContainer.setText(message);
         mErrorMessageContainer.setVisibility(View.VISIBLE);
     }

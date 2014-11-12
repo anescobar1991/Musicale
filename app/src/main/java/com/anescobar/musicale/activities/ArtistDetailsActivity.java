@@ -1,7 +1,8 @@
 package com.anescobar.musicale.activities;
 
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -9,7 +10,7 @@ import com.anescobar.musicale.R;
 import com.anescobar.musicale.fragments.AboutArtistFragment;
 
 
-public class ArtistDetailsActivity extends FragmentActivity {
+public class ArtistDetailsActivity extends ActionBarActivity {
 
     public static final String ABOUT_ARTIST_FRAGMENT = "aboutArtistFragment";
 
@@ -18,11 +19,14 @@ public class ArtistDetailsActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about_artist);
 
-        //show home/up button on actionbar
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-
         //gets extras that were passed into activity
         Bundle extras = getIntent().getExtras();
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.musicale_toolbar);
+        if (toolbar != null) {
+            setSupportActionBar(toolbar);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         //get passed Event from extras if there are any
         if (extras != null) {

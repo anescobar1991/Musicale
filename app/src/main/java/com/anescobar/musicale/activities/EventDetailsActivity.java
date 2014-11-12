@@ -1,8 +1,9 @@
 package com.anescobar.musicale.activities;
 
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -18,20 +19,23 @@ import java.util.Collection;
 import de.umass.lastfm.Event;
 import de.umass.lastfm.ImageSize;
 
-public class EventDetailsActivity extends FragmentActivity {
+public class EventDetailsActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_details);
 
-        //show home/up button on actionbar
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-
         //gets extras that were passed into activity
         Bundle extras = getIntent().getExtras();
 
         Gson gson = new Gson();
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.musicale_toolbar);
+        if (toolbar != null) {
+            setSupportActionBar(toolbar);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         //store event locally
         Event event = gson.fromJson(extras.getString("EVENT"), Event.class);

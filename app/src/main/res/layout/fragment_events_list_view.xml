@@ -30,6 +30,7 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/fragment_events_listView_event_cards_holder"
             android:scrollbars="vertical"
+            android:clipToPadding="false"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 

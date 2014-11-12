@@ -2,6 +2,7 @@
     android:id="@+id/artist_upcoming_event_card"
     android:layout_width="match_parent"
     android:padding="4dp"
+    android:background="?android:attr/selectableItemBackground"
     android:layout_marginBottom="4dp"
     android:layout_marginTop="4dp"
     android:layout_height="wrap_content">
@@ -18,8 +19,7 @@
         android:paddingRight="8dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toEndOf="@+id/artist_upcoming_event_venue_image"
-        android:textColor="@color/default_text_grey" />
+        android:layout_toEndOf="@+id/artist_upcoming_event_venue_image" />
 
     <TextView
         android:id="@+id/artist_upcoming_event_venue_name"
@@ -29,7 +29,6 @@
         android:layout_below="@+id/artist_upcoming_event_date"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
-        android:textColor="@color/default_text_grey"
         android:layout_height="wrap_content" />
 
     <TextView
@@ -39,7 +38,6 @@
         android:layout_below="@+id/artist_upcoming_event_venue_name"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
-        android:textColor="@color/default_text_grey"
         android:layout_height="wrap_content" />
 
 </RelativeLayout>
