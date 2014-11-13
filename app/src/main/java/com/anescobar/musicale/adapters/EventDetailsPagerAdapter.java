@@ -20,28 +20,39 @@ import de.umass.lastfm.Event;
  * Not much to it, pretty self explanatory...
  */
 public class EventDetailsPagerAdapter extends FragmentPagerAdapter {
-    private ArrayList<Fragment> fragments = new ArrayList<Fragment>();
     private ArrayList<String> titles = new ArrayList<String>();
+    private Event mEvent;
 
     public EventDetailsPagerAdapter(FragmentManager fm, Context context, Event event) {
         super(fm);
-        //add fragments and corresponding titles to lists
-        fragments.add(AboutEventVenueFragment.newInstance(event.getVenue()));
+
+        mEvent = event;
+        //add titles to lists
         titles.add(context.getString(R.string.event_details_about_venue_tab));
-        fragments.add(AboutArtistFragment.newInstance(event.getHeadliner()));
         titles.add(context.getString(R.string.event_details_about_artist_tab));
-        fragments.add(new AboutEventBuzzFragment());
         titles.add(context.getString(R.string.event_details_social_media_tab));
     }
 
     @Override
     public Fragment getItem(int position) {
-        return fragments.get(position);
+        Fragment fragment = null;
+        switch (position) {
+            case 0:
+                fragment = AboutEventVenueFragment.newInstance(mEvent.getVenue());
+                break;
+            case 1:
+                fragment = AboutArtistFragment.newInstance(mEvent.getHeadliner());
+                break;
+            case 2:
+                fragment = new AboutEventBuzzFragment();
+                break;
+        }
+        return fragment;
     }
 
     @Override
     public int getCount() {
-        return fragments.size();
+        return 3;
     }
 
     @Override

@@ -87,6 +87,7 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
     }
 
     private void setUpView(final Artist artist) {
+        RelativeLayout artistBioContainer = (RelativeLayout) mView.findViewById(R.id.fragment_about_artist_bio_container);
         TextView artistName = (TextView) mView.findViewById(R.id.fragment_about_artist_artist_name);
         ImageView artistImage = (ImageView) mView.findViewById(R.id.fragment_about_artist_artist_image);
         TextView artistBio = (TextView) mView.findViewById(R.id.fragment_about_artist_bio);
@@ -96,7 +97,12 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
 
         //-------------Loads dynamic data into view------------------
         artistName.setText(artist.getName());
-        artistBio.setText(Html.fromHtml(artist.getWikiSummary()).toString());
+
+        if (!artist.getWikiSummary().isEmpty()) {
+            artistBio.setText(Html.fromHtml(artist.getWikiSummary()).toString());
+        } else {
+            artistBioContainer.setVisibility(View.GONE);
+        }
 
         Collection<String> tags = artist.getTags();
 
@@ -139,7 +145,9 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
     @Override
     public void onArtistInfoFetcherTaskCompleted(Artist artist) {
         try {
-            new ArtistInfoSeeker().getArtistTopTracks(artist.getName(), this, getActivity());
+            if (getActivity() != null) {
+                new ArtistInfoSeeker().getArtistTopTracks(artist.getName(), this, getActivity());
+            }
         } catch (NetworkNotAvailableException e) {
             displayErrorMessage(getString(R.string.error_no_network_connectivity));
         }

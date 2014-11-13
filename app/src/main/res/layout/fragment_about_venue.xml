@@ -143,30 +143,6 @@
 
             </RelativeLayout>
 
-            <!--<FrameLayout-->
-            <!--android:id="@+id/fragment_about_venue_venue_show_other_event_layout"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_below="@+id/fragment_about_venue_location_container"-->
-            <!--android:layout_height="wrap_content">-->
-
-            <!--<Button-->
-            <!--android:id="@+id/fragment_about_venue_venue_show_other_events"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:textColor="@color/white"-->
-            <!--android:textAllCaps="true"-->
-            <!--android:background="@drawable/default_raised_button"-->
-            <!--android:text="@string/about_venue_show_other_events_button_text"-->
-            <!--android:layout_height="wrap_content" />-->
-
-            <!--<ProgressBar-->
-            <!--android:id="@+id/fragment_about_venue_other_events_loading"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:visibility="gone"-->
-            <!--android:layout_gravity="center"-->
-            <!--android:layout_height="wrap_content" />-->
-
-            <!--</FrameLayout>-->
-
             <LinearLayout
                 android:id="@+id/fragment_about_venue_other_events_container"
                 android:layout_width="match_parent"
@@ -192,13 +168,6 @@
                     android:layout_marginTop="4dp"
                     android:layout_marginBottom="16dp"
                     android:background="@color/border_default_grey"/>
-
-                <!--<TextView-->
-                <!--android:id="@+id/fragment_about_venue_error_message_container"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:visibility="gone"-->
-                <!--android:layout_gravity="center"-->
-                <!--android:layout_height="wrap_content" />-->
 
             </LinearLayout>
 

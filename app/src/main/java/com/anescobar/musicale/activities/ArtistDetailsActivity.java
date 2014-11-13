@@ -9,7 +9,6 @@ import android.widget.Toast;
 import com.anescobar.musicale.R;
 import com.anescobar.musicale.fragments.AboutArtistFragment;
 
-
 public class ArtistDetailsActivity extends ActionBarActivity {
 
     public static final String ABOUT_ARTIST_FRAGMENT = "aboutArtistFragment";
@@ -56,5 +55,4 @@ public class ArtistDetailsActivity extends ActionBarActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-
 }

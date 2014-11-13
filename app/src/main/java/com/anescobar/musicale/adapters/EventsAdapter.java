@@ -27,7 +27,7 @@ import de.umass.lastfm.ImageSize;
  */
 public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder> {
     private ArrayList<Event> mEvents;
-    private static Context mContext;
+    private Context mContext;
 
     // Adapter's Constructor
     public EventsAdapter(Context context, ArrayList<Event> events) {

@@ -2,7 +2,6 @@ package com.anescobar.musicale.activities;
 
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.ImageView;
@@ -60,7 +59,7 @@ public class EventDetailsActivity extends BaseActivity {
 
         //Set the pager with an adapter
         pager.setAdapter(new EventDetailsPagerAdapter(getSupportFragmentManager(), this, event));
-        pager.setOffscreenPageLimit(3);
+
         //Bind the title indicator to the adapter
         TabPageIndicator titleIndicator = (TabPageIndicator) findViewById(R.id.activity_event_details_view_pager_title);
         titleIndicator.setViewPager(pager);

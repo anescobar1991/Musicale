@@ -35,6 +35,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:id="@+id/fragment_about_artist_title_view"
+                android:layout_marginBottom="16dp"
                 android:layout_height="wrap_content">
 
                 <ImageView
@@ -66,7 +67,6 @@
             <RelativeLayout
                 android:id="@+id/fragment_about_artist_bio_container"
                 android:layout_width="match_parent"
-                android:layout_marginTop="16dp"
                 android:layout_marginBottom="16dp"
                 android:background="@drawable/layout_border"
                 android:padding="4dp"
@@ -103,7 +103,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_marginTop="4dp"
-                    android:layout_marginBottom="16dp"
+                    android:layout_marginBottom="12dp"
                     android:background="@color/border_default_grey"/>
 
             </LinearLayout>
@@ -113,6 +113,7 @@
                 android:layout_width="match_parent"
                 android:layout_below="@+id/fragment_about_artist_top_tracks_container"
                 android:orientation="vertical"
+                android:layout_marginBottom="16dp"
                 android:layout_height="wrap_content">
 
                 <TextView
@@ -140,7 +141,6 @@
                 android:layout_below="@+id/fragment_about_artist_similar_artists_container"
                 android:orientation="vertical"
                 android:visibility="gone"
-                android:layout_marginBottom="16dp"
                 android:layout_height="wrap_content">
 
                 <TextView
@@ -157,7 +157,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_marginTop="4dp"
-                    android:layout_marginBottom="16dp"
+                    android:layout_marginBottom="12dp"
                     android:background="@color/border_default_grey"/>
 
             </LinearLayout>

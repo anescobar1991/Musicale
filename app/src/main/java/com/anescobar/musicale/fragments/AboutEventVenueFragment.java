@@ -38,7 +38,6 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
 
     private static final String ARG_EVENT = "eventArg";
     private SupportMapFragment mMapFragment;
-    private GoogleMap mMap;
     private Venue mVenue;
     private LinearLayout mOtherEventsContainer;
     private ProgressBar mLoadingProgressbar;
@@ -107,13 +106,6 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
     }
 
     @Override
-    public void onStart(){
-        super.onStart();
-        //sets up map, with its settings, and adds event markers
-        setUpMapIfNeeded(mVenue);
-    }
-
-    @Override
     public void onResume(){
         super.onResume();
         //sets up map, with its settings, and adds event markers
@@ -122,12 +114,10 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
 
     //sets up map if it hasnt already been setup,
     private void setUpMapIfNeeded(final Venue venue) {
+        System.out.println("setupmadneeded called");
         LatLng venueLocation = new LatLng(venue.getLatitude(), venue.getLongitude());
 
-        // Do a null check to confirm that we have not already instantiated the map.
-        if (mMap == null) {
-            mMap = mMapFragment.getMap();
-        }
+        GoogleMap mMap = mMapFragment.getMap();
 
         //sets map's initial state
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(venueLocation, 14));
@@ -146,23 +136,23 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
-            //create dialog
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            // Add the buttons
-            builder.setPositiveButton(R.string.open_in_map, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    showVenueInMap(venue.getLatitude(), venue.getLongitude(), venue.getName());
-                }
-            });
-            builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                }
-            });
+                //create dialog
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                // Add the buttons
+                builder.setPositiveButton(R.string.open_in_map, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        showVenueInMap(venue.getLatitude(), venue.getLongitude(), venue.getName());
+                    }
+                });
+                builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                    }
+                });
 
-            // Set dialog's message
-            builder.setMessage(R.string.open_in_map_question);
-            // Create the AlertDialog
-            builder.show();
+                // Set dialog's message
+                builder.setMessage(R.string.open_in_map_question);
+                // Create the AlertDialog
+                builder.show();
             }
         });
     }
