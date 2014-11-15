@@ -2,6 +2,7 @@
     android:orientation="vertical"
     android:fillViewport="true"
     android:clipToPadding="false"
+    android:background="@color/light_background"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -27,140 +28,190 @@
             android:id="@+id/fragment_about_artist_content"
             android:visibility="gone"
             android:orientation="vertical"
-            android:padding="4dp"
-            android:animateLayoutChanges="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <RelativeLayout
+            <android.support.v7.widget.CardView
+                xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/fragment_about_artist_info_card"
+                android:layout_gravity="center"
                 android:layout_width="match_parent"
-                android:id="@+id/fragment_about_artist_title_view"
-                android:layout_marginBottom="16dp"
-                android:layout_height="wrap_content">
+                android:layout_margin="8dp"
+                card_view:cardBackgroundColor="@color/white"
+                android:layout_height="wrap_content"
+                card_view:cardCornerRadius="2dp">
 
-                <ImageView
-                    android:id="@+id/fragment_about_artist_artist_image"
-                    android:contentDescription="@null"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginEnd="4dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-                <TextView
-                    android:id="@+id/fragment_about_artist_artist_name"
-                    android:textColor="@color/accent"
-                    android:layout_toEndOf="@+id/fragment_about_artist_artist_image"
-                    android:textSize="24sp"
-                    android:textStyle="bold"
+                <RelativeLayout
+                    android:orientation="vertical"
+                    android:paddingBottom="16dp"
+                    android:paddingTop="16dp"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content">
 
-                <TextView
-                    android:id="@+id/fragment_about_artist_tags"
-                    android:layout_width="match_parent"
-                    android:layout_toEndOf="@+id/fragment_about_artist_artist_image"
-                    android:layout_below="@+id/fragment_about_artist_artist_name"
-                    android:layout_height="wrap_content" />
+                    <RelativeLayout
+                        android:id="@+id/fragment_about_artist_info_container"
+                        android:layout_width="match_parent"
+                        android:layout_marginBottom="16dp"
+                        android:layout_height="wrap_content">
 
-            </RelativeLayout>
+                        <ImageView
+                            android:id="@+id/fragment_about_artist_artist_image"
+                            android:contentDescription="@null"
+                            android:layout_marginTop="4dp"
+                            android:layout_marginEnd="4dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
 
-            <RelativeLayout
-                android:id="@+id/fragment_about_artist_bio_container"
+                        <TextView
+                            android:id="@+id/fragment_about_artist_artist_name"
+                            android:textColor="@color/accent"
+                            android:layout_toEndOf="@+id/fragment_about_artist_artist_image"
+                            android:textSize="24sp"
+                            android:textStyle="bold"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                        <TextView
+                            android:id="@+id/fragment_about_artist_tags"
+                            android:layout_width="match_parent"
+                            android:layout_toEndOf="@+id/fragment_about_artist_artist_image"
+                            android:layout_below="@+id/fragment_about_artist_artist_name"
+                            android:layout_height="wrap_content" />
+
+                    </RelativeLayout>
+
+                    <TextView
+                        android:id="@+id/fragment_about_artist_bio"
+                        android:layout_width="match_parent"
+                        android:paddingLeft="4dp"
+                        android:paddingRight="4dp"
+                        android:layout_below="@+id/fragment_about_artist_info_container"
+                        android:layout_height="wrap_content" />
+
+                </RelativeLayout>
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/fragment_about_artist_top_tracks_card"
+                android:layout_below="@+id/fragment_about_artist_info_card"
+                android:layout_gravity="center"
                 android:layout_width="match_parent"
-                android:layout_marginBottom="16dp"
-                android:background="@drawable/layout_border"
-                android:padding="4dp"
-                android:layout_below="@+id/fragment_about_artist_title_view"
-                android:layout_height="wrap_content">
+                android:layout_margin="8dp"
+                card_view:cardBackgroundColor="@color/white"
+                android:layout_height="wrap_content"
+                card_view:cardCornerRadius="2dp">
 
-                <TextView
-                    android:id="@+id/fragment_about_artist_bio"
+                <LinearLayout
+                    android:id="@+id/fragment_about_artist_top_tracks_container"
                     android:layout_width="match_parent"
-                    android:padding="4dp"
-                    android:layout_height="wrap_content" />
+                    android:orientation="vertical"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:layout_height="wrap_content">
 
-            </RelativeLayout>
+                    <TextView
+                        android:id="@+id/fragment_about_artist_top_tracks_title"
+                        android:layout_width="wrap_content"
+                        android:textSize="20sp"
+                        android:text="@string/about_artist_top_tracks_text"
+                        android:textStyle="bold"
+                        android:layout_gravity="center_horizontal"
+                        android:textColor="@color/accent"
+                        android:layout_height="wrap_content" />
 
-            <LinearLayout
-                android:id="@+id/fragment_about_artist_top_tracks_container"
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="12dp"
+                        android:background="@color/border_default_grey"/>
+
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/fragment_about_artist_similar_artists_card"
+                android:layout_below="@+id/fragment_about_artist_top_tracks_card"
+                android:layout_gravity="center"
                 android:layout_width="match_parent"
-                android:layout_below="@+id/fragment_about_artist_bio_container"
-                android:orientation="vertical"
-                android:layout_marginBottom="16dp"
-                android:layout_height="wrap_content">
+                android:layout_margin="8dp"
+                card_view:cardBackgroundColor="@color/white"
+                android:layout_height="wrap_content"
+                card_view:cardCornerRadius="2dp">
 
-                <TextView
-                    android:id="@+id/fragment_about_artist_top_tracks_title"
-                    android:layout_width="wrap_content"
-                    android:textSize="20sp"
-                    android:text="@string/about_artist_top_tracks_text"
-                    android:textStyle="bold"
-                    android:layout_gravity="center_horizontal"
-                    android:textColor="@color/accent"
-                    android:layout_height="wrap_content" />
-
-                <View
+                <LinearLayout
+                    android:id="@+id/fragment_about_artist_similar_artists_container"
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginBottom="12dp"
-                    android:background="@color/border_default_grey"/>
+                    android:orientation="vertical"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:layout_height="wrap_content">
 
-            </LinearLayout>
+                    <TextView
+                        android:id="@+id/fragment_about_artist_related_artists_title"
+                        android:layout_width="wrap_content"
+                        android:textSize="20sp"
+                        android:text="@string/about_artist_show_related_artists_text"
+                        android:textStyle="bold"
+                        android:layout_gravity="center_horizontal"
+                        android:textColor="@color/accent"
+                        android:layout_height="wrap_content" />
 
-            <LinearLayout
-                android:id="@+id/fragment_about_artist_similar_artists_container"
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="12dp"
+                        android:background="@color/border_default_grey"/>
+
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/fragment_about_artist_upcoming_events_card"
+                android:layout_below="@+id/fragment_about_artist_similar_artists_card"
+                android:layout_gravity="center"
                 android:layout_width="match_parent"
-                android:layout_below="@+id/fragment_about_artist_top_tracks_container"
-                android:orientation="vertical"
-                android:layout_marginBottom="16dp"
-                android:layout_height="wrap_content">
+                android:layout_margin="8dp"
+                card_view:cardBackgroundColor="@color/white"
+                android:layout_height="wrap_content"
+                card_view:cardCornerRadius="2dp">
 
-                <TextView
-                    android:id="@+id/fragment_about_artist_related_artists_title"
-                    android:layout_width="wrap_content"
-                    android:textSize="20sp"
-                    android:text="@string/about_artist_show_related_artists_text"
-                    android:textStyle="bold"
-                    android:layout_gravity="center_horizontal"
-                    android:textColor="@color/accent"
-                    android:layout_height="wrap_content" />
-
-                <View
+                <LinearLayout
+                    android:id="@+id/fragment_about_artist_upcoming_events_container"
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginBottom="12dp"
-                    android:background="@color/border_default_grey"/>
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:layout_height="wrap_content">
 
-            </LinearLayout>
+                    <TextView
+                        android:id="@+id/fragment_about_artist_upcoming_events_title"
+                        android:layout_width="wrap_content"
+                        android:textSize="20sp"
+                        android:text="@string/artist_upcoming_events_title"
+                        android:textStyle="bold"
+                        android:layout_gravity="center_horizontal"
+                        android:textColor="@color/accent"
+                        android:layout_height="wrap_content" />
 
-            <LinearLayout
-                android:id="@+id/fragment_about_artist_upcoming_events_container"
-                android:layout_width="match_parent"
-                android:layout_below="@+id/fragment_about_artist_similar_artists_container"
-                android:orientation="vertical"
-                android:visibility="gone"
-                android:layout_height="wrap_content">
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="12dp"
+                        android:background="@color/border_default_grey"/>
 
-                <TextView
-                    android:id="@+id/fragment_about_artist_upcoming_events_title"
-                    android:layout_width="wrap_content"
-                    android:textSize="20sp"
-                    android:text="@string/artist_upcoming_events_title"
-                    android:textStyle="bold"
-                    android:layout_gravity="center_horizontal"
-                    android:textColor="@color/accent"
-                    android:layout_height="wrap_content" />
+                </LinearLayout>
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginBottom="12dp"
-                    android:background="@color/border_default_grey"/>
-
-            </LinearLayout>
+            </android.support.v7.widget.CardView>
 
         </RelativeLayout>
 

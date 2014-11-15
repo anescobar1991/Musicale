@@ -87,7 +87,6 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
     }
 
     private void setUpView(final Artist artist) {
-        RelativeLayout artistBioContainer = (RelativeLayout) mView.findViewById(R.id.fragment_about_artist_bio_container);
         TextView artistName = (TextView) mView.findViewById(R.id.fragment_about_artist_artist_name);
         ImageView artistImage = (ImageView) mView.findViewById(R.id.fragment_about_artist_artist_image);
         TextView artistBio = (TextView) mView.findViewById(R.id.fragment_about_artist_bio);
@@ -101,7 +100,7 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
         if (!artist.getWikiSummary().isEmpty()) {
             artistBio.setText(Html.fromHtml(artist.getWikiSummary()).toString());
         } else {
-            artistBioContainer.setVisibility(View.GONE);
+            artistBio.setVisibility(View.GONE);
         }
 
         Collection<String> tags = artist.getTags();

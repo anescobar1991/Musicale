@@ -114,7 +114,6 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
 
     //sets up map if it hasnt already been setup,
     private void setUpMapIfNeeded(final Venue venue) {
-        System.out.println("setupmadneeded called");
         LatLng venueLocation = new LatLng(venue.getLatitude(), venue.getLongitude());
 
         GoogleMap mMap = mMapFragment.getMap();
@@ -223,7 +222,7 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
         }
     }
 
-    private void setUpEventCard(final Event event, final LinearLayout parentView) {
+    private void setUpEventCard(final Event event, final ViewGroup parentView) {
         LayoutInflater vi = LayoutInflater.from(getActivity());
         View view = vi.inflate(R.layout.event_card, parentView, false);
 
