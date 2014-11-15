@@ -133,27 +133,18 @@ public class EventsMapViewFragment extends Fragment implements EventFetcherListe
         final Gson gson = new Gson();
         String serializedLatLng = getArguments().getString("currentLatLng", null);
 
-        if (serializedLatLng != null) {
-            mLatLng = gson.fromJson(serializedLatLng, LatLng.class);
+        mLatLng = gson.fromJson(serializedLatLng, LatLng.class);
 
-            //sets up map, with its settings, and adds event markers
-            setUpMapIfNeeded(mLatLng);
-        } else {
-            //TODO catch this error scenario
-        }
+        //sets up map, with its settings, and adds event markers
+        setUpMapIfNeeded(mLatLng);
 
     }
 
     @Override
     public void onResume(){
         super.onResume();
-        if (mLatLng != null) {
-            //sets up map, with its settings, and adds event markers
-            setUpMapIfNeeded(mLatLng);
-        } else {
-            //TODO catch this error scenario
-        }
-
+        //sets up map, with its settings, and adds event markers
+        setUpMapIfNeeded(mLatLng);
     }
 
     @Override

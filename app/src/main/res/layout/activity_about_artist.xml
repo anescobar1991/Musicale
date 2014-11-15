@@ -6,9 +6,16 @@
         layout="@layout/musicale_toolbar"
         android:id="@+id/musicale_toolbar"/>
 
+    <View
+        android:id="@+id/toolbar_shadow"
+        android:layout_width="match_parent"
+        android:layout_below="@+id/musicale_toolbar"
+        android:layout_height="4dp"
+        android:background="@drawable/drop_shadow" />
+
     <FrameLayout
         android:id="@+id/activity_about_artist_container"
-        android:layout_below="@+id/musicale_toolbar"
+        android:layout_below="@+id/toolbar_shadow"
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
     </FrameLayout>
