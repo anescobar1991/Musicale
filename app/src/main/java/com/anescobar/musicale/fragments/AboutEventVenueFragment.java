@@ -170,47 +170,46 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
         RelativeLayout venueUrlContainer = (RelativeLayout) view.findViewById(R.id.fragment_about_venue_url_container);
         RelativeLayout venuePhoneNumberContainer = (RelativeLayout) view.findViewById(R.id.fragment_about_venue_phone_number_container);
 
-
-        String venuePhoneNumber = venue.getPhonenumber();
-        String venueUrl = venue.getWebsite();
-        String venueImageUrl = venue.getImageURL(ImageSize.EXTRALARGE);
-
         //gets venue Events from backend
         getVenueEvents(mVenue.getId());
 
         //-------------loads all dynamic data into view-----------------
 
         //downloads venue image into view if there is image
-        if (venueImageUrl.length() > 0) {
-            Picasso.with(getActivity()).load(venueImageUrl)
+        if (venue.getImageURL(ImageSize.EXTRALARGE).length() > 0) {
+            Picasso.with(getActivity()).load(venue.getImageURL(ImageSize.EXTRALARGE))
                     .placeholder(R.drawable.placeholder)
                     .centerInside()
                     .resize(360, 360)
                     .into(venueImage);
             //else will load placeholder image into view
         } else {
-            venueImage.setVisibility(View.GONE);
+            venueImage.setImageResource(R.drawable.placeholder);
         }
 
         //hide venueUrl textview and image if there is no venue Url available
-        if (venueUrl.length() == 0) {
+        if (venue.getWebsite().length() == 0) {
             venueUrlContainer.setVisibility(View.GONE);
         } else {
             //display venue Url
-            venueUrlTextView.setText(venueUrl);
+            venueUrlTextView.setText(venue.getWebsite());
         }
 
         //hide venue phone number textview and image if there is no venue phone number available
-        if (venuePhoneNumber.length() == 0) {
+        if (venue.getPhonenumber().length() == 0) {
             venuePhoneNumberContainer.setVisibility(View.GONE);
         } else {
             //display venue phone number
-            venuePhoneNumberTextView.setText(venuePhoneNumber);
+            venuePhoneNumberTextView.setText(venue.getPhonenumber());
         }
 
         venueName.setText(venue.getName());
 
-        venueAddress.setText(venue.getStreet() + " • " + venue.getCity() + " • " + venue.getCountry());
+        if (venue.getStreet().length() == 0) {
+            venueAddress.setText(venue.getCity() + " • " + venue.getCountry());
+        } else {
+            venueAddress.setText(venue.getStreet() + " • " + venue.getCity() + " • " + venue.getCountry());
+        }
     }
 
     //sends intent to open Google maps application at specified location with specified label

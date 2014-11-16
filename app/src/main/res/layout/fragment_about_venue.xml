@@ -57,8 +57,6 @@
                         <ImageView
                             android:id="@+id/fragment_about_venue_image"
                             android:layout_width="wrap_content"
-                            android:paddingEnd="8dp"
-                            android:paddingStart="0dp"
                             android:layout_height="wrap_content"
                             android:contentDescription="@null" />
 
@@ -67,6 +65,8 @@
                             android:layout_width="wrap_content"
                             android:layout_toEndOf="@+id/fragment_about_venue_image"
                             android:textSize="20sp"
+                            android:paddingLeft="4dp"
+                            android:paddingRight="4dp"
                             android:textStyle="bold"
                             android:textColor="@color/accent"
                             android:layout_height="wrap_content" />
@@ -74,6 +74,7 @@
                         <RelativeLayout
                             android:id="@+id/fragment_about_venue_phone_number_container"
                             android:layout_width="match_parent"
+                            android:paddingLeft="4dp"
                             android:layout_below="@+id/fragment_about_venue_venue_name"
                             android:layout_toEndOf="@+id/fragment_about_venue_image"
                             android:layout_height="wrap_content">
@@ -89,8 +90,8 @@
                             <TextView
                                 android:id="@+id/fragment_about_venue_phone_number"
                                 android:layout_width="wrap_content"
-                                android:paddingStart="4dp"
-                                android:paddingEnd="0dp"
+                                android:paddingLeft="4dp"
+                                android:paddingRight="4dp"
                                 android:layout_toEndOf="@+id/fragment_about_venue_phone_icon"
                                 android:layout_height="wrap_content" />
 
@@ -99,6 +100,7 @@
                         <RelativeLayout
                             android:id="@+id/fragment_about_venue_url_container"
                             android:layout_width="match_parent"
+                            android:paddingLeft="4dp"
                             android:layout_toEndOf="@+id/fragment_about_venue_image"
                             android:layout_below="@+id/fragment_about_venue_phone_number_container"
                             android:layout_height="wrap_content">
@@ -114,9 +116,9 @@
                             <TextView
                                 android:id="@+id/fragment_about_venue_url"
                                 android:layout_width="wrap_content"
-                                android:paddingStart="4dp"
                                 android:autoLink="web"
-                                android:paddingEnd="0dp"
+                                android:paddingLeft="4dp"
+                                android:paddingRight="4dp"
                                 android:layout_toEndOf="@+id/fragment_about_venue_website_icon"
                                 android:layout_height="wrap_content" />
 
@@ -129,7 +131,7 @@
                         android:layout_width="match_parent"
                         android:layout_below="@+id/fragment_about_venue_venue_info_container"
                         android:paddingBottom="4dp"
-                        android:layout_height="100dp"/>
+                        android:layout_height="120dp"/>
 
                     <TextView
                         android:id="@+id/fragment_about_venue_address"
@@ -172,8 +174,8 @@
                     android:textColor="@color/accent"
                     android:layout_height="wrap_content" />
 
+                <!--thin line separator-->
                 <View
-                    android:id="@+id/fragment_about_venue_separator2"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_marginTop="4dp"
