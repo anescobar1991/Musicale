@@ -2,7 +2,6 @@
 
     <style name="MusicaleTheme" parent="MusicaleTheme.Base">
         <item name="colorPrimary">@color/primary</item>
-        <item name="vpiTabPageIndicatorStyle">@style/Widget.TabPageIndicator</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
         <item name="android:windowContentTransitions">true</item>
         <item name="android:windowAllowEnterTransitionOverlap">true</item>

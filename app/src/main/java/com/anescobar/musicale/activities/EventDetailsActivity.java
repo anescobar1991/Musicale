@@ -9,9 +9,9 @@ import android.widget.TextView;
 
 import com.anescobar.musicale.R;
 import com.anescobar.musicale.adapters.EventDetailsPagerAdapter;
+import com.astuetz.PagerSlidingTabStrip;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
-import com.viewpagerindicator.TabPageIndicator;
 
 import java.util.Collection;
 
@@ -61,8 +61,9 @@ public class EventDetailsActivity extends BaseActivity {
         pager.setAdapter(new EventDetailsPagerAdapter(getSupportFragmentManager(), this, event));
 
         //Bind the title indicator to the adapter
-        TabPageIndicator titleIndicator = (TabPageIndicator) findViewById(R.id.activity_event_details_view_pager_title);
-        titleIndicator.setViewPager(pager);
+        // Bind the tabs to the ViewPager
+        PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.activity_event_details_tabs);
+        tabs.setViewPager(pager);
 
         TextView eventTitleTextView = (TextView) findViewById(R.id.activity_event_details_event_title);
         TextView eventArtistsTextView = (TextView) findViewById(R.id.activity_event_details_event_artists);

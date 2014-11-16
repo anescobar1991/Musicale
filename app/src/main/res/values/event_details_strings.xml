@@ -4,6 +4,6 @@
     <string name="event_image_accessibility_label">Event image</string>
     <string name="event_details_about_venue_tab">About venue</string>
     <string name="event_details_about_artist_tab">About headliner</string>
-    <string name="event_details_social_media_tab">Event buzz</string>
+    <string name="event_details_social_media_tab">Social media</string>
 
 </resources>
