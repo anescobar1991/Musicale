@@ -9,26 +9,32 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/track_pause_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:src="@drawable/ic_pause_circle_outline_grey600_36dp"
-        android:contentDescription="@string/pause_track_preview"/>
+    <FrameLayout
+        android:layout_width="40dp"
+        android:layout_height="40dp">
 
-    <ImageView
-        android:id="@+id/track_play_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_play_circle_outline_grey600_36dp"
-        android:contentDescription="@string/play_track_preview"/>
+        <ImageView
+            android:id="@+id/track_stop_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:src="@drawable/ic_stop_grey600_36dp"
+            android:contentDescription="@string/stop_track_preview"/>
 
-    <ProgressBar
-        android:id="@+id/track_loading_preview"
-        android:layout_width="30dp"
-        android:visibility="gone"
-        android:layout_height="wrap_content" />
+        <ImageView
+            android:id="@+id/track_play_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_play_circle_outline_grey600_36dp"
+            android:contentDescription="@string/play_track_preview"/>
+
+        <ProgressBar
+            android:id="@+id/track_loading_preview"
+            android:layout_width="32dp"
+            android:visibility="gone"
+            android:layout_height="wrap_content" />
+
+    </FrameLayout>
 
     <TextView
         android:id="@+id/track_link_name"

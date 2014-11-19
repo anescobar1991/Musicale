@@ -1,6 +1,8 @@
 package com.anescobar.musicale.view.fragments;
 
 import android.content.Intent;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Html;
@@ -29,6 +31,7 @@ import com.anescobar.musicale.app.adapters.utils.NetworkNotAvailableException;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
 import java.util.Collection;
 
 import de.umass.lastfm.Artist;
@@ -48,6 +51,8 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
     private RelativeLayout mContainer;
     private ProgressBar mContentLoadingProgressBar;
     private LinearLayout mUpcomingEventsContainer;
+
+    private boolean mTrackPlaying = false;
 
     public AboutArtistFragment() {}
 
@@ -345,39 +350,79 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
     }
 
     @Override
-    public void onSpotifyTrackInfoFetcherTaskCompleted(SpotifyTrack track, View view) {
+    public void onSpotifyTrackInfoFetcherTaskCompleted(final SpotifyTrack track, final View view) {
         //parent activity would be null if user has navigated away from this screen
         if (getActivity() != null) {
-            ImageView playButton = (ImageView) view.findViewById(R.id.track_play_button);
-            ProgressBar previewLoading = (ProgressBar) view.findViewById(R.id.track_loading_preview);
-
-            //
-            playButton.setVisibility(View.VISIBLE);
-            previewLoading.setVisibility(View.GONE);
+            final ImageView playButton = (ImageView) view.findViewById(R.id.track_play_button);
+            final ProgressBar previewLoading = (ProgressBar) view.findViewById(R.id.track_loading_preview);
+            final ImageView stopButton = (ImageView) view.findViewById(R.id.track_stop_button);
 
             if (track.previewUrl != null) {
-                //TODO do playback shit
-                //TODO make sure UI remains responsive and make sure that UI displays to user that something is going on
-                //TODO for media playback handle interruptions(headphones taken out), leaving screen, and pausing
-                //TODO http://developer.android.com/guide/topics/media/mediaplayer.html
-//                MediaPlayer mediaPlayer = new MediaPlayer();
-//                mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-//                try {
-//                    mediaPlayer.setDataSource(track.previewUrl);
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//                try {
-//                    mediaPlayer.prepare(); // might take long! (for buffering, etc)
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//                mediaPlayer.start();
+                final MediaPlayer mediaPlayer = new MediaPlayer();
+                mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+
+                mTrackPlaying = true;
+                view.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (mTrackPlaying) {
+                            mTrackPlaying = false;
+                            playButton.setVisibility(View.VISIBLE);
+                            previewLoading.setVisibility(View.GONE);
+                            stopButton.setVisibility(View.GONE);
+
+                            mediaPlayer.reset();
+                            mediaPlayer.release();
+                        } else {
+                            getSpotifyTrackInfo(track.trackName, track.artistName, view);
+                        }
+                    }
+                });
+                //TODO for media playback handle interruptions(headphones taken out), leaving screen(release mediaPlayer), tapping other track link(Stop playing current track and play newly requested one)
+                try {
+                    mediaPlayer.setDataSource(track.previewUrl);
+
+                    mediaPlayer.prepareAsync();
+
+                    mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+
+                        @Override
+                        public void onPrepared(MediaPlayer mp) {
+                            playButton.setVisibility(View.GONE);
+                            previewLoading.setVisibility(View.GONE);
+                            stopButton.setVisibility(View.VISIBLE);
+                            mp.start();
+                        }
+                    });
+
+                    mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                        @Override
+                        public void onCompletion(MediaPlayer mp) {
+                            stopButton.setVisibility(View.GONE);
+                            playButton.setVisibility(View.VISIBLE);
+
+                            mTrackPlaying = false;
+
+                            mp.release();
+                        }
+                    });
+                } catch (IOException e) {
+                    e.printStackTrace();
+
+                    previewLoading.setVisibility(View.GONE);
+                    playButton.setVisibility(View.VISIBLE);
+
+                    Toast.makeText(getActivity(), getString(R.string.preview_not_available),Toast.LENGTH_SHORT).show();
+                }
 
             } else {
+                previewLoading.setVisibility(View.GONE);
+                playButton.setVisibility(View.VISIBLE);
+
                 //if preview is not available for song on spotify display toast to let user know
                 Toast.makeText(getActivity(), getString(R.string.preview_not_available),Toast.LENGTH_SHORT).show();
             }
         }
     }
+
 }
