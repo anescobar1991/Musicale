@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:fillViewport="true"
@@ -15,7 +16,7 @@
             android:id="@+id/fragment_about_venue_loading_progressbar"
             android:layout_width="wrap_content"
             android:layout_gravity="center"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"/>
 
         <TextView
             android:id="@+id/fragment_about_venue_error_message_container"
@@ -23,7 +24,7 @@
             android:visibility="gone"
             android:gravity="center"
             android:layout_gravity="center"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"/>
 
         <RelativeLayout
             android:id="@+id/fragment_about_venue_content"
@@ -58,7 +59,7 @@
                             android:id="@+id/fragment_about_venue_image"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:contentDescription="@null" />
+                            android:contentDescription="@null"/>
 
                         <TextView
                             android:id="@+id/fragment_about_venue_venue_name"
@@ -69,7 +70,7 @@
                             android:paddingRight="4dp"
                             android:textStyle="bold"
                             android:textColor="@color/accent"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"/>
 
                         <RelativeLayout
                             android:id="@+id/fragment_about_venue_phone_number_container"
@@ -85,7 +86,7 @@
                                 android:contentDescription="@string/about_venue_call_venue"
                                 android:adjustViewBounds="true"
                                 android:src="@drawable/ic_action_call"
-                                android:layout_height="wrap_content" />
+                                android:layout_height="wrap_content"/>
 
                             <TextView
                                 android:id="@+id/fragment_about_venue_phone_number"
@@ -93,7 +94,7 @@
                                 android:paddingLeft="4dp"
                                 android:paddingRight="4dp"
                                 android:layout_toEndOf="@+id/fragment_about_venue_phone_icon"
-                                android:layout_height="wrap_content" />
+                                android:layout_height="wrap_content"/>
 
                         </RelativeLayout>
 
@@ -111,7 +112,7 @@
                                 android:contentDescription="@string/about_venue_visit_venue_website"
                                 android:adjustViewBounds="true"
                                 android:src="@drawable/ic_action_web_site"
-                                android:layout_height="wrap_content" />
+                                android:layout_height="wrap_content"/>
 
                             <TextView
                                 android:id="@+id/fragment_about_venue_url"
@@ -120,7 +121,7 @@
                                 android:paddingLeft="4dp"
                                 android:paddingRight="4dp"
                                 android:layout_toEndOf="@+id/fragment_about_venue_website_icon"
-                                android:layout_height="wrap_content" />
+                                android:layout_height="wrap_content"/>
 
                         </RelativeLayout>
 
@@ -138,7 +139,7 @@
                         android:layout_width="match_parent"
                         android:gravity="center_horizontal"
                         android:layout_below="@+id/fragment_about_venue_map_container"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"/>
 
                 </RelativeLayout>
 
@@ -172,7 +173,7 @@
                     android:textStyle="bold"
                     android:layout_gravity="center_horizontal"
                     android:textColor="@color/accent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"/>
 
                 <!--thin line separator-->
                 <View

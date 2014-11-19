@@ -1,3 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:fillViewport="true"
@@ -14,7 +16,7 @@
             android:id="@+id/fragment_about_artist_loading_progressbar"
             android:layout_width="wrap_content"
             android:layout_gravity="center"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"/>
 
         <TextView
             android:id="@+id/fragment_about_artist_error_message_container"
@@ -22,7 +24,7 @@
             android:visibility="gone"
             android:gravity="center"
             android:layout_gravity="center"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"/>
 
         <RelativeLayout
             android:id="@+id/fragment_about_artist_content"
@@ -58,7 +60,7 @@
                             android:id="@+id/fragment_about_artist_artist_image"
                             android:contentDescription="@null"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"/>
 
                         <TextView
                             android:id="@+id/fragment_about_artist_artist_name"
@@ -69,7 +71,7 @@
                             android:paddingLeft="4dp"
                             android:paddingRight="4dp"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"/>
 
                         <TextView
                             android:id="@+id/fragment_about_artist_tags"
@@ -78,7 +80,7 @@
                             android:paddingRight="4dp"
                             android:layout_toEndOf="@+id/fragment_about_artist_artist_image"
                             android:layout_below="@+id/fragment_about_artist_artist_name"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"/>
 
                     </RelativeLayout>
 
@@ -88,7 +90,7 @@
                         android:paddingLeft="4dp"
                         android:paddingRight="4dp"
                         android:layout_below="@+id/fragment_about_artist_info_container"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"/>
 
                 </RelativeLayout>
 
@@ -121,7 +123,7 @@
                         android:textStyle="bold"
                         android:layout_gravity="center_horizontal"
                         android:textColor="@color/accent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"/>
 
                     <!--Thin line separator-->
                     <View
@@ -162,7 +164,7 @@
                         android:textStyle="bold"
                         android:layout_gravity="center_horizontal"
                         android:textColor="@color/accent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"/>
 
                     <!--Thin line separator-->
                     <View
@@ -204,7 +206,7 @@
                         android:textStyle="bold"
                         android:layout_gravity="center_horizontal"
                         android:textColor="@color/accent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"/>
 
                     <!--thin line separator-->
                     <View

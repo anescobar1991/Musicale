@@ -1,3 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/artist_upcoming_event_card"
     android:layout_width="match_parent"
@@ -11,7 +13,7 @@
         android:id="@+id/artist_upcoming_event_venue_image"
         android:layout_width="60dp"
         android:adjustViewBounds="true"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"/>
 
     <TextView
         android:id="@+id/artist_upcoming_event_date"
@@ -19,7 +21,7 @@
         android:paddingRight="8dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toEndOf="@+id/artist_upcoming_event_venue_image" />
+        android:layout_toEndOf="@+id/artist_upcoming_event_venue_image"/>
 
     <TextView
         android:id="@+id/artist_upcoming_event_venue_name"
@@ -29,7 +31,7 @@
         android:layout_below="@+id/artist_upcoming_event_date"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"/>
 
     <TextView
         android:id="@+id/artist_upcoming_event_venue_location"
@@ -38,6 +40,6 @@
         android:layout_below="@+id/artist_upcoming_event_venue_name"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"/>
 
 </RelativeLayout>

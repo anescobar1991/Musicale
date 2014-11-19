@@ -48,4 +48,7 @@ dependencies {
     compile 'com.jpardogo.materialtabstrip:library:1.0.3'
     compile 'com.squareup.picasso:picasso:2.3.3'
     compile 'com.crashlytics.android:crashlytics:1.+'
+    compile 'com.google.code.gson:gson:2.3'
+    compile 'com.squareup.okhttp:okhttp:2.0.0'
+    compile 'com.squareup.okhttp:okhttp-urlconnection:2.0.0'
 }

@@ -4,5 +4,8 @@
     <string name="about_artist_top_tracks_text">Top tracks</string>
     <string name="title_artist_details_activity">Artist details</string>
     <string name="artist_upcoming_events_title">Upcoming events</string>
+    <string name="preview_not_available">Preview not available for this track</string>
+    <string name="pause_track_preview">Pause track preview</string>
+    <string name="play_track_preview">Play track preview</string>
 
 </resources>

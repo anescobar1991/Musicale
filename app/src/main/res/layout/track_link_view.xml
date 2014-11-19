@@ -1,3 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/track_view_layout"
     android:orientation="horizontal"
@@ -8,17 +10,32 @@
     android:layout_height="wrap_content">
 
     <ImageView
+        android:id="@+id/track_pause_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:src="@drawable/ic_pause_circle_outline_grey600_36dp"
+        android:contentDescription="@string/pause_track_preview"/>
+
+    <ImageView
+        android:id="@+id/track_play_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_play_circle_outline_grey600_36dp"
-        android:contentDescription="@null" />
+        android:contentDescription="@string/play_track_preview"/>
+
+    <ProgressBar
+        android:id="@+id/track_loading_preview"
+        android:layout_width="30dp"
+        android:visibility="gone"
+        android:layout_height="wrap_content" />
 
     <TextView
-        android:id="@+id/track_link_view"
+        android:id="@+id/track_link_name"
         android:textSize="16sp"
         android:layout_marginStart="4dp"
         android:layout_gravity="center"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"/>
 
 </LinearLayout>

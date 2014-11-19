@@ -1,3 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="250dp"
     android:paddingTop="8dp"
@@ -10,7 +12,7 @@
         android:layout_height="wrap_content"
         android:paddingEnd="8dp"
         android:paddingStart="0dp"
-        android:contentDescription="@null" />
+        android:contentDescription="@null"/>
 
     <TextView
         android:id="@+id/event_info_window_event_title_textfield"
@@ -19,7 +21,7 @@
         android:textColor="@color/accent"
         android:layout_width="wrap_content"
         android:layout_toEndOf="@+id/event_info_window_event_image"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"/>
 
     <TextView
         android:id="@+id/event_info_window_event_date_textfield"
@@ -27,7 +29,7 @@
         android:layout_below="@+id/event_info_window_event_title_textfield"
         android:layout_width="wrap_content"
         android:layout_toEndOf="@+id/event_info_window_event_image"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"/>
 
     <TextView
         android:id="@+id/event_info_window_venue_name_textfield"
@@ -35,6 +37,6 @@
         android:layout_width="wrap_content"
         android:textSize="14sp"
         android:layout_toEndOf="@+id/event_info_window_event_image"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"/>
 
 </RelativeLayout>
