@@ -1,4 +1,4 @@
-package com.anescobar.musicale.view.fragments.activities;
+package com.anescobar.musicale.view.activities;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -6,10 +6,10 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.anescobar.musicale.R;
-import com.anescobar.musicale.app.adapters.interfaces.EventFetcherListener;
-import com.anescobar.musicale.rest.models.services.EventsFinder;
-import com.anescobar.musicale.app.adapters.utils.LocationNotAvailableException;
-import com.anescobar.musicale.app.adapters.utils.NetworkNotAvailableException;
+import com.anescobar.musicale.app.interfaces.EventFetcherListener;
+import com.anescobar.musicale.app.utils.LocationNotAvailableException;
+import com.anescobar.musicale.app.utils.NetworkNotAvailableException;
+import com.anescobar.musicale.rest.services.EventsFinder;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.common.ConnectionResult;
 

@@ -1,14 +1,14 @@
-package com.anescobar.musicale.rest.models.services;
+package com.anescobar.musicale.rest.services;
 
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.anescobar.musicale.app.adapters.interfaces.ArtistInfoFetcherTaskListener;
-import com.anescobar.musicale.app.adapters.interfaces.ArtistTopTracksFetcherTaskListener;
-import com.anescobar.musicale.app.adapters.interfaces.ArtistUpcomingEventsFetcherTaskListener;
-import com.anescobar.musicale.app.adapters.utils.NetworkNotAvailableException;
-import com.anescobar.musicale.app.adapters.utils.NetworkUtil;
+import com.anescobar.musicale.app.interfaces.ArtistInfoFetcherTaskListener;
+import com.anescobar.musicale.app.interfaces.ArtistTopTracksFetcherTaskListener;
+import com.anescobar.musicale.app.interfaces.ArtistUpcomingEventsFetcherTaskListener;
+import com.anescobar.musicale.app.utils.NetworkNotAvailableException;
+import com.anescobar.musicale.app.utils.NetworkUtil;
 
 import java.util.Collection;
 

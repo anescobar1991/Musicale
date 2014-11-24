@@ -1,4 +1,4 @@
-package com.anescobar.musicale.app.adapters.models;
+package com.anescobar.musicale.app.models;
 
 import java.util.ArrayList;
 

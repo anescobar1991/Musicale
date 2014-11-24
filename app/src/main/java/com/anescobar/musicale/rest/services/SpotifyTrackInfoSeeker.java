@@ -1,13 +1,12 @@
-package com.anescobar.musicale.rest.models.services;
+package com.anescobar.musicale.rest.services;
 
 import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
 
-import com.anescobar.musicale.app.adapters.interfaces.SpotifyTrackInfoTaskListener;
-import com.anescobar.musicale.app.adapters.utils.NetworkNotAvailableException;
-import com.anescobar.musicale.app.adapters.utils.NetworkUtil;
-
+import com.anescobar.musicale.app.interfaces.SpotifyTrackInfoTaskListener;
+import com.anescobar.musicale.app.utils.NetworkNotAvailableException;
+import com.anescobar.musicale.app.utils.NetworkUtil;
 import com.anescobar.musicale.rest.models.SpotifyTrack;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.OkHttpClient;

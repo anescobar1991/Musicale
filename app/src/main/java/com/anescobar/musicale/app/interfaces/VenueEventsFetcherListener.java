@@ -1,4 +1,4 @@
-package com.anescobar.musicale.app.adapters.interfaces;
+package com.anescobar.musicale.app.interfaces;
 
 import java.util.Collection;
 

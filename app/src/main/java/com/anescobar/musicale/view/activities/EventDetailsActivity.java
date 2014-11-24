@@ -1,4 +1,4 @@
-package com.anescobar.musicale.view.fragments.activities;
+package com.anescobar.musicale.view.activities;
 
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;

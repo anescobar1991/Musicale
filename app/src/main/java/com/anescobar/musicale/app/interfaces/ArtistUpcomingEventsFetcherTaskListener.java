@@ -1,4 +1,4 @@
-package com.anescobar.musicale.app.adapters.interfaces;
+package com.anescobar.musicale.app.interfaces;
 
 import de.umass.lastfm.Event;
 import de.umass.lastfm.PaginatedResult;

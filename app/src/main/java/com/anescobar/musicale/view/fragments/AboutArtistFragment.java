@@ -18,16 +18,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.anescobar.musicale.R;
-import com.anescobar.musicale.app.adapters.interfaces.SpotifyTrackInfoTaskListener;
+import com.anescobar.musicale.app.interfaces.ArtistInfoFetcherTaskListener;
+import com.anescobar.musicale.app.interfaces.ArtistTopTracksFetcherTaskListener;
+import com.anescobar.musicale.app.interfaces.ArtistUpcomingEventsFetcherTaskListener;
+import com.anescobar.musicale.app.interfaces.SpotifyTrackInfoTaskListener;
+import com.anescobar.musicale.app.utils.NetworkNotAvailableException;
 import com.anescobar.musicale.rest.models.SpotifyTrack;
-import com.anescobar.musicale.rest.models.services.SpotifyTrackInfoSeeker;
-import com.anescobar.musicale.view.fragments.activities.ArtistDetailsActivity;
-import com.anescobar.musicale.view.fragments.activities.EventDetailsActivity;
-import com.anescobar.musicale.app.adapters.interfaces.ArtistInfoFetcherTaskListener;
-import com.anescobar.musicale.app.adapters.interfaces.ArtistTopTracksFetcherTaskListener;
-import com.anescobar.musicale.app.adapters.interfaces.ArtistUpcomingEventsFetcherTaskListener;
-import com.anescobar.musicale.rest.models.services.ArtistInfoSeeker;
-import com.anescobar.musicale.app.adapters.utils.NetworkNotAvailableException;
+
+import com.anescobar.musicale.rest.services.ArtistInfoSeeker;
+import com.anescobar.musicale.rest.services.SpotifyTrackInfoSeeker;
+import com.anescobar.musicale.view.activities.ArtistDetailsActivity;
+import com.anescobar.musicale.view.activities.EventDetailsActivity;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 

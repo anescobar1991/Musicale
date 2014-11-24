@@ -11,7 +11,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.anescobar.musicale.R;
-import com.anescobar.musicale.view.fragments.activities.EventDetailsActivity;
+import com.anescobar.musicale.view.activities.EventDetailsActivity;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
