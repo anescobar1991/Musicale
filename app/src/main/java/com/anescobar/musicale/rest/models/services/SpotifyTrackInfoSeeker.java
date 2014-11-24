@@ -3,7 +3,6 @@ package com.anescobar.musicale.rest.models.services;
 import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
-import android.view.View;
 
 import com.anescobar.musicale.app.adapters.interfaces.SpotifyTrackInfoTaskListener;
 import com.anescobar.musicale.app.adapters.utils.NetworkNotAvailableException;
@@ -38,11 +37,11 @@ public class SpotifyTrackInfoSeeker {
     }
 
     public void getTrackInfo(String artistName, String trackName,
-                             final SpotifyTrackInfoTaskListener listener, final Context context, final View view) throws NetworkNotAvailableException {
+                             final SpotifyTrackInfoTaskListener listener, final Context context, final String trackId) throws NetworkNotAvailableException {
 
         if (mNetworkUtil.isNetworkAvailable(context)) {
             //let listener know that task is about to start
-            listener.onSpotifyTrackInfoFetcherTaskAboutToStart(view);
+            listener.onSpotifyTrackInfoFetcherTaskAboutToStart(trackId);
 
             OkHttpClient client = new OkHttpClient();
 
@@ -86,17 +85,17 @@ public class SpotifyTrackInfoSeeker {
                                 JSONObject jObject = new JSONObject(streamToString(response.body().byteStream()));
 
                                 SpotifyTrack track = new SpotifyTrack();
+                                track.trackId = trackId;
 
                                 //if there are results for search query then populate model from response
                                 if (jObject.getJSONObject("tracks").getInt("total") > 0) {
                                     track.artistName = jObject.getJSONObject("tracks").getJSONArray("items").getJSONObject(0).getJSONArray("artists").getJSONObject(0).getString("name");
                                     track.popularity = jObject.getJSONObject("tracks").getJSONArray("items").getJSONObject(0).getInt("popularity");
                                     track.previewUrl = jObject.getJSONObject("tracks").getJSONArray("items").getJSONObject(0).getString("preview_url");
-                                    track.spotifyId = jObject.getJSONObject("tracks").getJSONArray("items").getJSONObject(0).getString("id");
                                     track.trackName = jObject.getJSONObject("tracks").getJSONArray("items").getJSONObject(0).getString("name");
                                 }
                                 //return Spotify Track model to calling class using callback
-                                listener.onSpotifyTrackInfoFetcherTaskCompleted(track, view);
+                                listener.onSpotifyTrackInfoFetcherTaskCompleted(track);
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             } catch (IOException e) {

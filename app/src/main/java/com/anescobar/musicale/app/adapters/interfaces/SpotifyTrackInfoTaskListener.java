@@ -12,6 +12,6 @@ import de.umass.lastfm.Artist;
  */
 public interface SpotifyTrackInfoTaskListener {
 
-    void onSpotifyTrackInfoFetcherTaskAboutToStart(View view);
-    void onSpotifyTrackInfoFetcherTaskCompleted(SpotifyTrack track, View view);
+    void onSpotifyTrackInfoFetcherTaskAboutToStart(String trackId);
+    void onSpotifyTrackInfoFetcherTaskCompleted(SpotifyTrack track);
 }

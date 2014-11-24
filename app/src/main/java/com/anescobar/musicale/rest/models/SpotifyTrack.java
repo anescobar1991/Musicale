@@ -6,7 +6,7 @@ package com.anescobar.musicale.rest.models;
 public class SpotifyTrack {
     public String trackName;
     public String artistName;
-    public String spotifyId;
+    public String trackId;
     public int popularity;
     public String previewUrl;
 }

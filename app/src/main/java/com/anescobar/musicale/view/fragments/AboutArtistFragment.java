@@ -32,7 +32,9 @@ import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Random;
 
 import de.umass.lastfm.Artist;
 import de.umass.lastfm.Event;
@@ -52,7 +54,9 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
     private ProgressBar mContentLoadingProgressBar;
     private LinearLayout mUpcomingEventsContainer;
 
-    private boolean mTrackPlaying = false;
+    private MediaPlayer mMediaPlayer;
+
+    private ArrayList<View> mTrackLinks = new ArrayList<View>();
 
     public AboutArtistFragment() {}
 
@@ -77,6 +81,9 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
         mContainer = (RelativeLayout) mView.findViewById(R.id.fragment_about_artist_content);
         mContentLoadingProgressBar = (ProgressBar) mView.findViewById(R.id.fragment_about_artist_loading_progressbar);
         mUpcomingEventsContainer = (LinearLayout) mView.findViewById(R.id.fragment_about_artist_upcoming_events_container);
+
+        mMediaPlayer = new MediaPlayer();
+        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
         Bundle args = getArguments();
 
@@ -168,7 +175,6 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
         LayoutInflater vi = LayoutInflater.from(getActivity());
         View view = vi.inflate(R.layout.artist_card, parentView, false);
 
-
         RelativeLayout artistCard = (RelativeLayout) view.findViewById(R.id.artist_card);
         ImageView artistImageView = (ImageView) view.findViewById(R.id.artist_card_image);
         TextView artistTitleTextView = (TextView) view.findViewById(R.id.artist_card_image_text_field);
@@ -204,6 +210,17 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
         LayoutInflater vi = LayoutInflater.from(getActivity());
         View view = vi.inflate(R.layout.track_link_view, parentView, false);
 
+        final String trackId;
+
+        if (track.getMbid().length() > 0) {
+            trackId = track.getMbid();
+        } else {
+            trackId = Integer.toString(new Random().nextInt()); //if no mbid then use randomly generated ID
+        }
+
+        view.setTag(trackId);
+        mTrackLinks.add(view);
+
         LinearLayout trackLayout = (LinearLayout) view.findViewById(R.id.track_view_layout);
         TextView trackTextView = (TextView) view.findViewById(R.id.track_link_name);
 
@@ -213,7 +230,7 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
         trackLayout.setOnClickListener(new LinearLayout.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getSpotifyTrackInfo(track.getName(), track.getArtist(), view);
+                getSpotifyTrackInfo(track.getName(), track.getArtist(), trackId);
             }
         });
 
@@ -265,7 +282,6 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
 
     @Override
     public void onArtistUpcomingEventsFetcherTaskAboutToStart() {
-
     }
 
     @Override
@@ -294,7 +310,6 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
         eventDateTextView.setText(event.getStartDate().toLocaleString().substring(0, 12));
         venueNameTextView.setText("@ " + event.getVenue().getName());
         venueLocationTextView.setText(event.getVenue().getCity() + " " + event.getVenue().getCountry());
-
 
         String eventImageUrl = event.getVenue().getImageURL(ImageSize.EXTRALARGE);
 
@@ -327,9 +342,9 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
         parentView.addView(view);
     }
 
-    private void getSpotifyTrackInfo(String trackName, String artistName, View view) {
+    private void getSpotifyTrackInfo(String trackName, String artistName, String trackId) {
         try {
-            new SpotifyTrackInfoSeeker().getTrackInfo(artistName, trackName, this, getActivity(), view);
+            new SpotifyTrackInfoSeeker().getTrackInfo(artistName, trackName, this, getActivity(), trackId);
         } catch (NetworkNotAvailableException e) {
             e.printStackTrace();
             Toast.makeText(getActivity(), getString(R.string.error_no_network_connectivity),Toast.LENGTH_SHORT).show();
@@ -337,9 +352,13 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
     }
 
     @Override
-    public void onSpotifyTrackInfoFetcherTaskAboutToStart(View view) {
+    public void onSpotifyTrackInfoFetcherTaskAboutToStart(String trackId) {
+        View view = mTopTracksContainer.findViewWithTag(trackId);
+
         //parent activity would be null if user has navigated away from this screen
         if (getActivity() != null) {
+            resetNonPlayingTracksPlayButton(trackId);
+
             ImageView playButton = (ImageView) view.findViewById(R.id.track_play_button);
             ProgressBar previewLoading = (ProgressBar) view.findViewById(R.id.track_loading_preview);
 
@@ -350,7 +369,9 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
     }
 
     @Override
-    public void onSpotifyTrackInfoFetcherTaskCompleted(final SpotifyTrack track, final View view) {
+    public void onSpotifyTrackInfoFetcherTaskCompleted(final SpotifyTrack track) {
+        View view = mTopTracksContainer.findViewWithTag(track.trackId);
+
         //parent activity would be null if user has navigated away from this screen
         if (getActivity() != null) {
             final ImageView playButton = (ImageView) view.findViewById(R.id.track_play_button);
@@ -358,33 +379,32 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
             final ImageView stopButton = (ImageView) view.findViewById(R.id.track_stop_button);
 
             if (track.previewUrl != null) {
-                final MediaPlayer mediaPlayer = new MediaPlayer();
-                mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-
-                mTrackPlaying = true;
                 view.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (mTrackPlaying) {
-                            mTrackPlaying = false;
+
+                        if (mMediaPlayer.isPlaying()) {
+                            resetNonPlayingTracksPlayButton(track.trackId);
+
                             playButton.setVisibility(View.VISIBLE);
                             previewLoading.setVisibility(View.GONE);
                             stopButton.setVisibility(View.GONE);
 
-                            mediaPlayer.reset();
-                            mediaPlayer.release();
+                            mMediaPlayer.reset();
                         } else {
-                            getSpotifyTrackInfo(track.trackName, track.artistName, view);
+                            getSpotifyTrackInfo(track.trackName, track.artistName, track.trackId);
                         }
                     }
                 });
-                //TODO for media playback handle interruptions(headphones taken out), leaving screen(release mediaPlayer), tapping other track link(Stop playing current track and play newly requested one)
                 try {
-                    mediaPlayer.setDataSource(track.previewUrl);
 
-                    mediaPlayer.prepareAsync();
+                    mMediaPlayer.reset();
 
-                    mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                    mMediaPlayer.setDataSource(track.previewUrl);
+
+                    mMediaPlayer.prepareAsync();
+
+                    mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
 
                         @Override
                         public void onPrepared(MediaPlayer mp) {
@@ -395,15 +415,13 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
                         }
                     });
 
-                    mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                    mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                         @Override
                         public void onCompletion(MediaPlayer mp) {
                             stopButton.setVisibility(View.GONE);
                             playButton.setVisibility(View.VISIBLE);
 
-                            mTrackPlaying = false;
-
-                            mp.release();
+                            mMediaPlayer.reset();
                         }
                     });
                 } catch (IOException e) {
@@ -421,6 +439,39 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
 
                 //if preview is not available for song on spotify display toast to let user know
                 Toast.makeText(getActivity(), getString(R.string.preview_not_available),Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        mMediaPlayer.release();
+
+        //reset all track's play buttons
+        resetNonPlayingTracksPlayButton(null);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        mMediaPlayer = new MediaPlayer();
+        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+    }
+
+    private void resetNonPlayingTracksPlayButton(String currentlyPlayingTrackId) {
+
+        for (View trackLink : mTrackLinks) {
+            if (trackLink.getTag() != currentlyPlayingTrackId) {
+                final ImageView playButton = (ImageView) trackLink.findViewById(R.id.track_play_button);
+                final ProgressBar previewLoading = (ProgressBar) trackLink.findViewById(R.id.track_loading_preview);
+                final ImageView stopButton = (ImageView) trackLink.findViewById(R.id.track_stop_button);
+
+                playButton.setVisibility(View.VISIBLE);
+                previewLoading.setVisibility(View.GONE);
+                stopButton.setVisibility(View.GONE);
             }
         }
     }
