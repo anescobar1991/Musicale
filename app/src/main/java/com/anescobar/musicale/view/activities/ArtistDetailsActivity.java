@@ -1,7 +1,6 @@
 package com.anescobar.musicale.view.activities;
 
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -9,21 +8,27 @@ import android.widget.Toast;
 import com.anescobar.musicale.R;
 import com.anescobar.musicale.view.fragments.AboutArtistFragment;
 
-public class ArtistDetailsActivity extends ActionBarActivity {
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
+public class ArtistDetailsActivity extends BaseActivity {
 
     public static final String ABOUT_ARTIST_FRAGMENT = "aboutArtistFragment";
+
+    @InjectView(R.id.musicale_toolbar) Toolbar mToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about_artist);
 
+        ButterKnife.inject(this);
+
         //gets extras that were passed into activity
         Bundle extras = getIntent().getExtras();
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.musicale_toolbar);
-        if (toolbar != null) {
-            setSupportActionBar(toolbar);
+        if (mToolbar != null) {
+            setSupportActionBar(mToolbar);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
@@ -36,7 +41,7 @@ public class ArtistDetailsActivity extends ActionBarActivity {
         //add aboutArtist fragment to activity
         android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
-                .replace(R.id.activity_about_artist_container, AboutArtistFragment.newInstance(artist), ABOUT_ARTIST_FRAGMENT)
+                .replace(R.id.about_artist_container, AboutArtistFragment.newInstance(artist), ABOUT_ARTIST_FRAGMENT)
                 .commit();
 
         //should never ever be null, but who knows?

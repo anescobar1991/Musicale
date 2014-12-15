@@ -17,6 +17,8 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import de.umass.lastfm.Event;
 import de.umass.lastfm.ImageSize;
 
@@ -90,25 +92,20 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
 
     // Create the ViewHolder class to keep references to your views
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        public RelativeLayout mEventCard;
-        public ImageView mEventImage;
-        public TextView mEventTitleTextView;
-        public TextView mEventDateTextView;
-        public TextView mEventVenueNameTextView;
-        public TextView mVenueLocationTextView;
+        @InjectView(R.id.event_card) RelativeLayout mEventCard;
+        @InjectView(R.id.event_image) ImageView mEventImage;
+        @InjectView(R.id.event_name) TextView mEventTitleTextView;
+        @InjectView(R.id.event_date) TextView mEventDateTextView;
+        @InjectView(R.id.event_venue_name) TextView mEventVenueNameTextView;
+        @InjectView(R.id.event_venue_location) TextView mVenueLocationTextView;
+
         /**
          * Constructor
          * @param view The container view which holds the elements from the row item xml
          */
         public ViewHolder(View view) {
             super(view);
-
-            mEventCard = (RelativeLayout) view.findViewById(R.id.event_card);
-            mEventImage = (ImageView) view.findViewById(R.id.event_card_event_image);
-            mEventTitleTextView = (TextView) view.findViewById(R.id.event_card_event_title_textfield);
-            mEventDateTextView = (TextView) view.findViewById(R.id.event_card_event_date_textfield);
-            mEventVenueNameTextView = (TextView) view.findViewById(R.id.event_card_venue_name_textfield);
-            mVenueLocationTextView = (TextView) view.findViewById(R.id.event_card_venue_location_textfield);
+            ButterKnife.inject(this, view);
         }
     }
 

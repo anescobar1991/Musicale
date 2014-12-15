@@ -1,50 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/fragment_events_list_view_container"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/events_list_view_container"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@color/light_background"
-    android:weightSum="10">
-
-    <FrameLayout
-        android:id="@+id/fragment_events_list_view_list_container"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="10">
-
-        <ProgressBar
-            android:id="@+id/fragment_events_list_view_loading"
-            android:layout_width="wrap_content"
-            android:layout_gravity="center"
-            android:visibility="gone"
-            android:layout_height="wrap_content"/>
-
-        <TextView
-            android:id="@+id/fragment_events_list_view_error_message_container"
-            android:layout_width="match_parent"
-            android:gravity="center"
-            android:textAlignment="center"
-            android:visibility="gone"
-            android:layout_height="match_parent"/>
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/fragment_events_listView_event_cards_holder"
-            android:scrollbars="vertical"
-            android:clipToPadding="false"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-
-    </FrameLayout>
+    android:layout_height="match_parent" >
 
     <ProgressBar
-        android:id="@+id/fragment_events_list_view_more_events_loading"
-        android:layout_width="25dp"
-        android:layout_weight="1"
-        android:visibility="gone"
+        android:id="@+id/events_list_progressbar"
+        android:layout_width="wrap_content"
         android:layout_gravity="center"
-        android:layout_height="25dp"/>
+        android:visibility="gone"
+        android:layout_height="wrap_content"/>
 
-</LinearLayout>
+    <TextView
+        android:id="@+id/events_list_message_container"
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:textAlignment="center"
+        android:visibility="gone"
+        android:layout_height="match_parent"/>
 
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/events_recyclerview"
+        android:scrollbars="vertical"
+        android:clipToPadding="false"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+</FrameLayout>

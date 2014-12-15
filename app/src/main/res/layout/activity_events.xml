@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:layout_width="match_parent">
 
     <include
-        layout="@layout/musicale_toolbar"
-        android:id="@+id/musicale_toolbar"/>
+        android:id="@+id/musicale_toolbar"
+        layout="@layout/musicale_toolbar" />
 
     <LinearLayout
-        android:id="@+id/activity_events_tabs"
-        android:layout_below="@+id/musicale_toolbar"
         android:layout_width="match_parent"
+        android:orientation="horizontal"
         android:layout_height="48dp">
 
         <Button
-            android:id="@+id/activity_event_list_tab"
+            android:id="@+id/event_list_tab"
             android:layout_width="0dp"
             android:background="@drawable/unselected_tab_button"
             android:text="@string/view_in_list_tab_text"
@@ -24,7 +24,7 @@
             android:layout_height="match_parent"/>
 
         <Button
-            android:id="@+id/activity_event_map_tab"
+            android:id="@+id/event_map_tab"
             android:layout_width="0dp"
             android:textSize="14sp"
             android:background="@drawable/unselected_tab_button"
@@ -35,17 +35,14 @@
     </LinearLayout>
 
     <View
-        android:id="@+id/activity_events_tabs_shadow"
         android:layout_width="match_parent"
-        android:layout_below="@+id/activity_events_tabs"
         android:layout_height="4dp"
         android:background="@drawable/drop_shadow"/>
 
     <FrameLayout
         android:id="@+id/activity_events_container"
-        android:layout_below="@+id/activity_events_tabs_shadow"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
     </FrameLayout>
 
-</RelativeLayout>
+</LinearLayout>

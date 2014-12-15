@@ -38,6 +38,9 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnClick;
 import de.umass.lastfm.Caller;
 import de.umass.lastfm.Event;
 import de.umass.lastfm.ImageSize;
@@ -49,13 +52,15 @@ public class EventsMapViewFragment extends Fragment implements EventFetcherListe
     private MapFragment mMapFragment;
     private EventsMapViewFragmentInteractionListener mListener;
     private GoogleMap mMap;
-    private Button mRedoSearchButton;
-    private RelativeLayout mLoadingOverlay;
+
+    @InjectView(R.id.redo_search_button) Button mRedoSearchButton;
+    @InjectView(R.id.loading_overlay) RelativeLayout mLoadingOverlay;
+
     private EventQueryDetails mEventQueryDetails = EventQueryDetails.getInstance();
     private LatLng mLatLng;
     private int mCameraChangeCount = 0; //keeps track of how many times map camera change has occurred
-    private HashMap<String, Event> mMarkers = new HashMap<String, Event>();
-    private ArrayList<LatLng> mMarkerPositions = new ArrayList<LatLng>();
+    private HashMap<String, Event> mMarkers = new HashMap<>();
+    private ArrayList<LatLng> mMarkerPositions = new ArrayList<>();
 
     public EventsMapViewFragment() {
         // Required empty public constructor
@@ -96,34 +101,31 @@ public class EventsMapViewFragment extends Fragment implements EventFetcherListe
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_events_map_view, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_events_map_view, container, false);
+
+        ButterKnife.inject(this, rootView);
 
         //displays map fragment on screen
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-        transaction.add(R.id.fragment_events_map_view_container, mMapFragment)
+        transaction.add(R.id.events_map_container, mMapFragment)
                 .commit();
 
-        mRedoSearchButton = (Button) view.findViewById(R.id.fragment_events_map_redo_search);
-        mLoadingOverlay = (RelativeLayout) view.findViewById(R.id.fragment_events_map_view_loading_overlay);
-
-        //sets click listener for when user taps redo search button
-        mRedoSearchButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                LatLng newLatLng = mMap.getCameraPosition().target;
-
-                //stores new latLng
-                mLatLng = newLatLng;
-
-                mListener.storeCurrentLatLng(newLatLng);
-
-                //calls getEvents method, which gets events from backend and displays and stores them as needed
-                getEventsFromServer(1, newLatLng);
-            }
-        });
-
-        return view;
+        return rootView;
     }
+
+    @OnClick(R.id.redo_search_button)
+    public void searchNewLocation() {
+        LatLng newLatLng = mMap.getCameraPosition().target;
+
+        //stores new latLng
+        mLatLng = newLatLng;
+
+        mListener.storeCurrentLatLng(newLatLng);
+
+        //calls getEvents method, which gets events from backend and displays and stores them as needed
+        getEventsFromServer(1, newLatLng);
+    }
+
 
     @Override
     public void onStart(){
@@ -316,10 +318,10 @@ public class EventsMapViewFragment extends Fragment implements EventFetcherListe
             // Getting view from the layout file info_window_layout
             View infoWindow = inflater.inflate(R.layout.event_info_window, null);
 
-            TextView eventTitleTextfield = (TextView) infoWindow.findViewById(R.id.event_info_window_event_title_textfield);
-            TextView venueNameTextfield = (TextView) infoWindow.findViewById(R.id.event_info_window_venue_name_textfield);
-            TextView eventDateTextfield = (TextView) infoWindow.findViewById(R.id.event_info_window_event_date_textfield);
-            ImageView eventImage = (ImageView) infoWindow.findViewById(R.id.event_info_window_event_image);
+            TextView eventTitleTextfield = (TextView) infoWindow.findViewById(R.id.event_name);
+            TextView venueNameTextfield = (TextView) infoWindow.findViewById(R.id.event_venue_name);
+            TextView eventDateTextfield = (TextView) infoWindow.findViewById(R.id.event_date);
+            ImageView eventImage = (ImageView) infoWindow.findViewById(R.id.event_image);
 
             eventTitleTextfield.setText(mMarkers.get(marker.getId()).getTitle());
             //gets event date as Date object but only needs MMDDYYYY, not the timestamp

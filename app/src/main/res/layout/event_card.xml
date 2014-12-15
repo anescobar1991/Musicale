@@ -4,13 +4,12 @@
     android:layout_width="match_parent"
     android:id="@+id/event_card"
     android:padding="4dp"
-    android:animateLayoutChanges="true"
     android:background="@drawable/card_view_background"
     android:layout_marginBottom="1dp"
     android:layout_height="wrap_content">
 
     <ImageView
-        android:id="@+id/event_card_event_image"
+        android:id="@+id/event_image"
         android:layout_width="100dp"
         android:paddingTop="8dp"
         android:adjustViewBounds="true"
@@ -18,46 +17,46 @@
         android:contentDescription="@null"/>
 
     <TextView
-        android:id="@+id/event_card_event_title_textfield"
+        android:id="@+id/event_name"
         android:layout_width="wrap_content"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
-        android:layout_toEndOf="@+id/event_card_event_image"
+        android:layout_toEndOf="@+id/event_image"
         android:textSize="20sp"
         android:ellipsize="end"
         android:maxLines="1"
         android:layout_height="wrap_content"/>
 
     <TextView
-        android:id="@+id/event_card_event_date_textfield"
+        android:id="@+id/event_date"
         android:layout_width="wrap_content"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
-        android:layout_below="@+id/event_card_event_title_textfield"
-        android:layout_toEndOf="@+id/event_card_event_image"
+        android:layout_below="@+id/event_name"
+        android:layout_toEndOf="@+id/event_image"
         android:textSize="14sp"
         android:ellipsize="end"
         android:maxLines="1"
         android:layout_height="wrap_content"/>
 
     <TextView
-        android:id="@+id/event_card_venue_name_textfield"
+        android:id="@+id/event_venue_name"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
-        android:layout_below="@+id/event_card_event_date_textfield"
-        android:layout_toEndOf="@+id/event_card_event_image"
+        android:layout_below="@+id/event_date"
+        android:layout_toEndOf="@+id/event_image"
         android:textSize="14sp"
         android:layout_width="wrap_content"
         android:maxLength="33"
         android:layout_height="wrap_content"/>
 
     <TextView
-        android:id="@+id/event_card_venue_location_textfield"
-        android:layout_toEndOf="@+id/event_card_event_image"
+        android:id="@+id/event_venue_location"
+        android:layout_toEndOf="@+id/event_image"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
         android:textSize="14sp"
-        android:layout_below="@+id/event_card_venue_name_textfield"
+        android:layout_below="@+id/event_venue_name"
         android:layout_width="wrap_content"
         android:ellipsize="end"
         android:maxLines="1"

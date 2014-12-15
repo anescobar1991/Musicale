@@ -3,41 +3,42 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/artist_upcoming_event_card"
     android:layout_width="match_parent"
-    android:padding="4dp"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp"
+    android:paddingLeft="4dp"
+    android:paddingRight="4dp"
     android:background="@drawable/card_view_background"
-    android:layout_marginBottom="4dp"
-    android:layout_marginTop="4dp"
     android:layout_height="wrap_content">
 
     <ImageView
-        android:id="@+id/artist_upcoming_event_venue_image"
+        android:id="@+id/venue_image"
         android:layout_width="60dp"
         android:adjustViewBounds="true"
         android:layout_height="wrap_content"/>
 
     <TextView
-        android:id="@+id/artist_upcoming_event_date"
+        android:id="@+id/event_date"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toEndOf="@+id/artist_upcoming_event_venue_image"/>
+        android:layout_toEndOf="@+id/venue_image"/>
 
     <TextView
-        android:id="@+id/artist_upcoming_event_venue_name"
+        android:id="@+id/event_venue_name"
         android:layout_width="wrap_content"
         android:textStyle="bold"
-        android:layout_toEndOf="@+id/artist_upcoming_event_venue_image"
-        android:layout_below="@+id/artist_upcoming_event_date"
+        android:layout_toEndOf="@+id/venue_image"
+        android:layout_below="@+id/event_date"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
         android:layout_height="wrap_content"/>
 
     <TextView
-        android:id="@+id/artist_upcoming_event_venue_location"
+        android:id="@+id/venue_location"
         android:layout_width="wrap_content"
-        android:layout_toEndOf="@+id/artist_upcoming_event_venue_image"
-        android:layout_below="@+id/artist_upcoming_event_venue_name"
+        android:layout_toEndOf="@+id/venue_image"
+        android:layout_below="@+id/event_venue_name"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
         android:layout_height="wrap_content"/>

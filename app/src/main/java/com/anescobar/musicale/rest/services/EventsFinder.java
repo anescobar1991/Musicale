@@ -72,6 +72,7 @@ public class EventsFinder {
         MapUtilities.nullSafePut(params, "page", page);
         MapUtilities.nullSafePut(params, "limit", limit);
         MapUtilities.nullSafePut(params, "tag", tag);
+
         Result result = Caller.getInstance().call("geo.getEvents", API_KEY , params);
 
         return ResponseBuilder.buildPaginatedResult(result, Event.class);

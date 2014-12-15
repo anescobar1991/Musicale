@@ -5,19 +5,19 @@
     android:layout_height="match_parent">
 
     <FrameLayout
-        android:id="@+id/fragment_events_map_view_container"
+        android:id="@+id/events_map_container"
         android:layout_width="match_parent"
         android:clipToPadding="false"
         android:layout_height="match_parent"/>
 
     <include layout="@layout/loading_overlay"
-        android:id="@+id/fragment_events_map_view_loading_overlay"
+        android:id="@+id/loading_overlay"
         android:layout_height="match_parent"
         android:layout_width="match_parent"
         android:visibility="gone"/>
 
     <Button
-        android:id="@+id/fragment_events_map_redo_search"
+        android:id="@+id/redo_search_button"
         android:layout_width="match_parent"
         android:textColor="@color/white"
         android:layout_gravity="bottom"

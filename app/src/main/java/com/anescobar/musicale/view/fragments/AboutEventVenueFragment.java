@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +31,8 @@ import com.squareup.picasso.Picasso;
 
 import java.util.Collection;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import de.umass.lastfm.Event;
 import de.umass.lastfm.ImageSize;
 import de.umass.lastfm.Venue;
@@ -39,11 +42,13 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
     private static final String ARG_EVENT = "eventArg";
     private SupportMapFragment mMapFragment;
     private Venue mVenue;
-    private LinearLayout mOtherEventsContainer;
-    private ProgressBar mLoadingProgressbar;
-    private TextView mErrorMessageContainer;
     private EventsFinder mEventsFinder;
-    private RelativeLayout mAboutVenueContainer;
+
+    @InjectView(R.id.about_venue_progressbar) ProgressBar mLoadingProgressbar;
+    @InjectView(R.id.about_venue_content) LinearLayout mAboutVenueContainer;
+    @InjectView(R.id.about_venue_message_container) TextView mErrorMessageContainer;
+    @InjectView(R.id.venue_other_events_container) LinearLayout mOtherEventsContainer;
+    @InjectView(R.id.venue_upcoming_events_card) CardView mUpcomingEventsCard;
 
     public AboutEventVenueFragment() {
         // Required empty public constructor
@@ -75,6 +80,8 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
         View view = inflater.inflate(
                 R.layout.fragment_about_venue, container, false);
 
+        ButterKnife.inject(this, view);
+
         Bundle args = getArguments();
 
         String serializedEvent = args.getString(ARG_EVENT, null);
@@ -87,7 +94,7 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
 
         //displays map fragment on screen
         android.support.v4.app.FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-        transaction.add(R.id.fragment_about_venue_map_container, mMapFragment)
+        transaction.add(R.id.venue_map_container, mMapFragment)
                 .commit();
 
         // if there is a serialized event in bundle
@@ -157,18 +164,11 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
     }
 
     private void setUpView(final Venue venue, final View view) {
-        mOtherEventsContainer = (LinearLayout) view.findViewById(R.id.fragment_about_venue_other_events_container);
-        mLoadingProgressbar = (ProgressBar) view.findViewById(R.id.fragment_about_venue_loading_progressbar);
-        mAboutVenueContainer = (RelativeLayout) view.findViewById(R.id.fragment_about_venue_content);
-        mErrorMessageContainer = (TextView) view.findViewById(R.id.fragment_about_venue_error_message_container);
-
-        TextView venueName = (TextView) view.findViewById(R.id.fragment_about_venue_venue_name);
-        TextView venuePhoneNumberTextView = (TextView) view.findViewById(R.id.fragment_about_venue_phone_number);
-        TextView venueUrlTextView = (TextView) view.findViewById(R.id.fragment_about_venue_url);
-        TextView venueAddress = (TextView) view.findViewById(R.id.fragment_about_venue_address);
-        ImageView venueImage = (ImageView) view.findViewById(R.id.fragment_about_venue_image);
-        RelativeLayout venueUrlContainer = (RelativeLayout) view.findViewById(R.id.fragment_about_venue_url_container);
-        RelativeLayout venuePhoneNumberContainer = (RelativeLayout) view.findViewById(R.id.fragment_about_venue_phone_number_container);
+        TextView venueName = (TextView) view.findViewById(R.id.venue_name);
+        TextView venuePhoneNumberTextView = (TextView) view.findViewById(R.id.venue_phone_number);
+        TextView venueUrlTextView = (TextView) view.findViewById(R.id.venue_url);
+        TextView venueAddress = (TextView) view.findViewById(R.id.venue_address);
+        ImageView venueImage = (ImageView) view.findViewById(R.id.venue_image);
 
         //gets venue Events from backend
         getVenueEvents(mVenue.getId());
@@ -189,7 +189,7 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
 
         //hide venueUrl textview and image if there is no venue Url available
         if (venue.getWebsite().length() == 0) {
-            venueUrlContainer.setVisibility(View.GONE);
+            venueUrlTextView.setVisibility(View.GONE);
         } else {
             //display venue Url
             venueUrlTextView.setText(venue.getWebsite());
@@ -197,7 +197,7 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
 
         //hide venue phone number textview and image if there is no venue phone number available
         if (venue.getPhonenumber().length() == 0) {
-            venuePhoneNumberContainer.setVisibility(View.GONE);
+            venuePhoneNumberTextView.setVisibility(View.GONE);
         } else {
             //display venue phone number
             venuePhoneNumberTextView.setText(venue.getPhonenumber());
@@ -226,11 +226,11 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
         View view = vi.inflate(R.layout.event_card, parentView, false);
 
         RelativeLayout eventCard = (RelativeLayout) view.findViewById(R.id.event_card);
-        ImageView eventImage = (ImageView) view.findViewById(R.id.event_card_event_image);
-        TextView eventTitleTextView = (TextView) view.findViewById(R.id.event_card_event_title_textfield);
-        TextView eventDateTextView = (TextView) view.findViewById(R.id.event_card_event_date_textfield);
-        TextView eventVenueNameTextView = (TextView) view.findViewById(R.id.event_card_venue_name_textfield);
-        TextView venueLocationTextView = (TextView) view.findViewById(R.id.event_card_venue_location_textfield);
+        ImageView eventImage = (ImageView) view.findViewById(R.id.event_image);
+        TextView eventTitleTextView = (TextView) view.findViewById(R.id.event_name);
+        TextView eventDateTextView = (TextView) view.findViewById(R.id.event_date);
+        TextView eventVenueNameTextView = (TextView) view.findViewById(R.id.event_venue_name);
+        TextView venueLocationTextView = (TextView) view.findViewById(R.id.event_venue_location);
 
         //sets event card details
         eventTitleTextView.setText(event.getTitle());
@@ -273,17 +273,22 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
 
     @Override
     public void onVenueEventsFetcherTaskCompleted(Collection<Event> events) {
-        //if activity is null(b/c user navigated away from screen) then shouldnt load events to screen
+        //if activity is null (b/c user navigated away from screen) then shouldnt load events to screen
         if (getActivity() != null) {
-            mLoadingProgressbar.setVisibility(View.GONE);
-
-            for (Event event : events) {
-                setUpEventCard(event, mOtherEventsContainer);
+            if(!events.isEmpty()) {
+                for (Event event : events) {
+                    setUpEventCard(event, mOtherEventsContainer);
+                }
+            } else {
+                mUpcomingEventsCard.setVisibility(View.GONE);
             }
+
+            mLoadingProgressbar.setVisibility(View.GONE);
 
             //sets content area visible
             mAboutVenueContainer.setVisibility(View.VISIBLE);
         }
+
     }
 
     private void getVenueEvents(String venueId) {

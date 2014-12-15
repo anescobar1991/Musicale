@@ -8,7 +8,6 @@
     android:layout_height="48dp">
 
     <TextView
-        android:id="@+id/musicale_header_app_name_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/app_name"
@@ -20,7 +19,6 @@
         android:textSize="24sp"/>
 
     <TextView
-        android:id="@+id/musicale_header_powered_by_text"
         android:layout_width="wrap_content"
         android:paddingLeft="8dp"
         android:layout_height="wrap_content"
@@ -31,7 +29,6 @@
         android:text="@string/info_powered_by"/>
 
     <ImageButton
-        android:id="@+id/musicale_header_last_fm_logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"

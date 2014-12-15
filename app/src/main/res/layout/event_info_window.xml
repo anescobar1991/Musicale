@@ -7,7 +7,7 @@
     android:layout_height="100dp">
 
     <ImageView
-        android:id="@+id/event_info_window_event_image"
+        android:id="@+id/event_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingEnd="8dp"
@@ -15,28 +15,28 @@
         android:contentDescription="@null"/>
 
     <TextView
-        android:id="@+id/event_info_window_event_title_textfield"
+        android:id="@+id/event_name"
         android:textSize="16sp"
         android:textStyle="bold"
         android:textColor="@color/accent"
         android:layout_width="wrap_content"
-        android:layout_toEndOf="@+id/event_info_window_event_image"
+        android:layout_toEndOf="@+id/event_image"
         android:layout_height="wrap_content"/>
 
     <TextView
-        android:id="@+id/event_info_window_event_date_textfield"
+        android:id="@+id/event_date"
         android:textSize="14sp"
-        android:layout_below="@+id/event_info_window_event_title_textfield"
+        android:layout_below="@+id/event_name"
         android:layout_width="wrap_content"
-        android:layout_toEndOf="@+id/event_info_window_event_image"
+        android:layout_toEndOf="@+id/event_image"
         android:layout_height="wrap_content"/>
 
     <TextView
-        android:id="@+id/event_info_window_venue_name_textfield"
-        android:layout_below="@+id/event_info_window_event_date_textfield"
+        android:id="@+id/event_venue_name"
+        android:layout_below="@+id/event_date"
         android:layout_width="wrap_content"
         android:textSize="14sp"
-        android:layout_toEndOf="@+id/event_info_window_event_image"
+        android:layout_toEndOf="@+id/event_image"
         android:layout_height="wrap_content"/>
 
 </RelativeLayout>

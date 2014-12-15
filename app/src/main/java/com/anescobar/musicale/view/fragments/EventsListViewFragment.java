@@ -24,6 +24,8 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import de.umass.lastfm.Caller;
 import de.umass.lastfm.Event;
 import de.umass.lastfm.PaginatedResult;
@@ -32,12 +34,12 @@ public class EventsListViewFragment extends Fragment implements EventFetcherList
 
     private LinearLayoutManager mLayoutManager;
     private EventsAdapter mAdapter;
-    private RecyclerView mRecyclerView;
-    private ProgressBar mEventsLoadingProgressBar;
-    private ProgressBar mMoreEventsLoadingProgressBar;
-    private TextView mErrorMessageContainer;
 
-    private boolean currentlyGettingEvents = false;
+    @InjectView(R.id.events_recyclerview) RecyclerView mRecyclerView;
+    @InjectView(R.id.events_list_message_container) TextView mMessageContainer;
+    @InjectView(R.id.events_list_progressbar) ProgressBar mEventsLoadingProgressBar;
+
+    private boolean mCurrentlyGettingEvents = false;
 
     private LatLng mLatLng;
 
@@ -75,12 +77,10 @@ public class EventsListViewFragment extends Fragment implements EventFetcherList
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_events_list_view, container, false);
 
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.fragment_events_listView_event_cards_holder);
-        mEventsLoadingProgressBar = (ProgressBar) view.findViewById(R.id.fragment_events_list_view_loading);
-        mMoreEventsLoadingProgressBar = (ProgressBar) view.findViewById(R.id.fragment_events_list_view_more_events_loading);
+        ButterKnife.inject(this, view);
+
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mErrorMessageContainer = (TextView) view.findViewById(R.id.fragment_events_list_view_error_message_container);
 
         return view;
     }
@@ -128,28 +128,18 @@ public class EventsListViewFragment extends Fragment implements EventFetcherList
             //sets the onScrollListener that will inform us of when user has scrolled to bottom of recycleView
             mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
 
-                //fetch next page of events upon scrolling to bottom of list
                 @Override
-                public void onScrollStateChanged(RecyclerView recyclerView, int state) {
-                    //if scroll state is settled or settling then check if load more button should be displayed
-                    //checking both for better responsiveness
-                    if (state == RecyclerView.SCROLL_STATE_SETTLING || state == RecyclerView.SCROLL_STATE_IDLE) {
-                        int itemCount = mAdapter.getItemCount() - 1;
-
-                        //if user has scrolled to bottom of recycle view and there are still pages of events left
-                        if (mLayoutManager.findLastCompletelyVisibleItemPosition() == itemCount && mEventQueryDetails.totalNumberOfEventPages > mEventQueryDetails.numberOfEventPagesLoaded) {
-                            //fetch next page of events only if there is not already a request to get next page
-                            if (!currentlyGettingEvents) {
-                                getEventsFromServer(mEventQueryDetails.numberOfEventPagesLoaded + 1, mLatLng);
-                            }
-                        }
-                    }
-                }
+                public void onScrollStateChanged(RecyclerView recyclerView, int state) {}
 
                 @Override
                 public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                }
+                    int loadNextPagePoint = mAdapter.getItemCount()/2;
 
+                    //if user has scrolled to halfway point of list and there are still pages of events left then will fetch next page
+                    if (mLayoutManager.findFirstVisibleItemPosition() > loadNextPagePoint && !mCurrentlyGettingEvents && mEventQueryDetails.totalNumberOfEventPages > mEventQueryDetails.numberOfEventPagesLoaded) {
+                        getEventsFromServer(mEventQueryDetails.numberOfEventPagesLoaded + 1, mLatLng);
+                    }
+                }
             });
 
             mAdapterSet = true;
@@ -177,14 +167,11 @@ public class EventsListViewFragment extends Fragment implements EventFetcherList
     //called onPreExecute of eventsFetcherTask
     @Override
     public void onEventFetcherTaskAboutToStart() {
-        currentlyGettingEvents = true;
-        mErrorMessageContainer.setVisibility(View.GONE);
+        mCurrentlyGettingEvents = true;
+        mMessageContainer.setVisibility(View.GONE);
 
-        //display loading progressbar at bottom of screen if it is loading more events after first page
-        if (mEventQueryDetails.numberOfEventPagesLoaded > 1) {
-            mMoreEventsLoadingProgressBar.setVisibility(View.VISIBLE);
-            //display loading progressbar in middle of screen if it is loading first page of events
-        } else {
+        //display loading progressbar in middle of screen if it is loading first page of events
+        if (mEventQueryDetails.numberOfEventPagesLoaded == 1) {
             mRecyclerView.setVisibility(View.INVISIBLE);
             mEventsLoadingProgressBar.setVisibility(View.VISIBLE);
         }
@@ -193,10 +180,10 @@ public class EventsListViewFragment extends Fragment implements EventFetcherList
     //called onPostExecute of eventsFetcherTask
     @Override
     public void onEventFetcherTaskCompleted(PaginatedResult<Event> eventsNearby) {
-        currentlyGettingEvents = false;
+        mCurrentlyGettingEvents = false;
         //if last call was successful then load events to screen
         if (Caller.getInstance().getLastResult().isSuccessful()) {
-            ArrayList<Event> events= new ArrayList<Event>(eventsNearby.getPageResults());
+            ArrayList<Event> events= new ArrayList<>(eventsNearby.getPageResults());
 
             //set variable that stores total number of pages
             mEventQueryDetails.totalNumberOfEventPages = eventsNearby.getTotalPages();
@@ -222,9 +209,6 @@ public class EventsListViewFragment extends Fragment implements EventFetcherList
             mRecyclerView.scrollToPosition(0);
 
             mRecyclerView.setVisibility(View.VISIBLE);
-            //hides loading progressbar at bottom of screen if it is loading more events after first page
-        } else {
-            mMoreEventsLoadingProgressBar.setVisibility(View.GONE);
         }
     }
 
@@ -241,8 +225,7 @@ public class EventsListViewFragment extends Fragment implements EventFetcherList
 
     private void setErrorMessage(String message) {
         mRecyclerView.setVisibility(View.GONE);
-        mErrorMessageContainer.setText(message);
-        mErrorMessageContainer.setVisibility(View.VISIBLE);
+        mMessageContainer.setText(message);
+        mMessageContainer.setVisibility(View.VISIBLE);
     }
-
 }

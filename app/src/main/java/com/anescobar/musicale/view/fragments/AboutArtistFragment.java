@@ -51,15 +51,17 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
     private View mView;
     private LinearLayout mSimilarArtistsContainer;
     private LinearLayout mTopTracksContainer;
-    private RelativeLayout mContainer;
+    private LinearLayout mContainer;
     private ProgressBar mContentLoadingProgressBar;
     private LinearLayout mUpcomingEventsContainer;
 
     private MediaPlayer mMediaPlayer;
 
-    private ArrayList<View> mTrackLinks = new ArrayList<View>();
+    private ArrayList<View> mTrackLinks = new ArrayList<>();
 
-    public AboutArtistFragment() {}
+    public AboutArtistFragment() {
+        //required empty constructor
+    }
 
     public static AboutArtistFragment newInstance(String artist) {
         AboutArtistFragment fragment = new AboutArtistFragment();
@@ -79,9 +81,9 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
                              Bundle savedInstanceState) {
 
         mView = inflater.inflate(R.layout.fragment_about_artist, container, false);
-        mContainer = (RelativeLayout) mView.findViewById(R.id.fragment_about_artist_content);
-        mContentLoadingProgressBar = (ProgressBar) mView.findViewById(R.id.fragment_about_artist_loading_progressbar);
-        mUpcomingEventsContainer = (LinearLayout) mView.findViewById(R.id.fragment_about_artist_upcoming_events_container);
+        mContainer = (LinearLayout) mView.findViewById(R.id.content);
+        mContentLoadingProgressBar = (ProgressBar) mView.findViewById(R.id.about_artist_progressbar);
+        mUpcomingEventsContainer = (LinearLayout) mView.findViewById(R.id.upcoming_events_container);
 
         mMediaPlayer = new MediaPlayer();
         mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -105,12 +107,12 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
     }
 
     private void setUpView(final Artist artist) {
-        TextView artistName = (TextView) mView.findViewById(R.id.fragment_about_artist_artist_name);
-        ImageView artistImage = (ImageView) mView.findViewById(R.id.fragment_about_artist_artist_image);
-        TextView artistBio = (TextView) mView.findViewById(R.id.fragment_about_artist_bio);
-        TextView artistTags = (TextView) mView.findViewById(R.id.fragment_about_artist_tags);
-        mSimilarArtistsContainer = (LinearLayout) mView.findViewById(R.id.fragment_about_artist_similar_artists_container);
-        mTopTracksContainer = (LinearLayout) mView.findViewById(R.id.fragment_about_artist_top_tracks_container);
+        TextView artistName = (TextView) mView.findViewById(R.id.artist_name);
+        ImageView artistImage = (ImageView) mView.findViewById(R.id.artist_image);
+        TextView artistBio = (TextView) mView.findViewById(R.id.artist_bio);
+        TextView artistTags = (TextView) mView.findViewById(R.id.artist_tags);
+        mSimilarArtistsContainer = (LinearLayout) mView.findViewById(R.id.similar_artists_container);
+        mTopTracksContainer = (LinearLayout) mView.findViewById(R.id.top_tracks_container);
 
         //-------------Loads dynamic data into view------------------
         artistName.setText(artist.getName());
@@ -176,9 +178,9 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
         LayoutInflater vi = LayoutInflater.from(getActivity());
         View view = vi.inflate(R.layout.artist_card, parentView, false);
 
-        RelativeLayout artistCard = (RelativeLayout) view.findViewById(R.id.artist_card);
-        ImageView artistImageView = (ImageView) view.findViewById(R.id.artist_card_image);
-        TextView artistTitleTextView = (TextView) view.findViewById(R.id.artist_card_image_text_field);
+        LinearLayout artistCard = (LinearLayout) view.findViewById(R.id.artist_card);
+        ImageView artistImageView = (ImageView) view.findViewById(R.id.artist_image);
+        TextView artistTitleTextView = (TextView) view.findViewById(R.id.artist_name);
 
         //sets artist card details
         artistTitleTextView.setText(artist.getName());
@@ -274,7 +276,7 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
     }
 
     private void displayErrorMessage(String message) {
-        TextView errorMessageContainer = (TextView) mView.findViewById(R.id.fragment_about_artist_error_message_container);
+        TextView errorMessageContainer = (TextView) mView.findViewById(R.id.message_container);
 
         mContentLoadingProgressBar.setVisibility(View.GONE);
         errorMessageContainer.setText(message);
@@ -303,10 +305,10 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
         View view = vi.inflate(R.layout.artist_upcoming_event, parentView, false);
 
         RelativeLayout upcomingEventCard = (RelativeLayout) view.findViewById(R.id.artist_upcoming_event_card);
-        ImageView venueImageImageView = (ImageView) view.findViewById(R.id.artist_upcoming_event_venue_image);
-        TextView venueNameTextView = (TextView) view.findViewById(R.id.artist_upcoming_event_venue_name);
-        TextView venueLocationTextView = (TextView) view.findViewById(R.id.artist_upcoming_event_venue_location);
-        TextView eventDateTextView = (TextView) view.findViewById(R.id.artist_upcoming_event_date);
+        ImageView venueImageImageView = (ImageView) view.findViewById(R.id.venue_image);
+        TextView venueNameTextView = (TextView) view.findViewById(R.id.event_venue_name);
+        TextView venueLocationTextView = (TextView) view.findViewById(R.id.venue_location);
+        TextView eventDateTextView = (TextView) view.findViewById(R.id.event_date);
 
         eventDateTextView.setText(event.getStartDate().toLocaleString().substring(0, 12));
         venueNameTextView.setText("@ " + event.getVenue().getName());
