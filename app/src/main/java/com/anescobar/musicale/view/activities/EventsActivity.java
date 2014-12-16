@@ -41,6 +41,7 @@ public class EventsActivity extends LocationAwareActivity implements
 
         if (mToolbar != null) {
             setSupportActionBar(mToolbar);
+            getSupportActionBar().setTitle(R.string.title_events_activity);
         }
     }
 

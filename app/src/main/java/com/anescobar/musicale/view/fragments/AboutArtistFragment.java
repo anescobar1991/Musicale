@@ -37,6 +37,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Random;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import de.umass.lastfm.Artist;
 import de.umass.lastfm.Event;
 import de.umass.lastfm.ImageSize;
@@ -48,15 +50,19 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
         SpotifyTrackInfoTaskListener {
 
     private static final String ARG_ARTIST = "artistArg";
-    private View mView;
-    private LinearLayout mSimilarArtistsContainer;
-    private LinearLayout mTopTracksContainer;
-    private LinearLayout mContainer;
-    private ProgressBar mContentLoadingProgressBar;
-    private LinearLayout mUpcomingEventsContainer;
+
+    @InjectView(R.id.content) LinearLayout mContainer;
+    @InjectView(R.id.about_artist_progressbar) ProgressBar mContentLoadingProgressBar;
+    @InjectView(R.id.upcoming_events_container) LinearLayout mUpcomingEventsContainer;
+    @InjectView(R.id.top_tracks_container) LinearLayout mTopTracksContainer;
+    @InjectView(R.id.message_container) TextView mErrorMessageContainer;
+    @InjectView(R.id.artist_name) TextView mArtistName;
+    @InjectView(R.id.artist_bio) TextView mArtistBio;
+    @InjectView(R.id.artist_tags) TextView mArtistTags;
+    @InjectView(R.id.similar_artists_container) LinearLayout mSimilarArtistsContainer;
+    @InjectView(R.id.artist_image) ImageView mArtistImage;
 
     private MediaPlayer mMediaPlayer;
-
     private ArrayList<View> mTrackLinks = new ArrayList<>();
 
     public AboutArtistFragment() {
@@ -80,10 +86,9 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        mView = inflater.inflate(R.layout.fragment_about_artist, container, false);
-        mContainer = (LinearLayout) mView.findViewById(R.id.content);
-        mContentLoadingProgressBar = (ProgressBar) mView.findViewById(R.id.about_artist_progressbar);
-        mUpcomingEventsContainer = (LinearLayout) mView.findViewById(R.id.upcoming_events_container);
+        View rootView = inflater.inflate(R.layout.fragment_about_artist, container, false);
+
+        ButterKnife.inject(this, rootView);
 
         mMediaPlayer = new MediaPlayer();
         mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -103,24 +108,17 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
             displayErrorMessage(getString(R.string.error_no_network_connectivity));
         }
 
-        return mView;
+        return rootView;
     }
 
     private void setUpView(final Artist artist) {
-        TextView artistName = (TextView) mView.findViewById(R.id.artist_name);
-        ImageView artistImage = (ImageView) mView.findViewById(R.id.artist_image);
-        TextView artistBio = (TextView) mView.findViewById(R.id.artist_bio);
-        TextView artistTags = (TextView) mView.findViewById(R.id.artist_tags);
-        mSimilarArtistsContainer = (LinearLayout) mView.findViewById(R.id.similar_artists_container);
-        mTopTracksContainer = (LinearLayout) mView.findViewById(R.id.top_tracks_container);
-
         //-------------Loads dynamic data into view------------------
-        artistName.setText(artist.getName());
+        mArtistName.setText(artist.getName());
 
         if (!artist.getWikiSummary().isEmpty()) {
-            artistBio.setText(Html.fromHtml(artist.getWikiSummary()).toString());
+            mArtistBio.setText(Html.fromHtml(artist.getWikiSummary()).toString());
         } else {
-            artistBio.setVisibility(View.GONE);
+            mArtistBio.setVisibility(View.GONE);
         }
 
         Collection<String> tags = artist.getTags();
@@ -136,7 +134,7 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
             formattedTags = formattedTags.substring(0, formattedTags.length()-2);
 
             //sets artistTags textview to display formatted tags string
-            artistTags.setText(formattedTags.toUpperCase());
+            mArtistTags.setText(formattedTags.toUpperCase());
         }
 
         String artistImageUrl = artist.getImageURL(ImageSize.EXTRALARGE);
@@ -147,10 +145,10 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
                     .placeholder(R.drawable.placeholder)
                     .centerInside()
                     .resize(400, 400)
-                    .into(artistImage);
+                    .into(mArtistImage);
             //else will load placeholder image into view
         } else {
-            artistImage.setImageResource(R.drawable.placeholder);
+            mArtistImage.setImageResource(R.drawable.placeholder);
         }
 
         //display similar artists on screen
@@ -276,11 +274,9 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
     }
 
     private void displayErrorMessage(String message) {
-        TextView errorMessageContainer = (TextView) mView.findViewById(R.id.message_container);
-
         mContentLoadingProgressBar.setVisibility(View.GONE);
-        errorMessageContainer.setText(message);
-        errorMessageContainer.setVisibility(View.VISIBLE);
+        mErrorMessageContainer.setText(message);
+        mErrorMessageContainer.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -478,5 +474,4 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
             }
         }
     }
-
 }

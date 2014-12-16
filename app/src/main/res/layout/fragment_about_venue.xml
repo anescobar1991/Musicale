@@ -69,6 +69,7 @@
                             android:textSize="20sp"
                             android:paddingLeft="4dp"
                             android:paddingRight="4dp"
+                            android:layout_marginBottom="4dp"
                             android:textStyle="bold"
                             android:textColor="@color/accent"
                             android:layout_height="wrap_content"/>
@@ -76,7 +77,7 @@
                         <TextView
                             android:id="@+id/venue_phone_number"
                             android:layout_width="wrap_content"
-                            android:drawableLeft="@drawable/ic_action_call"
+                            android:drawableLeft="@drawable/ic_call_grey600_18dp"
                             android:drawablePadding="4dp"
                             android:paddingLeft="4dp"
                             android:paddingRight="4dp"
@@ -88,7 +89,7 @@
                         <TextView
                             android:id="@+id/venue_url"
                             android:layout_width="wrap_content"
-                            android:drawableLeft="@drawable/ic_action_web_site"
+                            android:drawableLeft="@drawable/ic_web_grey600_18dp"
                             android:drawablePadding="4dp"
                             android:autoLink="web"
                             android:paddingLeft="4dp"
