@@ -1,7 +1,9 @@
 package com.anescobar.musicale.view.fragments;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -17,6 +19,7 @@ import com.anescobar.musicale.R;
 import com.anescobar.musicale.app.adapters.EventsAdapter;
 import com.anescobar.musicale.app.interfaces.EventFetcherListener;
 import com.anescobar.musicale.app.models.EventQueryDetails;
+import com.anescobar.musicale.app.utils.LocationNotAvailableException;
 import com.anescobar.musicale.app.utils.NetworkNotAvailableException;
 import com.anescobar.musicale.rest.services.EventsFinder;
 import com.google.android.gms.maps.model.LatLng;
@@ -30,14 +33,15 @@ import de.umass.lastfm.Caller;
 import de.umass.lastfm.Event;
 import de.umass.lastfm.PaginatedResult;
 
-public class EventsListViewFragment extends Fragment implements EventFetcherListener {
-
+public class EventsListViewFragment extends Fragment implements EventFetcherListener, SwipeRefreshLayout.OnRefreshListener {
+    private EventsListViewFragmentInteractionListener mListener;
     private LinearLayoutManager mLayoutManager;
     private EventsAdapter mAdapter;
 
     @InjectView(R.id.events_recyclerview) RecyclerView mRecyclerView;
     @InjectView(R.id.events_list_message_container) TextView mMessageContainer;
     @InjectView(R.id.events_list_progressbar) ProgressBar mEventsLoadingProgressBar;
+    @InjectView(R.id.events_list_swipe_refresh_layout) SwipeRefreshLayout mEventsListSwipeRefreshLayout;
 
     private boolean mCurrentlyGettingEvents = false;
 
@@ -67,9 +71,34 @@ public class EventsListViewFragment extends Fragment implements EventFetcherList
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
 
-        //lets it know that this fragment has its own menu implementation
-        setHasOptionsMenu(true);
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            setHasOptionsMenu(true); //sets actionbar to display this fragment's specific actionbar
+            mListener = (EventsListViewFragmentInteractionListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement EventsListViewFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     */
+    public interface EventsListViewFragmentInteractionListener {
+        LatLng getCurrentLatLng() throws LocationNotAvailableException;
     }
 
     @Override
@@ -81,6 +110,8 @@ public class EventsListViewFragment extends Fragment implements EventFetcherList
 
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
+        mEventsListSwipeRefreshLayout.setOnRefreshListener(this);
+        mEventsListSwipeRefreshLayout.setColorSchemeResources(R.color.accent, R.color.primary, R.color.accent_dark, R.color.primary_dark);
 
         return view;
     }
@@ -88,11 +119,16 @@ public class EventsListViewFragment extends Fragment implements EventFetcherList
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-
-        menu.findItem(R.id.action_refresh_events).setVisible(true);
-        menu.findItem(R.id.action_search_events).setVisible(true);
     }
 
+    @Override
+    public void onRefresh() {
+        try {
+            refreshEvents(mListener.getCurrentLatLng());
+        } catch (LocationNotAvailableException e) {
+            Toast.makeText(getActivity(),R.string.error_no_network_connectivity, Toast.LENGTH_SHORT).show();
+        }
+    }
 
     // Called at the start of the visible lifetime.
     @Override
@@ -173,14 +209,18 @@ public class EventsListViewFragment extends Fragment implements EventFetcherList
         //display loading progressbar in middle of screen if it is loading first page of events
         if (mEventQueryDetails.numberOfEventPagesLoaded == 1) {
             mRecyclerView.setVisibility(View.INVISIBLE);
-            mEventsLoadingProgressBar.setVisibility(View.VISIBLE);
+            if (!mEventsListSwipeRefreshLayout.isRefreshing()) {
+                mEventsLoadingProgressBar.setVisibility(View.VISIBLE);
+            }
         }
     }
 
     //called onPostExecute of eventsFetcherTask
     @Override
     public void onEventFetcherTaskCompleted(PaginatedResult<Event> eventsNearby) {
+        mEventsListSwipeRefreshLayout.setRefreshing(false);
         mCurrentlyGettingEvents = false;
+
         //if last call was successful then load events to screen
         if (Caller.getInstance().getLastResult().isSuccessful()) {
             ArrayList<Event> events= new ArrayList<>(eventsNearby.getPageResults());
@@ -227,5 +267,13 @@ public class EventsListViewFragment extends Fragment implements EventFetcherList
         mRecyclerView.setVisibility(View.GONE);
         mMessageContainer.setText(message);
         mMessageContainer.setVisibility(View.VISIBLE);
+    }
+
+    private void refreshEvents(LatLng userLatLng) {
+        //stores new current location
+        mLatLng = userLatLng;
+
+        //calls eventsListViewFragment's getEvents method, which gets events from backend and displays and stores them as needed
+        getEventsFromServer(1, userLatLng);
     }
 }

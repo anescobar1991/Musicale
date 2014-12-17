@@ -29,6 +29,8 @@ import de.umass.util.MapUtilities;
 public class EventsFinder {
     private static final String API_KEY = "824f19ce3c166a10c7b9858e3dfc3235";
     private NetworkUtil mNetworkUtil = new NetworkUtil();
+    private static final String SEARCH_RADIUS = "40";
+
     public EventsFinder() {
     }
 
@@ -94,7 +96,7 @@ public class EventsFinder {
 
             //send server request to get events nearby
             return getEventsQuery(
-                    mUserLocation.latitude, mUserLocation.longitude, "30", pageNumbers[0], 20, null
+                    mUserLocation.latitude, mUserLocation.longitude, SEARCH_RADIUS, pageNumbers[0], 20, null
             );
         }
 

@@ -17,6 +17,7 @@ public abstract class LocationAwareActivity extends BaseActivity implements
         GooglePlayServicesClient.ConnectionCallbacks {
 
     private LocationClient mLocationClient;
+    protected LatLng mLatLng;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +49,10 @@ public abstract class LocationAwareActivity extends BaseActivity implements
         } else {
             currentLatLng = new LatLng(mLocationClient.getLastLocation().getLatitude(),
                     mLocationClient.getLastLocation().getLongitude());
+
+            mLatLng = currentLatLng;
         }
+
         return currentLatLng;
     }
 }

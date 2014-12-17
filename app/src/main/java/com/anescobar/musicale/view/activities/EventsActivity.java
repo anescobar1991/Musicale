@@ -1,11 +1,11 @@
 package com.anescobar.musicale.view.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.anescobar.musicale.R;
 import com.anescobar.musicale.app.utils.LocationNotAvailableException;
@@ -19,7 +19,8 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 
 public class EventsActivity extends LocationAwareActivity implements
-        EventsMapViewFragment.EventsMapViewFragmentInteractionListener {
+        EventsMapViewFragment.EventsMapViewFragmentInteractionListener,
+        EventsListViewFragment.EventsListViewFragmentInteractionListener {
 
     private static final String EVENTS_LIST_VIEW_FRAGMENT_TAG = "eventsListViewFragment";
     private static final String EVENTS_MAP_VIEW_FRAGMENT_TAG = "eventsMapViewFragment";
@@ -30,7 +31,6 @@ public class EventsActivity extends LocationAwareActivity implements
 
     private boolean mMapViewDisplayed = false;
     private boolean mListViewDisplayed = false;
-    private LatLng mLatLng;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,29 +55,15 @@ public class EventsActivity extends LocationAwareActivity implements
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle actionbar item selection
         switch (item.getItemId()) {
-            case R.id.action_refresh_events:
-                try {
-                    refreshEvents(getCurrentLatLng());
-                } catch (LocationNotAvailableException e) {
-                    e.printStackTrace();
-                    Toast.makeText(this, getString(R.string.error_location_services_disabled), Toast.LENGTH_SHORT).show();
-                }
+            case R.id.action_about_musicale:
+                //starts About Musicale activity
+                Intent intent = new Intent(this, AboutMusicaleActivity.class);
+                startActivity(intent);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    private void refreshEvents(LatLng userLatLng) {
-        EventsListViewFragment eventsListViewFragment = (EventsListViewFragment) getFragmentManager().findFragmentByTag(EVENTS_LIST_VIEW_FRAGMENT_TAG);
-
-        //stores new current location
-        mLatLng = userLatLng;
-
-        //calls eventsListViewFragment's getEvents method, which gets events from backend and displays and stores them as needed
-        eventsListViewFragment.getEventsFromServer(1,userLatLng);
     }
 
     @Override
@@ -92,7 +78,6 @@ public class EventsActivity extends LocationAwareActivity implements
         //add events fragment to activity once location client is connected
         displayEventsListView();
     }
-
 
     @Override
     protected void onStop() {

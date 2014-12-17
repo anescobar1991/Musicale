@@ -94,8 +94,7 @@ public class EventsMapViewFragment extends Fragment implements EventFetcherListe
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
 
-        menu.findItem(R.id.action_refresh_events).setVisible(false);
-        menu.findItem(R.id.action_search_events).setVisible(false);
+//        menu.findItem(R.id.action_search_events).setVisible(false);
     }
 
     @Override
@@ -252,7 +251,7 @@ public class EventsMapViewFragment extends Fragment implements EventFetcherListe
     public void onEventFetcherTaskCompleted(PaginatedResult<Event> eventsNearby) {
         //if last call was successful then load events to screen
         if (Caller.getInstance().getLastResult().isSuccessful()) {
-            ArrayList<Event> events= new ArrayList<Event>(eventsNearby.getPageResults());
+            ArrayList<Event> events= new ArrayList<>(eventsNearby.getPageResults());
 
             //sets variable that keeps track of how many pages of results are cached
             mEventQueryDetails.numberOfEventPagesLoaded = 1;

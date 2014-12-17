@@ -21,11 +21,18 @@
         android:visibility="gone"
         android:layout_height="match_parent"/>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/events_recyclerview"
-        android:scrollbars="vertical"
-        android:clipToPadding="false"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/events_list_swipe_refresh_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" >
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/events_recyclerview"
+            android:scrollbars="vertical"
+            android:clipToPadding="false"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 
 </FrameLayout>
