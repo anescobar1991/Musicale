@@ -2,5 +2,6 @@
 <resources>
 
     <string name="title_activity_about_musicale">About Musicale</string>
+    <string name="about_musicale_description">Find shows around you and find out what others are saying about them! Musicale lets you do just that, just like you\'ve always wanted.</string>
 
 </resources>

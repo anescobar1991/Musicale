@@ -92,12 +92,11 @@ public class SpotifyTrackInfoSeeker {
                                     track.popularity = jObject.getJSONObject("tracks").getJSONArray("items").getJSONObject(0).getInt("popularity");
                                     track.previewUrl = jObject.getJSONObject("tracks").getJSONArray("items").getJSONObject(0).getString("preview_url");
                                     track.trackName = jObject.getJSONObject("tracks").getJSONArray("items").getJSONObject(0).getString("name");
+                                    track.fullTrackUrl = jObject.getJSONObject("tracks").getJSONArray("items").getJSONObject(0).getJSONObject("external_urls").getString("spotify");
                                 }
                                 //return Spotify Track model to calling class using callback
                                 listener.onSpotifyTrackInfoFetcherTaskCompleted(track);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            } catch (IOException e) {
+                            } catch (JSONException | IOException e) {
                                 e.printStackTrace();
                             }
                         }

@@ -67,7 +67,7 @@
                             android:layout_toEndOf="@+id/artist_image"
                             android:textSize="24sp"
                             android:textStyle="bold"
-                            android:paddingLeft="4dp"
+                            android:paddingLeft="8dp"
                             android:paddingRight="4dp"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"/>
@@ -75,7 +75,7 @@
                         <TextView
                             android:id="@+id/artist_tags"
                             android:layout_width="match_parent"
-                            android:paddingLeft="4dp"
+                            android:paddingLeft="8dp"
                             android:paddingRight="4dp"
                             android:layout_toEndOf="@+id/artist_image"
                             android:layout_below="@+id/artist_name"

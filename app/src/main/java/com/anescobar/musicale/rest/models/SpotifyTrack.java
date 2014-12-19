@@ -9,4 +9,5 @@ public class SpotifyTrack {
     public String trackId;
     public int popularity;
     public String previewUrl;
+    public String fullTrackUrl;
 }
