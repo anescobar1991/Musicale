@@ -192,9 +192,11 @@ public class EventsListViewFragment extends Fragment implements EventFetcherList
             new EventsFinder().getEvents(pageNumber, userLocation, this, getActivity());
         } catch (NetworkNotAvailableException e) {
             e.printStackTrace();
+
             if (pageNumber == 1) {
                 setErrorMessage(getString(R.string.error_no_network_connectivity));
             } else {
+                mEventsListSwipeRefreshLayout.setRefreshing(false);
                 Toast.makeText(getActivity(),getString(R.string.error_no_network_connectivity),Toast.LENGTH_SHORT).show();
             }
         }
@@ -264,6 +266,7 @@ public class EventsListViewFragment extends Fragment implements EventFetcherList
     }
 
     private void setErrorMessage(String message) {
+        mEventsListSwipeRefreshLayout.setRefreshing(false);
         mRecyclerView.setVisibility(View.GONE);
         mMessageContainer.setText(message);
         mMessageContainer.setVisibility(View.VISIBLE);

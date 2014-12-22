@@ -5,14 +5,13 @@
     android:orientation="horizontal"
     android:paddingTop="8dp"
     android:paddingBottom="8dp"
-    android:paddingLeft="4dp"
-    android:paddingRight="4dp"
     android:background="@drawable/card_view_background"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <FrameLayout
         android:layout_width="40dp"
+        android:layout_marginRight="8dp"
         android:layout_height="40dp">
 
         <ImageView
@@ -41,7 +40,6 @@
     <TextView
         android:id="@+id/track_link_name"
         android:textSize="16sp"
-        android:layout_marginStart="4dp"
         android:layout_gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>

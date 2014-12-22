@@ -5,21 +5,18 @@
     android:layout_width="match_parent"
     android:paddingTop="8dp"
     android:paddingBottom="8dp"
-    android:paddingLeft="4dp"
-    android:paddingRight="4dp"
     android:background="@drawable/card_view_background"
     android:layout_height="wrap_content">
 
     <ImageView
         android:id="@+id/venue_image"
+        android:layout_marginRight="8dp"
         android:layout_width="60dp"
         android:adjustViewBounds="true"
         android:layout_height="wrap_content"/>
 
     <TextView
         android:id="@+id/event_date"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toEndOf="@+id/venue_image"/>
@@ -30,8 +27,6 @@
         android:textStyle="bold"
         android:layout_toEndOf="@+id/venue_image"
         android:layout_below="@+id/event_date"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp"
         android:layout_height="wrap_content"/>
 
     <TextView
@@ -39,8 +34,6 @@
         android:layout_width="wrap_content"
         android:layout_toEndOf="@+id/venue_image"
         android:layout_below="@+id/event_venue_name"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp"
         android:layout_height="wrap_content"/>
 
 </RelativeLayout>

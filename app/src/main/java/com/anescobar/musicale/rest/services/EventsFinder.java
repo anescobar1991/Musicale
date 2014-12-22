@@ -29,7 +29,7 @@ import de.umass.util.MapUtilities;
 public class EventsFinder {
     private static final String API_KEY = "824f19ce3c166a10c7b9858e3dfc3235";
     private NetworkUtil mNetworkUtil = new NetworkUtil();
-    private static final String SEARCH_RADIUS = "40";
+    private static final String SEARCH_RADIUS = "40"; //distance in KM
 
     public EventsFinder() {
     }

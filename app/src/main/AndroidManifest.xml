@@ -45,7 +45,9 @@
 
         <activity
             android:name=".view.activities.AboutMusicaleActivity"
+            android:configChanges="orientation"
             android:label="@string/title_activity_about_musicale"
+            android:screenOrientation="portrait"
             android:parentActivityName=".view.activities.EventsActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

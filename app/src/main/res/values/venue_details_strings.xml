@@ -6,5 +6,6 @@
     <string name="other_events_title_text">Upcoming events at this venue</string>
     <string name="open_in_map">Open in map</string>
     <string name="open_in_map_question">Open in map?</string>
+    <string name="event_address_separator">" • "</string>
 
 </resources>

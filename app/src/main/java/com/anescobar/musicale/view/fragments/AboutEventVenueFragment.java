@@ -206,9 +206,13 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
         venueName.setText(venue.getName());
 
         if (venue.getStreet().length() == 0) {
-            venueAddress.setText(venue.getCity() + " • " + venue.getCountry());
+            venueAddress.setText(venue.getCity() + getString(R.string.event_address_separator) + venue.getCountry());
+        } else if (venue.getCity().length() == 0) {
+            venueAddress.setText(venue.getStreet() + getString(R.string.event_address_separator) + venue.getCountry());
+        } else if (venue.getCountry().length() == 0) {
+            venueAddress.setText(venue.getStreet() + getString(R.string.event_address_separator) + venue.getCity());
         } else {
-            venueAddress.setText(venue.getStreet() + " • " + venue.getCity() + " • " + venue.getCountry());
+            venueAddress.setText(venue.getStreet() + getString(R.string.event_address_separator) + venue.getCity() + getString(R.string.event_address_separator) + venue.getCountry());
         }
     }
 

@@ -29,8 +29,8 @@
         <LinearLayout
             android:id="@+id/about_venue_content"
             android:orientation="vertical"
-            android:layout_width="match_parent"
             android:visibility="gone"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <android.support.v7.widget.CardView
@@ -41,12 +41,14 @@
                 android:layout_margin="8dp"
                 card_view:cardBackgroundColor="@color/white"
                 android:layout_height="wrap_content"
-                card_view:cardCornerRadius="2dp">
+                card_view:cardCornerRadius="4dp">
 
                 <LinearLayout
                     android:orientation="vertical"
                     android:paddingBottom="16dp"
                     android:paddingTop="16dp"
+                    android:paddingLeft="8dp"
+                    android:paddingRight="8dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
@@ -59,6 +61,7 @@
                         <ImageView
                             android:id="@+id/venue_image"
                             android:layout_width="wrap_content"
+                            android:layout_marginRight="8dp"
                             android:layout_height="wrap_content"
                             android:contentDescription="@null"/>
 
@@ -67,9 +70,6 @@
                             android:layout_width="wrap_content"
                             android:layout_toEndOf="@+id/venue_image"
                             android:textSize="20sp"
-                            android:paddingLeft="8dp"
-                            android:paddingRight="4dp"
-                            android:layout_marginBottom="4dp"
                             android:textStyle="bold"
                             android:textColor="@color/accent"
                             android:layout_height="wrap_content"/>
@@ -79,8 +79,6 @@
                             android:layout_width="wrap_content"
                             android:drawableLeft="@drawable/ic_call_grey600_18dp"
                             android:drawablePadding="4dp"
-                            android:paddingLeft="8dp"
-                            android:paddingRight="4dp"
                             android:gravity="center_vertical"
                             android:layout_toRightOf="@+id/venue_image"
                             android:layout_below="@+id/venue_name"
@@ -92,9 +90,7 @@
                             android:drawableLeft="@drawable/ic_web_grey600_18dp"
                             android:drawablePadding="4dp"
                             android:autoLink="web"
-                            android:paddingLeft="8dp"
                             android:gravity="center_vertical"
-                            android:paddingRight="4dp"
                             android:layout_toRightOf="@+id/venue_image"
                             android:layout_below="@+id/venue_phone_number"
                             android:layout_height="wrap_content"/>
@@ -105,7 +101,7 @@
                         android:id="@+id/venue_map_container"
                         android:layout_width="match_parent"
                         android:layout_marginBottom="8dp"
-                        android:layout_height="160dp"/>
+                        android:layout_height="150dp"/>
 
                     <TextView
                         android:id="@+id/venue_address"
@@ -143,13 +139,13 @@
                         android:textStyle="bold"
                         android:layout_gravity="center_horizontal"
                         android:textColor="@color/accent"
+                        android:layout_marginBottom="4dp"
                         android:layout_height="wrap_content"/>
 
                     <!--thin line separator-->
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:layout_marginTop="4dp"
                         android:layout_marginBottom="16dp"
                         android:background="@color/border_default_grey"/>
 

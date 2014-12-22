@@ -2,15 +2,13 @@
     android:layout_width="wrap_content"
     android:layout_below="@+id/musicale_toolbar"
     android:background="@color/accent"
-    android:paddingBottom="8dp"
+    android:padding="8dp"
     android:layout_height="wrap_content">
 
     <ImageView
         android:id="@+id/event_image"
         android:layout_width="wrap_content"
-        android:paddingTop="8dp"
-        android:paddingStart="4dp"
-        android:paddingEnd="8dp"
+        android:layout_marginRight="8dp"
         android:layout_height="wrap_content"
         android:contentDescription="@string/event_image_accessibility_label"/>
 
@@ -38,8 +36,7 @@
         android:id="@+id/event_venue_name"
         android:layout_width="wrap_content"
         android:textColor="@color/white"
-        android:paddingEnd="4dp"
-        android:paddingStart="0dp"
+        android:layout_marginBottom="4dp"
         android:layout_toEndOf="@id/event_date"
         android:layout_below="@+id/event_title"
         android:layout_height="wrap_content"/>
@@ -48,12 +45,8 @@
         android:id="@+id/event_artists"
         android:layout_width="wrap_content"
         android:textColor="@color/white"
-        android:layout_marginTop="12dp"
-        android:layout_marginBottom="4dp"
-        android:paddingEnd="4dp"
         android:maxLines="4"
         android:ellipsize="end"
-        android:paddingStart="0dp"
         android:layout_toEndOf="@+id/event_image"
         android:layout_below="@+id/event_venue_name"
         android:layout_height="wrap_content"/>
