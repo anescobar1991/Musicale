@@ -8,6 +8,7 @@ import com.anescobar.musicale.app.interfaces.SpotifyTrackInfoTaskListener;
 import com.anescobar.musicale.app.utils.NetworkNotAvailableException;
 import com.anescobar.musicale.app.utils.NetworkUtil;
 import com.anescobar.musicale.rest.models.SpotifyTrack;
+import com.crashlytics.android.Crashlytics;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -98,6 +99,7 @@ public class SpotifyTrackInfoSeeker {
                                 listener.onSpotifyTrackInfoFetcherTaskCompleted(track);
                             } catch (JSONException | IOException e) {
                                 e.printStackTrace();
+                                Crashlytics.logException(e);
                             }
                         }
                     });

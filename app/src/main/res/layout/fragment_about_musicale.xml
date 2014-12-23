@@ -59,182 +59,245 @@
         android:background="@color/light_background"
         android:layout_width="match_parent" >
 
-        <!--<RelativeLayout-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:paddingBottom="8dp"-->
-            <!--android:layout_height="wrap_content">-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:paddingBottom="8dp"
+            android:layout_height="wrap_content">
 
-            <!--<android.support.v7.widget.CardView-->
-                <!--xmlns:card_view="http://schemas.android.com/apk/res-auto"-->
-                <!--android:id="@+id/northwest_location_panel"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_marginTop="8dp"-->
-                <!--android:layout_marginBottom="8dp"-->
-                <!--android:layout_marginRight="8dp"-->
-                <!--android:layout_marginLeft="8dp"-->
-                <!--card_view:cardBackgroundColor="@color/white"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--card_view:cardCornerRadius="2dp">-->
+            <android.support.v7.widget.CardView
+                xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                android:layout_width="match_parent"
+                android:layout_margin="8dp"
+                card_view:cardBackgroundColor="@color/white"
+                android:layout_height="wrap_content"
+                card_view:cardCornerRadius="4dp">
 
-                <!--<RelativeLayout-->
-                    <!--android:orientation="vertical"-->
-                    <!--android:paddingBottom="16dp"-->
-                    <!--android:paddingTop="16dp"-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="wrap_content">-->
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:paddingBottom="16dp"
+                    android:paddingTop="16dp"
+                    android:paddingRight="8dp"
+                    android:paddingLeft="8dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
-                    <!--<TextView-->
-                        <!--android:id="@+id/locate_us_title"-->
-                        <!--android:layout_width="wrap_content"-->
-                        <!--android:textSize="20sp"-->
-                        <!--android:text="@string/locate_us_title"-->
-                        <!--android:textStyle="bold"-->
-                        <!--android:gravity="center"-->
-                        <!--android:layout_centerHorizontal="true"-->
-                        <!--android:textColor="@color/primary_dark"-->
-                        <!--android:layout_height="wrap_content"/>-->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:textSize="20sp"
+                        android:text="@string/credits_title"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:textColor="@color/accent"
+                        android:layout_height="wrap_content"/>
 
-                    <!--&lt;!&ndash;Thin line separator&ndash;&gt;-->
-                    <!--<View-->
-                        <!--android:id="@+id/separator"-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_height="1dp"-->
-                        <!--android:layout_below="@+id/locate_us_title"-->
-                        <!--android:layout_marginTop="4dp"-->
-                        <!--android:layout_marginBottom="16dp"-->
-                        <!--android:background="@color/border_default_grey"/>-->
+                    <!--Thin line separator-->
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@color/border_default_grey"/>
 
-                    <!--<FrameLayout-->
-                        <!--android:id="@+id/map_container"-->
-                        <!--android:layout_below="@+id/separator"-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_marginBottom="8dp"-->
-                        <!--android:layout_height="160dp"/>-->
+                    <LinearLayout
+                        android:id="@+id/last_fm_link"
+                        android:layout_marginBottom="8dp"
+                        android:background="@drawable/selectable_background"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp">
 
-                    <!--<TextView-->
-                        <!--android:id="@+id/address"-->
-                        <!--android:text="@string/northwest_address"-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:textColor="@color/default_text_grey"-->
-                        <!--android:gravity="center_horizontal"-->
-                        <!--android:textSize="16sp"-->
-                        <!--android:layout_below="@+id/map_container"-->
-                        <!--android:layout_height="wrap_content"/>-->
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="bottom"
+                            android:layout_gravity="center"
+                            android:drawablePadding="4dp"
+                            android:drawableRight="@drawable/lastfm_logo_black"
+                            android:text="@string/powered_by_last_fm_text"/>
 
-                <!--</RelativeLayout>-->
+                    </LinearLayout>
 
-            <!--</android.support.v7.widget.CardView>-->
+                    <LinearLayout
+                        android:id="@+id/spotify_link"
+                        android:background="@drawable/selectable_background"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp">
 
-            <!--<android.support.v7.widget.CardView-->
-                <!--xmlns:card_view="http://schemas.android.com/apk/res-auto"-->
-                <!--android:id="@+id/contact_us_panel"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_below="@+id/northwest_location_panel"-->
-                <!--android:layout_marginTop="8dp"-->
-                <!--android:layout_marginBottom="8dp"-->
-                <!--android:layout_marginRight="8dp"-->
-                <!--android:layout_marginLeft="8dp"-->
-                <!--card_view:cardBackgroundColor="@color/white"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--card_view:cardCornerRadius="2dp">-->
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:layout_gravity="center"
+                            android:drawablePadding="8dp"
+                            android:drawableRight="@drawable/listen_on_spotify_black"
+                            android:text="@string/previews_provided_by_spotify_text"/>
 
-                <!--<RelativeLayout-->
-                    <!--android:orientation="vertical"-->
-                    <!--android:paddingBottom="16dp"-->
-                    <!--android:paddingTop="16dp"-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="wrap_content">-->
+                    </LinearLayout>
 
-                    <!--<TextView-->
-                        <!--android:id="@+id/contact_us_title"-->
-                        <!--android:layout_width="wrap_content"-->
-                        <!--android:textSize="20sp"-->
-                        <!--android:text="@string/contact_us_title"-->
-                        <!--android:textStyle="bold"-->
-                        <!--android:gravity="center"-->
-                        <!--android:layout_centerHorizontal="true"-->
-                        <!--android:textColor="@color/primary_dark"-->
-                        <!--android:layout_height="wrap_content"/>-->
+                </LinearLayout>
 
-                    <!--&lt;!&ndash;Thin line separator&ndash;&gt;-->
-                    <!--<View-->
-                        <!--android:id="@+id/separator2"-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_height="1dp"-->
-                        <!--android:layout_below="@+id/contact_us_title"-->
-                        <!--android:layout_marginTop="4dp"-->
-                        <!--android:layout_marginBottom="16dp"-->
-                        <!--android:background="@color/border_default_grey"/>-->
+            </android.support.v7.widget.CardView>
 
-                    <!--<TextView-->
-                        <!--android:id="@+id/phone_number_row"-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_below="@+id/separator2"-->
-                        <!--android:textColor="@color/default_text_grey"-->
-                        <!--android:text="@string/northwest_phone_number"-->
-                        <!--android:drawableLeft="@drawable/ic_call_grey600_36dp"-->
-                        <!--android:textSize="16sp"-->
-                        <!--android:background="@drawable/card_view_background"-->
-                        <!--android:drawablePadding="8dp"-->
-                        <!--android:clickable="true"-->
-                        <!--android:gravity="center_vertical"-->
-                        <!--android:paddingBottom="8dp"-->
-                        <!--android:paddingTop="8dp"-->
-                        <!--android:layout_height="48dp"/>-->
+            <android.support.v7.widget.CardView
+                xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                android:layout_width="match_parent"
+                android:layout_margin="8dp"
+                card_view:cardBackgroundColor="@color/white"
+                android:layout_height="wrap_content"
+                card_view:cardCornerRadius="4dp">
 
-                    <!--<TextView-->
-                        <!--android:id="@+id/fax_number_row"-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_below="@+id/phone_number_row"-->
-                        <!--android:text="@string/northwest_fax_number"-->
-                        <!--android:background="@drawable/card_view_background"-->
-                        <!--android:drawableLeft="@drawable/ic_business_grey600_36dp"-->
-                        <!--android:textColor="@color/default_text_grey"-->
-                        <!--android:gravity="center_vertical"-->
-                        <!--android:paddingBottom="8dp"-->
-                        <!--android:paddingTop="8dp"-->
-                        <!--android:textSize="16sp"-->
-                        <!--android:drawablePadding="8dp"-->
-                        <!--android:layout_height="48dp"/>-->
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:paddingBottom="16dp"
+                    android:paddingTop="16dp"
+                    android:paddingLeft="8dp"
+                    android:paddingRight="8dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:textSize="20sp"
+                        android:text="@string/contact_us_title"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:layout_marginBottom="4dp"
+                        android:textColor="@color/accent"
+                        android:layout_height="wrap_content"/>
 
-                    <!--<TextView-->
-                        <!--android:id="@+id/email_address_row"-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_below="@+id/fax_number_row"-->
-                        <!--android:text="@string/northwest_email_address"-->
-                        <!--android:textSize="16sp"-->
-                        <!--android:clickable="true"-->
-                        <!--android:background="@drawable/card_view_background"-->
-                        <!--android:paddingBottom="8dp"-->
-                        <!--android:gravity="center_vertical"-->
-                        <!--android:drawablePadding="8dp"-->
-                        <!--android:paddingTop="8dp"-->
-                        <!--android:drawableLeft="@drawable/ic_email_grey600_36dp"-->
-                        <!--android:textColor="@color/default_text_grey"-->
-                        <!--android:layout_height="48dp"/>-->
+                    <!--Thin line separator-->
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@color/border_default_grey"/>
 
-                    <!--<TextView-->
-                        <!--android:id="@+id/web_url_row"-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_below="@+id/email_address_row"-->
-                        <!--android:textColor="@color/default_text_grey"-->
-                        <!--android:text="@string/northwest_web_url"-->
-                        <!--android:textSize="16sp"-->
-                        <!--android:clickable="true"-->
-                        <!--android:background="@drawable/card_view_background"-->
-                        <!--android:gravity="center_vertical"-->
-                        <!--android:drawablePadding="8dp"-->
-                        <!--android:paddingTop="8dp"-->
-                        <!--android:paddingBottom="8dp"-->
-                        <!--android:drawableLeft="@drawable/ic_web_grey600_36dp"-->
-                        <!--android:layout_height="48dp"/>-->
+                    <TextView
+                        android:text="@string/support_text"
+                        android:layout_width="match_parent"
+                        android:layout_marginBottom="16dp"
+                        android:layout_height="wrap_content"/>
 
-                <!--</RelativeLayout>-->
+                    <TextView
+                        android:id="@+id/email_address_row"
+                        android:layout_width="match_parent"
+                        android:text="@string/musicale_email_address"
+                        android:textSize="14sp"
+                        android:clickable="true"
+                        android:background="@drawable/selectable_background"
+                        android:gravity="center_vertical"
+                        android:drawablePadding="8dp"
+                        android:drawableLeft="@drawable/ic_email_grey600_24dp"
+                        android:textColor="@color/accent"
+                        android:layout_height="48dp"/>
 
-            <!--</android.support.v7.widget.CardView>-->
+                </LinearLayout>
 
-        <!--</RelativeLayout>-->
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                android:layout_width="match_parent"
+                android:layout_margin="8dp"
+                card_view:cardBackgroundColor="@color/white"
+                android:layout_height="wrap_content"
+                card_view:cardCornerRadius="4dp">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:paddingBottom="16dp"
+                    android:paddingTop="16dp"
+                    android:paddingRight="8dp"
+                    android:paddingLeft="8dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:textSize="20sp"
+                        android:text="@string/open_source_licenses_title"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:textColor="@color/accent"
+                        android:layout_height="wrap_content"/>
+
+                    <!--Thin line separator-->
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@color/border_default_grey"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="4dp"
+                        android:text="@string/butterknife_license_title"/>
+
+                    <WebView
+                        android:id="@+id/butterknife_license"
+                        android:layout_marginBottom="8dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="4dp"
+                        android:text="@string/gson_license_title"/>
+
+                    <WebView
+                        android:id="@+id/gson_license"
+                        android:layout_marginBottom="8dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="4dp"
+                        android:text="@string/okhttp_license_title"/>
+
+                    <WebView
+                        android:id="@+id/okhttp_license"
+                        android:layout_marginBottom="8dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="4dp"
+                        android:text="@string/PagerSlidingTabStrip_license_title"/>
+
+                    <WebView
+                        android:id="@+id/PagerSlidingTabStrip_license"
+                        android:layout_width="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="4dp"
+                        android:text="@string/picasso_license_title"/>
+
+                    <WebView
+                        android:id="@+id/picasso_license"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
+        </LinearLayout>
 
     </ScrollView>
 

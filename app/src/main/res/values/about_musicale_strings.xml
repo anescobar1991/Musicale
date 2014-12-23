@@ -3,5 +3,23 @@
 
     <string name="title_activity_about_musicale">About Musicale</string>
     <string name="about_musicale_description">Find shows around you and find out what others are saying about them! Musicale lets you do just that, just like you\'ve always wanted.</string>
+    <string name="contact_us_title">Contact us</string>
+    <string name="credits_title">Credits</string>
+    <string name="open_source_licenses_title">Open source licenses</string>
+
+    <string name="musicale_email_address">musicalesupport@gmail.com</string>
+    <string name="support_text">Feel free to contact us for ANYTHING you may need. \n\nWhether you want to let us know how much our app sucks or how much you enjoy it feel free to shoot us an email.</string>
+
+    <string name="powered_by_last_fm_text">Powered by</string>
+    <string name="previews_provided_by_spotify_text">Track previews provided by Spotify</string>
+
+    <string name="spotify_url">https://www.spotify.com/</string>
+    <string name="last_fm_url">http://www.last.fm/</string>
+
+    <string name="picasso_license_title">Picasso license:</string>
+    <string name="butterknife_license_title">ButterKnife license:</string>
+    <string name="gson_license_title">Gson license:</string>
+    <string name="okhttp_license_title">OkHttp license:</string>
+    <string name="PagerSlidingTabStrip_license_title">PagerSlidingTabStrip license:</string>
 
 </resources>

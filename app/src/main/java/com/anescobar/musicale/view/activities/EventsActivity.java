@@ -11,6 +11,7 @@ import com.anescobar.musicale.R;
 import com.anescobar.musicale.app.utils.LocationNotAvailableException;
 import com.anescobar.musicale.view.fragments.EventsListViewFragment;
 import com.anescobar.musicale.view.fragments.EventsMapViewFragment;
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -72,6 +73,7 @@ public class EventsActivity extends LocationAwareActivity implements
         try {
             mLatLng = getCurrentLatLng();
         } catch (LocationNotAvailableException e) {
+            Crashlytics.logException(e);
             e.printStackTrace();
         }
 
