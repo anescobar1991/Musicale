@@ -8,7 +8,7 @@ import android.view.MenuItem;
 import android.widget.Button;
 
 import com.anescobar.musicale.R;
-import com.anescobar.musicale.app.utils.LocationNotAvailableException;
+import com.anescobar.musicale.app.utils.exceptions.LocationNotAvailableException;
 import com.anescobar.musicale.view.fragments.EventsListViewFragment;
 import com.anescobar.musicale.view.fragments.EventsMapViewFragment;
 import com.crashlytics.android.Crashlytics;

@@ -5,7 +5,7 @@ import android.os.Handler;
 import android.util.Log;
 
 import com.anescobar.musicale.app.interfaces.SpotifyTrackInfoTaskListener;
-import com.anescobar.musicale.app.utils.NetworkNotAvailableException;
+import com.anescobar.musicale.app.utils.exceptions.NetworkNotAvailableException;
 import com.anescobar.musicale.app.utils.NetworkUtil;
 import com.anescobar.musicale.rest.models.SpotifyTrack;
 import com.crashlytics.android.Crashlytics;

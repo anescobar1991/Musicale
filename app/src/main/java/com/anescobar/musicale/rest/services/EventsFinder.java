@@ -6,7 +6,7 @@ import android.util.Log;
 
 import com.anescobar.musicale.app.interfaces.EventFetcherListener;
 import com.anescobar.musicale.app.interfaces.VenueEventsFetcherListener;
-import com.anescobar.musicale.app.utils.NetworkNotAvailableException;
+import com.anescobar.musicale.app.utils.exceptions.NetworkNotAvailableException;
 import com.anescobar.musicale.app.utils.NetworkUtil;
 import com.google.android.gms.maps.model.LatLng;
 

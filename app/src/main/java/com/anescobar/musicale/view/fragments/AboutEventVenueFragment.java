@@ -18,7 +18,7 @@ import android.widget.TextView;
 
 import com.anescobar.musicale.R;
 import com.anescobar.musicale.app.interfaces.VenueEventsFetcherListener;
-import com.anescobar.musicale.app.utils.NetworkNotAvailableException;
+import com.anescobar.musicale.app.utils.exceptions.NetworkNotAvailableException;
 import com.anescobar.musicale.rest.services.EventsFinder;
 import com.anescobar.musicale.view.activities.EventDetailsActivity;
 import com.google.android.gms.maps.CameraUpdateFactory;

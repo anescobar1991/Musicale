@@ -22,7 +22,7 @@ import com.anescobar.musicale.app.interfaces.ArtistInfoFetcherTaskListener;
 import com.anescobar.musicale.app.interfaces.ArtistTopTracksFetcherTaskListener;
 import com.anescobar.musicale.app.interfaces.ArtistUpcomingEventsFetcherTaskListener;
 import com.anescobar.musicale.app.interfaces.SpotifyTrackInfoTaskListener;
-import com.anescobar.musicale.app.utils.NetworkNotAvailableException;
+import com.anescobar.musicale.app.utils.exceptions.NetworkNotAvailableException;
 import com.anescobar.musicale.rest.models.SpotifyTrack;
 
 import com.anescobar.musicale.rest.services.ArtistInfoSeeker;

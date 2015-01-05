@@ -7,7 +7,7 @@ import android.util.Log;
 import com.anescobar.musicale.app.interfaces.ArtistInfoFetcherTaskListener;
 import com.anescobar.musicale.app.interfaces.ArtistTopTracksFetcherTaskListener;
 import com.anescobar.musicale.app.interfaces.ArtistUpcomingEventsFetcherTaskListener;
-import com.anescobar.musicale.app.utils.NetworkNotAvailableException;
+import com.anescobar.musicale.app.utils.exceptions.NetworkNotAvailableException;
 import com.anescobar.musicale.app.utils.NetworkUtil;
 
 import java.util.Collection;

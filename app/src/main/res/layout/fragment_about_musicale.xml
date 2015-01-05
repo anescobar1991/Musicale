@@ -185,7 +185,7 @@
                             android:layout_height="wrap_content"
                             android:gravity="center_vertical"
                             android:layout_gravity="center"
-                            android:drawablePadding="8dp"
+                            android:drawablePadding="4dp"
                             android:drawableRight="@drawable/spotify_logo_primary_horizontal_light_background_rgb_1_3_7"
                             android:text="@string/previews_provided_by_spotify_text"/>
 

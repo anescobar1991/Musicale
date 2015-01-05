@@ -2,7 +2,7 @@ package com.anescobar.musicale.view.activities;
 
 import android.os.Bundle;
 
-import com.anescobar.musicale.app.utils.LocationNotAvailableException;
+import com.anescobar.musicale.app.utils.exceptions.LocationNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.maps.model.LatLng;
