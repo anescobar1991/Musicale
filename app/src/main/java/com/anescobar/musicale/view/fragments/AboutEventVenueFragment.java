@@ -1,5 +1,6 @@
 package com.anescobar.musicale.view.fragments;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -18,7 +19,8 @@ import android.widget.TextView;
 
 import com.anescobar.musicale.R;
 import com.anescobar.musicale.app.interfaces.VenueEventsFetcherListener;
-import com.anescobar.musicale.app.utils.exceptions.NetworkNotAvailableException;
+import com.anescobar.musicale.app.models.VenueDetails;
+import com.anescobar.musicale.app.exceptions.NetworkNotAvailableException;
 import com.anescobar.musicale.rest.services.EventsFinder;
 import com.anescobar.musicale.view.activities.EventDetailsActivity;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -41,8 +43,9 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
 
     private static final String ARG_EVENT = "eventArg";
     private SupportMapFragment mMapFragment;
-    private Venue mVenue;
     private EventsFinder mEventsFinder;
+    private CachedVenueDetailsGetterSetter mCachedVenueDetailsGetterSetter;
+    private VenueDetails mVenueDetails = new VenueDetails();
 
     @InjectView(R.id.about_venue_progressbar) ProgressBar mLoadingProgressbar;
     @InjectView(R.id.about_venue_content) LinearLayout mAboutVenueContainer;
@@ -52,6 +55,11 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
 
     public AboutEventVenueFragment() {
         // Required empty public constructor
+    }
+
+    public interface CachedVenueDetailsGetterSetter {
+        VenueDetails getVenueDetails();
+        void setVenueDetails(VenueDetails venueDetails);
     }
 
     public static AboutEventVenueFragment newInstance(Venue venue) {
@@ -74,6 +82,23 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
     }
 
     @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mCachedVenueDetailsGetterSetter = (CachedVenueDetailsGetterSetter) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement CachedVenueDetailsGetterSetter");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mCachedVenueDetailsGetterSetter = null;
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
@@ -86,10 +111,8 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
 
         String serializedEvent = args.getString(ARG_EVENT, null);
 
-        //gets new instance of EventsFinder
         mEventsFinder = new EventsFinder();
 
-        //gets MapFragment
         mMapFragment = new SupportMapFragment();
 
         //displays map fragment on screen
@@ -97,17 +120,11 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
         transaction.add(R.id.venue_map_container, mMapFragment)
                 .commit();
 
-        // if there is a serialized event in bundle
         Gson gson = new Gson();
 
-        //deserializes event using Gson
-        Venue venue = gson.fromJson(serializedEvent, Venue.class);
+        mVenueDetails.mVenue = gson.fromJson(serializedEvent, Venue.class);
 
-        //sets venueLatLng field
-        mVenue = venue;
-
-        //sets up view
-        setUpView(venue, view);
+        setUpView(mVenueDetails.mVenue, view);
 
         return view;
     }
@@ -116,7 +133,13 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
     public void onResume(){
         super.onResume();
         //sets up map, with its settings, and adds event markers
-        setUpMapIfNeeded(mVenue);
+        setUpMapIfNeeded(mVenueDetails.mVenue);
+    }
+
+    @Override
+    public void onPause() {
+        mCachedVenueDetailsGetterSetter.setVenueDetails(mVenueDetails);
+        super.onPause();
     }
 
     //sets up map if it hasnt already been setup,
@@ -170,8 +193,12 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
         TextView venueAddress = (TextView) view.findViewById(R.id.venue_address);
         ImageView venueImage = (ImageView) view.findViewById(R.id.venue_image);
 
-        //gets venue Events from backend
-        getVenueEvents(mVenue.getId());
+        if (mCachedVenueDetailsGetterSetter.getVenueDetails().mUpcomingEvents != null) {
+            populateOtherEventsContainer(mCachedVenueDetailsGetterSetter.getVenueDetails().mUpcomingEvents);
+        } else {
+            //gets venue Events from backend
+            getVenueEvents(mVenueDetails.mVenue.getId());
+        }
 
         //-------------loads all dynamic data into view-----------------
 
@@ -191,7 +218,6 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
         if (venue.getWebsite().length() == 0) {
             venueUrlTextView.setVisibility(View.GONE);
         } else {
-            //display venue Url
             venueUrlTextView.setText(venue.getWebsite());
         }
 
@@ -199,7 +225,6 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
         if (venue.getPhonenumber().length() == 0) {
             venuePhoneNumberTextView.setVisibility(View.GONE);
         } else {
-            //display venue phone number
             venuePhoneNumberTextView.setText(venue.getPhonenumber());
         }
 
@@ -277,6 +302,11 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
 
     @Override
     public void onVenueEventsFetcherTaskCompleted(Collection<Event> events) {
+        mVenueDetails.mUpcomingEvents = events;
+        populateOtherEventsContainer(events);
+    }
+
+    private void populateOtherEventsContainer(Collection<Event> events) {
         //if activity is null (b/c user navigated away from screen) then shouldnt load events to screen
         if (getActivity() != null) {
             if(!events.isEmpty()) {
@@ -292,7 +322,6 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
             //sets content area visible
             mAboutVenueContainer.setVisibility(View.VISIBLE);
         }
-
     }
 
     private void getVenueEvents(String venueId) {

@@ -1,5 +1,6 @@
 package com.anescobar.musicale.view.fragments;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -22,7 +23,8 @@ import com.anescobar.musicale.app.interfaces.ArtistInfoFetcherTaskListener;
 import com.anescobar.musicale.app.interfaces.ArtistTopTracksFetcherTaskListener;
 import com.anescobar.musicale.app.interfaces.ArtistUpcomingEventsFetcherTaskListener;
 import com.anescobar.musicale.app.interfaces.SpotifyTrackInfoTaskListener;
-import com.anescobar.musicale.app.utils.exceptions.NetworkNotAvailableException;
+import com.anescobar.musicale.app.models.ArtistDetails;
+import com.anescobar.musicale.app.exceptions.NetworkNotAvailableException;
 import com.anescobar.musicale.rest.models.SpotifyTrack;
 
 import com.anescobar.musicale.rest.services.ArtistInfoSeeker;
@@ -51,6 +53,9 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
         SpotifyTrackInfoTaskListener {
 
     private static final String ARG_ARTIST = "artistArg";
+    private ArtistDetails mArtistDetails = new ArtistDetails();
+    private CachedArtistDetailsGetterSetter mCachedArtistDetailsGetterSetter;
+    private ArrayList<View> mTrackLinks = new ArrayList<>();
 
     @InjectView(R.id.content) LinearLayout mContainer;
     @InjectView(R.id.about_artist_progressbar) ProgressBar mContentLoadingProgressBar;
@@ -64,10 +69,14 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
     @InjectView(R.id.artist_image) ImageView mArtistImage;
 
     private MediaPlayer mMediaPlayer;
-    private ArrayList<View> mTrackLinks = new ArrayList<>();
 
     public AboutArtistFragment() {
         //required empty constructor
+    }
+
+    public interface CachedArtistDetailsGetterSetter {
+        ArtistDetails getArtistDetails();
+        void setArtistDetails(ArtistDetails artistDetails);
     }
 
     public static AboutArtistFragment newInstance(String artist) {
@@ -99,9 +108,21 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
         String artist = args.getString(ARG_ARTIST, null);
 
         try {
-            //gets artist info
-            new ArtistInfoSeeker().getArtistInfo(artist, this, getActivity());
-            new ArtistInfoSeeker().getArtistUpcomingEvents(artist, this, getActivity());
+            if (mCachedArtistDetailsGetterSetter.getArtistDetails().mArtist != null) {
+                setUpView(mCachedArtistDetailsGetterSetter.getArtistDetails().mArtist);
+            } else {
+                new ArtistInfoSeeker().getArtistInfo(artist, this, getActivity());
+            }
+
+            if (mCachedArtistDetailsGetterSetter.getArtistDetails().mUpcomingEvents != null) {
+                populateUpcomingEventsContainer(mCachedArtistDetailsGetterSetter.getArtistDetails().mUpcomingEvents);
+            } else {
+                new ArtistInfoSeeker().getArtistUpcomingEvents(artist, this, getActivity());
+            }
+
+            if (mCachedArtistDetailsGetterSetter.getArtistDetails().mTopTracks != null) {
+                populateTopTracksContainer(mCachedArtistDetailsGetterSetter.getArtistDetails().mTopTracks);
+            }
 
         } catch (NetworkNotAvailableException e) {
             e.printStackTrace();
@@ -110,6 +131,23 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
         }
 
         return rootView;
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mCachedArtistDetailsGetterSetter = (CachedArtistDetailsGetterSetter) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement mCachedArtistDetailsGetterSetter");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mCachedArtistDetailsGetterSetter = null;
     }
 
     private void setUpView(final Artist artist) {
@@ -162,6 +200,7 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
 
     @Override
     public void onArtistInfoFetcherTaskCompleted(Artist artist) {
+        mArtistDetails.mArtist = artist;
         try {
             if (getActivity() != null) {
                 new ArtistInfoSeeker().getArtistTopTracks(artist.getName(), this, getActivity());
@@ -246,6 +285,12 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
 
     @Override
     public void onArtistTopTrackFetcherTaskCompleted(Collection<Track> tracks) {
+        mArtistDetails.mTopTracks = tracks;
+
+        populateTopTracksContainer(tracks);
+    }
+
+    private void populateTopTracksContainer(Collection<Track> tracks) {
         //if activity has been killed then no need to attempt to populate view with tracks
         if (getActivity() != null) {
             //displays first 5 top tracks
@@ -259,7 +304,6 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
             mContainer.setVisibility(View.VISIBLE);
             mContentLoadingProgressBar.setVisibility(View.GONE);
         }
-
     }
 
     private void displaySimilarArtists(Collection<Artist> artists) {
@@ -286,6 +330,12 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
 
     @Override
     public void onArtistUpcomingEventsFetcherTaskCompleted(PaginatedResult<Event> events) {
+        mArtistDetails.mUpcomingEvents = events.getPageResults();
+
+        populateUpcomingEventsContainer(events.getPageResults());
+    }
+
+    private void populateUpcomingEventsContainer(Collection<Event> events) {
         //if activity is null(b/c user navigated away from screen) then shouldnt load events to screen
         if (getActivity() != null && !events.isEmpty()) {
             for (Event event : events) {
@@ -357,7 +407,7 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
 
         //parent activity would be null if user has navigated away from this screen
         if (getActivity() != null) {
-            resetNonPlayingTracksPlayButton(trackId);
+            resetPlayButtonForTracksNotPlaying(trackId);
 
             ImageView playButton = (ImageView) view.findViewById(R.id.track_play_button);
             ProgressBar previewLoading = (ProgressBar) view.findViewById(R.id.track_loading_preview);
@@ -384,7 +434,7 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
                     public void onClick(View v) {
 
                         if (mMediaPlayer.isPlaying()) {
-                            resetNonPlayingTracksPlayButton(track.trackId);
+                            resetPlayButtonForTracksNotPlaying(track.trackId);
 
                             playButton.setVisibility(View.VISIBLE);
                             previewLoading.setVisibility(View.GONE);
@@ -448,10 +498,12 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
     public void onPause() {
         super.onPause();
 
+        mCachedArtistDetailsGetterSetter.setArtistDetails(mArtistDetails);
+
         mMediaPlayer.release();
 
         //reset all track's play buttons
-        resetNonPlayingTracksPlayButton(null);
+        resetPlayButtonForTracksNotPlaying(null);
     }
 
     @Override
@@ -462,8 +514,7 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
         mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
     }
 
-    private void resetNonPlayingTracksPlayButton(String currentlyPlayingTrackId) {
-
+    private void resetPlayButtonForTracksNotPlaying(String currentlyPlayingTrackId) {
         for (View trackLink : mTrackLinks) {
             if (trackLink.getTag() != currentlyPlayingTrackId) {
                 final ImageView playButton = (ImageView) trackLink.findViewById(R.id.track_play_button);

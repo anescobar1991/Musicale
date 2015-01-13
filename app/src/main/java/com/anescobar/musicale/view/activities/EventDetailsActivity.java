@@ -7,6 +7,10 @@ import android.view.MenuItem;
 
 import com.anescobar.musicale.R;
 import com.anescobar.musicale.app.adapters.EventDetailsPagerAdapter;
+import com.anescobar.musicale.app.models.ArtistDetails;
+import com.anescobar.musicale.app.models.VenueDetails;
+import com.anescobar.musicale.view.fragments.AboutArtistFragment;
+import com.anescobar.musicale.view.fragments.AboutEventVenueFragment;
 import com.anescobar.musicale.view.fragments.EventInfoHeaderFragment;
 import com.astuetz.PagerSlidingTabStrip;
 import com.google.gson.Gson;
@@ -15,9 +19,12 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import de.umass.lastfm.Event;
 
-public class EventDetailsActivity extends BaseActivity {
+public class EventDetailsActivity extends BaseActivity
+        implements AboutEventVenueFragment.CachedVenueDetailsGetterSetter, AboutArtistFragment.CachedArtistDetailsGetterSetter {
 
     private static final String EVENT_INFO_HEADER_FRAGMENT = "eventInfoHeaderFragment";
+    private VenueDetails mVenueDetails = new VenueDetails();
+    private ArtistDetails mHeadlinerDetails = new ArtistDetails();
 
     @InjectView(R.id.musicale_toolbar) Toolbar mToolbar;
     @InjectView(R.id.event_details_view_pager) ViewPager mPager;
@@ -40,10 +47,7 @@ public class EventDetailsActivity extends BaseActivity {
 
         Gson gson = new Gson();
 
-        //store event locally
-        Event event = gson.fromJson(extras.getString("EVENT"), Event.class);
-
-        setUpView(event);
+        setUpView(gson.fromJson(extras.getString("EVENT"), Event.class));
     }
 
     @Override
@@ -59,15 +63,34 @@ public class EventDetailsActivity extends BaseActivity {
 
     //adds event info header fragment and sets view pager with adapter
     private void setUpView(Event event) {
-
         //add event info header fragment to activity
         addFragmentToActivity(R.id.event_info_header_container, EventInfoHeaderFragment.newInstance(event), EVENT_INFO_HEADER_FRAGMENT);
 
         //Set the pager with an adapter
         mPager.setAdapter(new EventDetailsPagerAdapter(getSupportFragmentManager(), this, event));
+        mPager.setOffscreenPageLimit(1);
 
         // Bind the tabs to the ViewPager
         mTabs.setViewPager(mPager);
     }
 
+    @Override
+    public VenueDetails getVenueDetails() {
+        return mVenueDetails;
+    }
+
+    @Override
+    public void setVenueDetails(VenueDetails venueDetails) {
+        mVenueDetails = venueDetails;
+    }
+
+    @Override
+    public ArtistDetails getArtistDetails() {
+        return mHeadlinerDetails;
+    }
+
+    @Override
+    public void setArtistDetails(ArtistDetails artistDetails) {
+        mHeadlinerDetails = artistDetails;
+    }
 }
