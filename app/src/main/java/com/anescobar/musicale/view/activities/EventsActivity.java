@@ -87,10 +87,6 @@ public class EventsActivity extends LocationAwareActivity implements
     }
 
     @Override
-    public void onDisconnected() {
-    }
-
-    @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
     }
 
