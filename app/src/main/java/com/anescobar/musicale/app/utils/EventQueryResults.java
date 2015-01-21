@@ -1,26 +1,26 @@
-package com.anescobar.musicale.app.models;
+package com.anescobar.musicale.app.utils;
 
 import java.util.ArrayList;
 
 import de.umass.lastfm.Event;
 
 /**
- * Singleton class to maintain event query details
+ * Singleton class to maintain event query details globally across app
  * Created by andres on 9/7/14.
  */
-public class EventQueryDetails {
-    private static EventQueryDetails sInstance = null;
+public class EventQueryResults {
+    private static EventQueryResults sInstance = null;
 
     public ArrayList<Event> events = new ArrayList<Event>();
     public int totalNumberOfEventPages = 0;
     public int numberOfEventPagesLoaded = 0;
 
-    private EventQueryDetails() {
+    private EventQueryResults() {
     }
 
-    public static EventQueryDetails getInstance() {
+    public static EventQueryResults getInstance() {
         if (sInstance == null) {
-            sInstance = new EventQueryDetails();
+            sInstance = new EventQueryResults();
         }
         return sInstance;
     }

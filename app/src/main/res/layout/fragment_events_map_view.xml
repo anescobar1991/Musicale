@@ -16,15 +16,4 @@
         android:layout_width="match_parent"
         android:visibility="gone"/>
 
-    <Button
-        android:id="@+id/redo_search_button"
-        android:layout_width="match_parent"
-        android:textColor="@color/white"
-        android:layout_gravity="bottom"
-        android:visibility="gone"
-        android:textAllCaps="true"
-        android:background="@drawable/default_raised_button"
-        android:text="@string/events_map_redo_search_button_text"
-        android:layout_height="wrap_content"/>
-
 </FrameLayout>

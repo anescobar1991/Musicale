@@ -5,7 +5,7 @@ import android.app.FragmentManager;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 
-import com.anescobar.musicale.app.models.EventQueryDetails;
+import com.anescobar.musicale.app.utils.EventQueryResults;
 
 /**
  * Created by andres on 9/5/14.
@@ -15,16 +15,15 @@ import com.anescobar.musicale.app.models.EventQueryDetails;
 
 public abstract class BaseActivity extends ActionBarActivity {
 
-    protected EventQueryDetails mEventQueryDetails;
+    protected EventQueryResults mEventQueryResults;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mEventQueryDetails = EventQueryDetails.getInstance();
+        mEventQueryResults = EventQueryResults.getInstance();
     }
 
-    //adds fragment to activity
     protected void addFragmentToActivity(int container, Fragment fragment, String fragmentTag) {
         FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction()

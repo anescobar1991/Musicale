@@ -4,6 +4,7 @@ import android.location.Location;
 import android.os.Bundle;
 
 import com.anescobar.musicale.app.exceptions.LocationNotAvailableException;
+import com.anescobar.musicale.app.utils.SearchLocation;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
@@ -18,11 +19,13 @@ public abstract class LocationAwareActivity extends BaseActivity implements
         GoogleApiClient.ConnectionCallbacks {
 
     private GoogleApiClient mGoogleApiClient;
-    protected LatLng mLatLng;
+    public SearchLocation mSearchLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mSearchLocation = SearchLocation.getInstance();
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(LocationServices.API)
@@ -59,6 +62,15 @@ public abstract class LocationAwareActivity extends BaseActivity implements
             throw new LocationNotAvailableException("LastLocation not available");
         }
 
-        return new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
+        mSearchLocation.mSearchLatLng = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
+
+        return mSearchLocation.mSearchLatLng;
+    }
+
+    public LatLng getSearchAreaLatLng() throws LocationNotAvailableException {
+        if (mSearchLocation.mSearchLatLng == null) {
+            throw new LocationNotAvailableException("SearchAreaLatLng is null, no lat lng has yet been cached");
+        }
+        return mSearchLocation.mSearchLatLng;
     }
 }

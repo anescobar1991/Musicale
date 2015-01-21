@@ -18,12 +18,11 @@ import android.widget.Toast;
 import com.anescobar.musicale.R;
 import com.anescobar.musicale.app.adapters.EventsAdapter;
 import com.anescobar.musicale.app.interfaces.EventFetcherListener;
-import com.anescobar.musicale.app.models.EventQueryDetails;
+import com.anescobar.musicale.app.utils.EventQueryResults;
 import com.anescobar.musicale.app.exceptions.LocationNotAvailableException;
 import com.anescobar.musicale.app.exceptions.NetworkNotAvailableException;
 import com.anescobar.musicale.rest.services.EventsFinder;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
@@ -33,7 +32,9 @@ import de.umass.lastfm.Caller;
 import de.umass.lastfm.Event;
 import de.umass.lastfm.PaginatedResult;
 
-public class EventsListViewFragment extends Fragment implements EventFetcherListener, SwipeRefreshLayout.OnRefreshListener {
+public class EventsListViewFragment extends Fragment implements EventFetcherListener,
+        SwipeRefreshLayout.OnRefreshListener {
+
     private EventsListViewFragmentInteractionListener mListener;
     private LinearLayoutManager mLayoutManager;
     private EventsAdapter mAdapter;
@@ -44,27 +45,11 @@ public class EventsListViewFragment extends Fragment implements EventFetcherList
     @InjectView(R.id.events_list_swipe_refresh_layout) SwipeRefreshLayout mEventsListSwipeRefreshLayout;
 
     private boolean mCurrentlyGettingEvents = false;
-
-    private LatLng mLatLng;
-
-    private EventQueryDetails mEventQueryDetails = EventQueryDetails.getInstance();
+    private EventQueryResults mEventQueryResults = EventQueryResults.getInstance();
 
     private boolean mAdapterSet = false;
 
-    //always use this to create new instance of this fragment
-    public static EventsListViewFragment newInstance(LatLng currentLocation) {
-        EventsListViewFragment eventsListViewFragment = new EventsListViewFragment();
-
-        final Gson gson = new Gson();
-        String serializedCurrentLatLng = gson.toJson(currentLocation, LatLng.class);
-        Bundle args = new Bundle();
-        args.putString("currentLatLng", serializedCurrentLatLng);
-        eventsListViewFragment.setArguments(args);
-
-        return eventsListViewFragment;
-    }
-
-        public EventsListViewFragment() {
+    public EventsListViewFragment() {
         // Required empty public constructor
     }
 
@@ -98,7 +83,7 @@ public class EventsListViewFragment extends Fragment implements EventFetcherList
      * activity.
      */
     public interface EventsListViewFragmentInteractionListener {
-        LatLng getCurrentLatLng() throws LocationNotAvailableException;
+        LatLng getSearchAreaLatLng() throws LocationNotAvailableException;
     }
 
     @Override
@@ -124,7 +109,7 @@ public class EventsListViewFragment extends Fragment implements EventFetcherList
     @Override
     public void onRefresh() {
         try {
-            refreshEvents(mListener.getCurrentLatLng());
+            refreshEvents(mListener.getSearchAreaLatLng());
         } catch (LocationNotAvailableException e) {
             Toast.makeText(getActivity(),R.string.error_no_network_connectivity, Toast.LENGTH_SHORT).show();
         }
@@ -135,20 +120,11 @@ public class EventsListViewFragment extends Fragment implements EventFetcherList
     public void onStart(){
         super.onStart();
 
-        //gets serialized latlng string from bundle and deserializes it
-        final Gson gson = new Gson();
-        String serializedLatLng = getArguments().getString("currentLatLng", null);
-
-        if (serializedLatLng != null) {
-            LatLng currentLatLng = gson.fromJson(serializedLatLng, LatLng.class);
-
-            //adds events to view
-            loadEventsToView(currentLatLng);
-
-            //stores latLng
-            mLatLng = currentLatLng;
-        } else {
-            setErrorMessage(getString(R.string.error_generic));
+        //adds events to view
+        try {
+            loadEventsToView(mListener.getSearchAreaLatLng());
+        } catch (LocationNotAvailableException e) {
+            Toast.makeText(getActivity(), getString(R.string.error_no_network_connectivity), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -156,7 +132,7 @@ public class EventsListViewFragment extends Fragment implements EventFetcherList
         // only sets up adapter if it hasnt been setup already
         if (!mAdapterSet) {
             // Create the adapter
-            mAdapter = new EventsAdapter(getActivity(), mEventQueryDetails.events);
+            mAdapter = new EventsAdapter(getActivity(), mEventQueryResults.events);
 
             //set recycler view with adapter
             mRecyclerView.setAdapter(mAdapter);
@@ -172,8 +148,12 @@ public class EventsListViewFragment extends Fragment implements EventFetcherList
                     int loadNextPagePoint = mAdapter.getItemCount()/2;
 
                     //if user has scrolled to halfway point of list and there are still pages of events left then will fetch next page
-                    if (mLayoutManager.findFirstVisibleItemPosition() > loadNextPagePoint && !mCurrentlyGettingEvents && mEventQueryDetails.totalNumberOfEventPages > mEventQueryDetails.numberOfEventPagesLoaded) {
-                        getEventsFromServer(mEventQueryDetails.numberOfEventPagesLoaded + 1, mLatLng);
+                    if (mLayoutManager.findFirstVisibleItemPosition() > loadNextPagePoint && !mCurrentlyGettingEvents && mEventQueryResults.totalNumberOfEventPages > mEventQueryResults.numberOfEventPagesLoaded) {
+                        try {
+                            getEventsFromServer(mEventQueryResults.numberOfEventPagesLoaded + 1, mListener.getSearchAreaLatLng());
+                        } catch (LocationNotAvailableException e) {
+                            Toast.makeText(getActivity(), getString(R.string.error_no_network_connectivity), Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
             });
@@ -188,7 +168,7 @@ public class EventsListViewFragment extends Fragment implements EventFetcherList
     //gets events from backend, keeps track of how many pages are already loaded and cached
     public void getEventsFromServer(Integer pageNumber, LatLng userLocation) {
         try {
-            mEventQueryDetails.numberOfEventPagesLoaded = pageNumber;
+            mEventQueryResults.numberOfEventPagesLoaded = pageNumber;
             new EventsFinder().getEvents(pageNumber, userLocation, this, getActivity());
         } catch (NetworkNotAvailableException e) {
             e.printStackTrace();
@@ -209,7 +189,7 @@ public class EventsListViewFragment extends Fragment implements EventFetcherList
         mMessageContainer.setVisibility(View.GONE);
 
         //display loading progressbar in middle of screen if it is loading first page of events
-        if (mEventQueryDetails.numberOfEventPagesLoaded == 1) {
+        if (mEventQueryResults.numberOfEventPagesLoaded == 1) {
             mRecyclerView.setVisibility(View.INVISIBLE);
             if (!mEventsListSwipeRefreshLayout.isRefreshing()) {
                 mEventsLoadingProgressBar.setVisibility(View.VISIBLE);
@@ -228,14 +208,14 @@ public class EventsListViewFragment extends Fragment implements EventFetcherList
             ArrayList<Event> events= new ArrayList<>(eventsNearby.getPageResults());
 
             //set variable that stores total number of pages
-            mEventQueryDetails.totalNumberOfEventPages = eventsNearby.getTotalPages();
+            mEventQueryResults.totalNumberOfEventPages = eventsNearby.getTotalPages();
 
-            if (mEventQueryDetails.numberOfEventPagesLoaded == 1) {
+            if (mEventQueryResults.numberOfEventPagesLoaded == 1) {
                 //clears events list before adding events to it
-                mEventQueryDetails.events.clear();
+                mEventQueryResults.events.clear();
             }
             //add events to mEvents
-            mEventQueryDetails.events.addAll(events);
+            mEventQueryResults.events.addAll(events);
 
             //set events adapter with new events
             setEventsAdapter();
@@ -243,12 +223,9 @@ public class EventsListViewFragment extends Fragment implements EventFetcherList
             setErrorMessage(getString(R.string.error_generic));
         }
 
-        if (mEventQueryDetails.numberOfEventPagesLoaded == 1) {
+        if (mEventQueryResults.numberOfEventPagesLoaded == 1) {
             //hide loading progressbar in middle of screen
             mEventsLoadingProgressBar.setVisibility(View.GONE);
-
-            //scrolls to top of recycler view because brand new set of events was loaded
-            mRecyclerView.scrollToPosition(0);
 
             mRecyclerView.setVisibility(View.VISIBLE);
         }
@@ -258,7 +235,7 @@ public class EventsListViewFragment extends Fragment implements EventFetcherList
     private void loadEventsToView(LatLng latLng) {
         //if there are no events from previous saved session then fetch events from backend
         //else use events from previous saved session to populate cards
-        if (mEventQueryDetails.events.isEmpty()) {
+        if (mEventQueryResults.events.isEmpty()) {
             getEventsFromServer(1, latLng);
         } else {
             setEventsAdapter();
@@ -272,11 +249,8 @@ public class EventsListViewFragment extends Fragment implements EventFetcherList
         mMessageContainer.setVisibility(View.VISIBLE);
     }
 
-    private void refreshEvents(LatLng userLatLng) {
-        //stores new current location
-        mLatLng = userLatLng;
-
+    private void refreshEvents(LatLng searchLatLng) {
         //calls eventsListViewFragment's getEvents method, which gets events from backend and displays and stores them as needed
-        getEventsFromServer(1, userLatLng);
+        getEventsFromServer(1, searchLatLng);
     }
 }

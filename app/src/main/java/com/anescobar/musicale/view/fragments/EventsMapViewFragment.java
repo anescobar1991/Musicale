@@ -11,23 +11,22 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.anescobar.musicale.R;
+import com.anescobar.musicale.app.exceptions.LocationNotAvailableException;
 import com.anescobar.musicale.view.activities.EventDetailsActivity;
 import com.anescobar.musicale.app.interfaces.EventFetcherListener;
 import com.anescobar.musicale.rest.services.EventsFinder;
 import com.anescobar.musicale.app.exceptions.NetworkNotAvailableException;
-import com.anescobar.musicale.app.models.EventQueryDetails;
+import com.anescobar.musicale.app.utils.EventQueryResults;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.UiSettings;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -40,43 +39,26 @@ import java.util.HashMap;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import butterknife.OnClick;
 import de.umass.lastfm.Caller;
 import de.umass.lastfm.Event;
 import de.umass.lastfm.ImageSize;
 import de.umass.lastfm.PaginatedResult;
 
-public class EventsMapViewFragment extends Fragment implements EventFetcherListener,
-        GoogleMap.OnInfoWindowClickListener, GoogleMap.OnCameraChangeListener {
+public class EventsMapViewFragment extends Fragment implements GoogleMap.OnInfoWindowClickListener,
+        EventFetcherListener {
 
     private MapFragment mMapFragment;
     private EventsMapViewFragmentInteractionListener mListener;
     private GoogleMap mMap;
 
-    @InjectView(R.id.redo_search_button) Button mRedoSearchButton;
     @InjectView(R.id.loading_overlay) RelativeLayout mLoadingOverlay;
 
-    private EventQueryDetails mEventQueryDetails = EventQueryDetails.getInstance();
-    private LatLng mLatLng;
-    private int mCameraChangeCount = 0; //keeps track of how many times map camera change has occurred
+    private EventQueryResults mEventQueryResults = EventQueryResults.getInstance();
     private HashMap<String, Event> mMarkers = new HashMap<>();
     private ArrayList<LatLng> mMarkerPositions = new ArrayList<>();
 
     public EventsMapViewFragment() {
         // Required empty public constructor
-    }
-
-    //always use this to create new instance of this fragment
-    public static EventsMapViewFragment newInstance(LatLng currentLocation) {
-        EventsMapViewFragment eventsMapViewFragment = new EventsMapViewFragment();
-
-        final Gson gson = new Gson();
-        String serializedCurrentLatLng = gson.toJson(currentLocation, LatLng.class);
-        Bundle args = new Bundle();
-        args.putString("currentLatLng", serializedCurrentLatLng);
-        eventsMapViewFragment.setArguments(args);
-
-        return eventsMapViewFragment;
     }
 
     @Override
@@ -112,40 +94,15 @@ public class EventsMapViewFragment extends Fragment implements EventFetcherListe
         return rootView;
     }
 
-    @OnClick(R.id.redo_search_button)
-    public void searchNewLocation() {
-        LatLng newLatLng = mMap.getCameraPosition().target;
-
-        //stores new latLng
-        mLatLng = newLatLng;
-
-        mListener.storeCurrentLatLng(newLatLng);
-
-        //calls getEvents method, which gets events from backend and displays and stores them as needed
-        getEventsFromServer(1, newLatLng);
-    }
-
-
-    @Override
-    public void onStart(){
-        super.onStart();
-
-        //deserializes latLng string in bundle and stores it
-        final Gson gson = new Gson();
-        String serializedLatLng = getArguments().getString("currentLatLng", null);
-
-        mLatLng = gson.fromJson(serializedLatLng, LatLng.class);
-
-        //sets up map, with its settings, and adds event markers
-        setUpMapIfNeeded(mLatLng);
-
-    }
-
     @Override
     public void onResume(){
         super.onResume();
-        //sets up map, with its settings, and adds event markers
-        setUpMapIfNeeded(mLatLng);
+
+        try {
+            setUpMapIfNeeded(mListener.getSearchAreaLatLng());
+        } catch (LocationNotAvailableException e) {
+            Toast.makeText(getActivity(),R.string.error_location_services_disabled, Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -166,19 +123,16 @@ public class EventsMapViewFragment extends Fragment implements EventFetcherListe
     }
 
     //gets events from backend
-    public void getEventsFromServer(Integer pageNumber, LatLng userLocation) {
-
+    public void getEventsFromServer(Integer pageNumber, LatLng searchAreaLatLng) {
         try {
-            new EventsFinder().getEvents(pageNumber, userLocation, this, getActivity());
+            new EventsFinder().getEvents(pageNumber, searchAreaLatLng, this, getActivity());
         } catch (NetworkNotAvailableException e) {
-            e.printStackTrace();
-
             Toast.makeText(getActivity(), getString(R.string.error_no_network_connectivity), Toast.LENGTH_SHORT).show();
         }
     }
 
     //sets up map if it hasnt already been setup,
-    private void setUpMapIfNeeded(LatLng cachedLocation) {
+    private void setUpMapIfNeeded(LatLng searchAreaLatLng) {
         // Do a null check to confirm that we have not already instantiated the map.
         if (mMap == null) {
             mMap = mMapFragment.getMap();
@@ -186,18 +140,18 @@ public class EventsMapViewFragment extends Fragment implements EventFetcherListe
             //set custom marker info window adapter
             mMap.setInfoWindowAdapter(new EventMarkerInfoWindowAdapter(getActivity()));
         }
-        setUpMap(cachedLocation);
+        setUpMap(searchAreaLatLng);
     }
 
     /**
      * This is where map is setup with home and with current or searched location as center
      * This should only be called once and when we are sure that {@link #mMap} is not null.
      */
-    private void setUpMap(LatLng userLocation) {
+    private void setUpMap(LatLng searchAreaLatLng) {
         //sets map's initial state
         UiSettings mapSettings = mMap.getUiSettings();
         mMap.setMyLocationEnabled(true);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 10));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(searchAreaLatLng, 10));
         mMap.setMyLocationEnabled(true);
         mapSettings.setZoomControlsEnabled(false);
         mapSettings.setMyLocationButtonEnabled(false);
@@ -206,17 +160,14 @@ public class EventsMapViewFragment extends Fragment implements EventFetcherListe
 
         //if there are no events from previous saved session then fetch events from backend
         //else use events from previous saved session to populate cards
-        if (mEventQueryDetails.events.isEmpty()) {
-            getEventsFromServer(1, userLocation);
+        if (mEventQueryResults.events.isEmpty()) {
+            getEventsFromServer(1, searchAreaLatLng);
         } else {
             displayEventsInMap();
         }
 
         //sets maps' onInfoWindow click listener
         mMap.setOnInfoWindowClickListener(this);
-
-        //sets maps' onCameraChange listener
-        mMap.setOnCameraChangeListener(this);
     }
 
     //iterates through arrayList of Events and displays them on map
@@ -224,7 +175,7 @@ public class EventsMapViewFragment extends Fragment implements EventFetcherListe
         //clears old events from map
         mMap.clear();
 
-        ArrayList<Event> events = mEventQueryDetails.events;
+        ArrayList<Event> events = mEventQueryResults.events;
         //iterate through events list
         for (Event event : events) {
             float lat = event.getVenue().getLatitude();
@@ -238,11 +189,6 @@ public class EventsMapViewFragment extends Fragment implements EventFetcherListe
 
     @Override
     public void onEventFetcherTaskAboutToStart() {
-        //hides redo search button if visible
-        if (mRedoSearchButton.getVisibility() == View.VISIBLE) {
-            mRedoSearchButton.setVisibility(View.GONE);
-        }
-
         //display loading overlay
         mLoadingOverlay.setVisibility(View.VISIBLE);
     }
@@ -254,16 +200,16 @@ public class EventsMapViewFragment extends Fragment implements EventFetcherListe
             ArrayList<Event> events= new ArrayList<>(eventsNearby.getPageResults());
 
             //sets variable that keeps track of how many pages of results are cached
-            mEventQueryDetails.numberOfEventPagesLoaded = 1;
+            mEventQueryResults.numberOfEventPagesLoaded = 1;
 
             //set variable that stores total number of pages
-            mEventQueryDetails.totalNumberOfEventPages = eventsNearby.getTotalPages();
+            mEventQueryResults.totalNumberOfEventPages = eventsNearby.getTotalPages();
 
             //clears events list before adding events to it
-            mEventQueryDetails.events.clear();
+            mEventQueryResults.events.clear();
 
             //add events to cache
-            mEventQueryDetails.events.addAll(events);
+            mEventQueryResults.events.addAll(events);
 
             //set events adapter with new events
             displayEventsInMap();
@@ -366,7 +312,6 @@ public class EventsMapViewFragment extends Fragment implements EventFetcherListe
             public void onError() {
             }
         };
-
     }
 
     @Override
@@ -384,18 +329,6 @@ public class EventsMapViewFragment extends Fragment implements EventFetcherListe
         startActivity(intent);
     }
 
-    //listener for when user moves map camera
-    @Override
-    public void onCameraChange(CameraPosition cameraPosition) {
-        mCameraChangeCount ++;
-
-        //first time cameraChanges is always for the initial map setup
-        if (mCameraChangeCount > 1) {
-            //displays redo search button when user moves map camera position
-            mRedoSearchButton.setVisibility(View.VISIBLE);
-        }
-    }
-
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -403,7 +336,7 @@ public class EventsMapViewFragment extends Fragment implements EventFetcherListe
      * activity.
      */
     public interface EventsMapViewFragmentInteractionListener {
-        public void storeCurrentLatLng(LatLng latLng);
+        public LatLng getSearchAreaLatLng() throws LocationNotAvailableException;
     }
 
 }

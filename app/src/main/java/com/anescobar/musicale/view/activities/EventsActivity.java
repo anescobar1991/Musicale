@@ -13,7 +13,6 @@ import com.anescobar.musicale.view.fragments.EventsListViewFragment;
 import com.anescobar.musicale.view.fragments.EventsMapViewFragment;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.maps.model.LatLng;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -71,13 +70,12 @@ public class EventsActivity extends LocationAwareActivity implements
     public void onConnected(Bundle bundle) {
         //gets latLng and stores it once location client is connected
         try {
-            mLatLng = getCurrentLatLng();
+            getCurrentLatLng();
         } catch (LocationNotAvailableException e) {
             Crashlytics.logException(e);
             e.printStackTrace();
         }
 
-        //add events fragment to activity once location client is connected
         displayEventsListView();
     }
 
@@ -88,11 +86,6 @@ public class EventsActivity extends LocationAwareActivity implements
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-    }
-
-    @Override
-    public void storeCurrentLatLng(LatLng latLng) {
-        mLatLng = latLng;
     }
 
     @OnClick(R.id.event_list_tab)
@@ -108,8 +101,7 @@ public class EventsActivity extends LocationAwareActivity implements
             mMapViewTab.setBackground(getResources().getDrawable(R.drawable.unselected_tab_button));
             mMapViewTab.setTextColor(getResources().getColor(R.color.default_text_grey));
 
-            //will add new events list view fragment if it hasnt already been added
-            addFragmentToActivity(R.id.activity_events_container, EventsListViewFragment.newInstance(mLatLng), EVENTS_LIST_VIEW_FRAGMENT_TAG);
+            addFragmentToActivity(R.id.activity_events_container, new EventsListViewFragment(), EVENTS_LIST_VIEW_FRAGMENT_TAG);
         }
     }
 
@@ -127,7 +119,7 @@ public class EventsActivity extends LocationAwareActivity implements
             mListViewTab.setBackground(getResources().getDrawable(R.drawable.unselected_tab_button));
             mListViewTab.setTextColor(getResources().getColor(R.color.default_text_grey));
 
-            addFragmentToActivity(R.id.activity_events_container, EventsMapViewFragment.newInstance(mLatLng), EventsActivity.EVENTS_MAP_VIEW_FRAGMENT_TAG);
+            addFragmentToActivity(R.id.activity_events_container, new EventsMapViewFragment(), EVENTS_MAP_VIEW_FRAGMENT_TAG);
         }
     }
 }
