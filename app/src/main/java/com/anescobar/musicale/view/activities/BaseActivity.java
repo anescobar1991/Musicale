@@ -15,13 +15,9 @@ import com.anescobar.musicale.app.utils.EventQueryResults;
 
 public abstract class BaseActivity extends ActionBarActivity {
 
-    protected EventQueryResults mEventQueryResults;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        mEventQueryResults = EventQueryResults.getInstance();
     }
 
     protected void addFragmentToActivity(int container, Fragment fragment, String fragmentTag) {

@@ -1,14 +1,13 @@
 package com.anescobar.musicale.view.fragments;
 
-import android.app.Activity;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
@@ -22,6 +21,7 @@ import com.anescobar.musicale.app.utils.EventQueryResults;
 import com.anescobar.musicale.app.exceptions.LocationNotAvailableException;
 import com.anescobar.musicale.app.exceptions.NetworkNotAvailableException;
 import com.anescobar.musicale.rest.services.EventsFinder;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
@@ -32,10 +32,9 @@ import de.umass.lastfm.Caller;
 import de.umass.lastfm.Event;
 import de.umass.lastfm.PaginatedResult;
 
-public class EventsListViewFragment extends Fragment implements EventFetcherListener,
-        SwipeRefreshLayout.OnRefreshListener {
+public class EventsListViewFragment extends LocationAwareFragment implements EventFetcherListener,
+        SwipeRefreshLayout.OnRefreshListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
-    private EventsListViewFragmentInteractionListener mListener;
     private LinearLayoutManager mLayoutManager;
     private EventsAdapter mAdapter;
 
@@ -54,49 +53,20 @@ public class EventsListViewFragment extends Fragment implements EventFetcherList
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            setHasOptionsMenu(true); //sets actionbar to display this fragment's specific actionbar
-            mListener = (EventsListViewFragmentInteractionListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement EventsListViewFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     */
-    public interface EventsListViewFragmentInteractionListener {
-        LatLng getSearchAreaLatLng() throws LocationNotAvailableException;
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_events_list_view, container, false);
 
         ButterKnife.inject(this, view);
 
+        setHasOptionsMenu(true);
+
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
         mEventsListSwipeRefreshLayout.setOnRefreshListener(this);
-        mEventsListSwipeRefreshLayout.setColorSchemeResources(R.color.accent, R.color.primary, R.color.accent_dark, R.color.primary_dark);
+        mEventsListSwipeRefreshLayout.setColorSchemeResources(
+                R.color.accent, R.color.primary, R.color.accent_dark, R.color.primary_dark
+        );
 
         return view;
     }
@@ -107,25 +77,28 @@ public class EventsListViewFragment extends Fragment implements EventFetcherList
     }
 
     @Override
-    public void onRefresh() {
-        try {
-            refreshEvents(mListener.getSearchAreaLatLng());
-        } catch (LocationNotAvailableException e) {
-            Toast.makeText(getActivity(),R.string.error_no_network_connectivity, Toast.LENGTH_SHORT).show();
-        }
+    public void onPrepareOptionsMenu(Menu menu) {
+        MenuItem exploreInMapButton = menu.findItem(R.id.action_explore_in_map);
+        MenuItem viewInListButton = menu.findItem(R.id.action_view_in_list);
+
+        exploreInMapButton.setVisible(true);
+        viewInListButton.setVisible(false);
+
+        super.onPrepareOptionsMenu(menu);
     }
 
-    // Called at the start of the visible lifetime.
     @Override
-    public void onStart(){
-        super.onStart();
+    public void onRefresh() {
+        refreshEvents(mSearchLocation.mSearchLatLng);
+    }
 
-        //adds events to view
-        try {
-            loadEventsToView(mListener.getSearchAreaLatLng());
-        } catch (LocationNotAvailableException e) {
-            Toast.makeText(getActivity(), getString(R.string.error_no_network_connectivity), Toast.LENGTH_SHORT).show();
+    @Override
+    public void onStart() {
+        if (mSearchLocation.mSearchLatLng != null) {
+            loadEventsToView(mSearchLocation.mSearchLatLng);
         }
+
+        super.onStart();
     }
 
     private void setEventsAdapter() {
@@ -149,11 +122,7 @@ public class EventsListViewFragment extends Fragment implements EventFetcherList
 
                     //if user has scrolled to halfway point of list and there are still pages of events left then will fetch next page
                     if (mLayoutManager.findFirstVisibleItemPosition() > loadNextPagePoint && !mCurrentlyGettingEvents && mEventQueryResults.totalNumberOfEventPages > mEventQueryResults.numberOfEventPagesLoaded) {
-                        try {
-                            getEventsFromServer(mEventQueryResults.numberOfEventPagesLoaded + 1, mListener.getSearchAreaLatLng());
-                        } catch (LocationNotAvailableException e) {
-                            Toast.makeText(getActivity(), getString(R.string.error_no_network_connectivity), Toast.LENGTH_SHORT).show();
-                        }
+                        getEventsFromServer(mEventQueryResults.numberOfEventPagesLoaded + 1, mSearchLocation.mSearchLatLng);
                     }
                 }
             });
@@ -253,4 +222,14 @@ public class EventsListViewFragment extends Fragment implements EventFetcherList
         //calls eventsListViewFragment's getEvents method, which gets events from backend and displays and stores them as needed
         getEventsFromServer(1, searchLatLng);
     }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        try {
+            loadEventsToView(getCurrentLatLng());
+        } catch (LocationNotAvailableException e) {
+            Toast.makeText(getActivity(), getString(R.string.error_location_services_disabled), Toast.LENGTH_SHORT).show();
+        }
+    }
+
 }

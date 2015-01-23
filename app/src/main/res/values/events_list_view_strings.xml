@@ -5,7 +5,5 @@
     <string name="event_card_open_map_accessibility_label">View venue in map</string>
     <string name="events_explore_in_map_button_text">Explore in map</string>
     <string name="events_map_redo_search_button_text">Redo search in this area</string>
-    <string name="view_in_list_tab_text">View in list</string>
-    <string name="explore_in_map_tab_text">Explore in map</string>
 
 </resources>

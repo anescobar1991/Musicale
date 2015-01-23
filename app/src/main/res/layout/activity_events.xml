@@ -9,31 +9,6 @@
         android:id="@+id/musicale_toolbar"
         layout="@layout/musicale_toolbar" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:orientation="horizontal"
-        android:layout_height="48dp">
-
-        <Button
-            android:id="@+id/event_list_tab"
-            android:layout_width="0dp"
-            android:background="@drawable/unselected_tab_button"
-            android:text="@string/view_in_list_tab_text"
-            android:textSize="14sp"
-            android:layout_weight="1"
-            android:layout_height="match_parent"/>
-
-        <Button
-            android:id="@+id/event_map_tab"
-            android:layout_width="0dp"
-            android:textSize="14sp"
-            android:background="@drawable/unselected_tab_button"
-            android:text="@string/explore_in_map_tab_text"
-            android:layout_weight="1"
-            android:layout_height="match_parent"/>
-
-    </LinearLayout>
-
     <View
         android:layout_width="match_parent"
         android:layout_height="4dp"

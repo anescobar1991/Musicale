@@ -1,14 +1,13 @@
 package com.anescobar.musicale.view.fragments;
 
-import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -44,11 +43,10 @@ import de.umass.lastfm.Event;
 import de.umass.lastfm.ImageSize;
 import de.umass.lastfm.PaginatedResult;
 
-public class EventsMapViewFragment extends Fragment implements GoogleMap.OnInfoWindowClickListener,
+public class EventsMapViewFragment extends LocationAwareFragment implements GoogleMap.OnInfoWindowClickListener,
         EventFetcherListener {
 
     private MapFragment mMapFragment;
-    private EventsMapViewFragmentInteractionListener mListener;
     private GoogleMap mMap;
 
     @InjectView(R.id.loading_overlay) RelativeLayout mLoadingOverlay;
@@ -86,6 +84,8 @@ public class EventsMapViewFragment extends Fragment implements GoogleMap.OnInfoW
 
         ButterKnife.inject(this, rootView);
 
+        setHasOptionsMenu(true);
+
         //displays map fragment on screen
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
         transaction.add(R.id.events_map_container, mMapFragment)
@@ -95,31 +95,32 @@ public class EventsMapViewFragment extends Fragment implements GoogleMap.OnInfoW
     }
 
     @Override
-    public void onResume(){
-        super.onResume();
-
+    public void onConnected(Bundle bundle) {
         try {
-            setUpMapIfNeeded(mListener.getSearchAreaLatLng());
+            setUpMapIfNeeded(getCurrentLatLng());
         } catch (LocationNotAvailableException e) {
             Toast.makeText(getActivity(),R.string.error_location_services_disabled, Toast.LENGTH_SHORT).show();
         }
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            mListener = (EventsMapViewFragmentInteractionListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement EventsMapViewFragmentInteractionListener");
+    public void onResume(){
+        super.onResume();
+
+        if (mSearchLocation.mSearchLatLng != null) {
+            setUpMapIfNeeded(mSearchLocation.mSearchLatLng);
         }
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
+    public void onPrepareOptionsMenu(Menu menu) {
+        MenuItem exploreInMapButton = menu.findItem(R.id.action_explore_in_map);
+        MenuItem viewInListButton = menu.findItem(R.id.action_view_in_list);
+
+        exploreInMapButton.setVisible(false);
+        viewInListButton.setVisible(true);
+
+        super.onPrepareOptionsMenu(menu);
     }
 
     //gets events from backend
@@ -328,15 +329,4 @@ public class EventsMapViewFragment extends Fragment implements GoogleMap.OnInfoW
         intent.putExtra("EVENT", serializedEvent);
         startActivity(intent);
     }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     */
-    public interface EventsMapViewFragmentInteractionListener {
-        public LatLng getSearchAreaLatLng() throws LocationNotAvailableException;
-    }
-
 }

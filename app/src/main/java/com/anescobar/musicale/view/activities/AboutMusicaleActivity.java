@@ -12,8 +12,7 @@ public class AboutMusicaleActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about_musicale);
-        if (savedInstanceState == null) {
-            addFragmentToActivity(R.id.container, new AboutMusicaleFragment(),ABOUT_MUSICALE_FRAGMENT_TAG);
-        }
+
+        addFragmentToActivity(R.id.container, new AboutMusicaleFragment(),ABOUT_MUSICALE_FRAGMENT_TAG);
     }
 }

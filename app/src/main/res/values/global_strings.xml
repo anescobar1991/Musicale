@@ -1,18 +1,17 @@
 <resources>
 
     <string name="app_name">Musicale</string>
-    <string name="info_powered_by">Powered by</string>
-    <string name="accessibility_lastFmLogo">Last.fm</string>
+
+    <!--error messages-->
     <string name="error_generic">Oops! This one is on us, we\'re having issues communicating with our server. Try again later.</string>
     <string name="error_location_services_disabled">Couldn\'t find your location. Do you have location services enabled?</string>
     <string name="error_no_network_connectivity">No internet connection found. Are you connected to a network?</string>
+
+    <!--Menu strings-->
+    <string name="action_view_in_map">Explore in map</string>
+    <string name="action_view_in_list">View in list</string>
     <string name="action_about_musicale">About Musicale</string>
     <string name="action_change_location">Change location</string>
-
-    <string name="title_about_musicale_section">About Musicale</string>
-    <string name="action_about_app">About Musicale</string>
-    <string name="action_events_search">Search for events</string>
-    <string name="action_refresh_events">Refresh events</string>
 
     <!-- Error dialog strings -->
     <string name="cancel">Cancel</string>

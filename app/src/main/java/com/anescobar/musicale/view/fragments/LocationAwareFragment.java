@@ -1,33 +1,35 @@
-package com.anescobar.musicale.view.activities;
+package com.anescobar.musicale.view.fragments;
+
 
 import android.location.Location;
 import android.os.Bundle;
+import android.app.Fragment;
 
 import com.anescobar.musicale.app.exceptions.LocationNotAvailableException;
 import com.anescobar.musicale.app.utils.SearchLocation;
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 
 /**
- * Created by andres on 9/9/14.
- * Abstract class to be superclass for all activities that require location services
- * Includes common methods and setup for location services
+ * This fragment should be extended by any fragment that needs location services
+ * It adds GoogleAPiClient and some methods to be used with it
  */
-public abstract class LocationAwareActivity extends BaseActivity implements
-        GoogleApiClient.OnConnectionFailedListener,
-        GoogleApiClient.ConnectionCallbacks {
+public abstract class LocationAwareFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+    protected GoogleApiClient mGoogleApiClient;
+    protected SearchLocation mSearchLocation = SearchLocation.getInstance();
 
-    private GoogleApiClient mGoogleApiClient;
-    public SearchLocation mSearchLocation;
+
+    public LocationAwareFragment() {
+        // Required empty public constructor
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mSearchLocation = SearchLocation.getInstance();
-
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
+        mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
                 .addApi(LocationServices.API)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
@@ -35,14 +37,15 @@ public abstract class LocationAwareActivity extends BaseActivity implements
     }
 
     @Override
-    protected void onStart() {
+    public void onStart() {
         super.onStart();
+
         // Connect the client
         mGoogleApiClient.connect();
     }
 
     @Override
-    protected void onStop() {
+    public void onStop() {
         // Disconnecting the client invalidates it.
         if (mGoogleApiClient.isConnected()) {
             mGoogleApiClient.disconnect();
@@ -55,22 +58,18 @@ public abstract class LocationAwareActivity extends BaseActivity implements
         mGoogleApiClient.connect();
     }
 
-    public LatLng getCurrentLatLng() throws LocationNotAvailableException {
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {}
+
+    protected LatLng getCurrentLatLng() throws LocationNotAvailableException {
         Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 
-        if (lastLocation == null) {
+        if (lastLocation != null) {
+            mSearchLocation.mSearchLatLng = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
+        } else {
             throw new LocationNotAvailableException("LastLocation not available");
         }
 
-        mSearchLocation.mSearchLatLng = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
-
-        return mSearchLocation.mSearchLatLng;
-    }
-
-    public LatLng getSearchAreaLatLng() throws LocationNotAvailableException {
-        if (mSearchLocation.mSearchLatLng == null) {
-            throw new LocationNotAvailableException("SearchAreaLatLng is null, no lat lng has yet been cached");
-        }
         return mSearchLocation.mSearchLatLng;
     }
 }
