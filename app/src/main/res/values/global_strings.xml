@@ -11,7 +11,6 @@
     <string name="action_view_in_map">Explore in map</string>
     <string name="action_view_in_list">View in list</string>
     <string name="action_about_musicale">About Musicale</string>
-    <string name="action_change_location">Change location</string>
 
     <!-- Error dialog strings -->
     <string name="cancel">Cancel</string>

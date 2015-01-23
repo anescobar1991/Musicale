@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
+import android.widget.TextView;
 
 import com.anescobar.musicale.R;
 
@@ -22,6 +23,7 @@ public class AboutMusicaleFragment extends Fragment {
     @InjectView(R.id.gson_license) WebView mGsonLicenseWebview;
     @InjectView(R.id.okhttp_license) WebView mOkHttpLicenseWebview;
     @InjectView(R.id.PagerSlidingTabStrip_license) WebView mPagerSlidingTabStripLicenseWebview;
+    @InjectView(R.id.floating_action_button_license) WebView mFloatingActionButtonLicenseWebview;
 
     public AboutMusicaleFragment() {
         // Required empty public constructor
@@ -38,22 +40,31 @@ public class AboutMusicaleFragment extends Fragment {
 
         setUpLicenseViews();
 
-        // Inflate the layout for this fragment
         return view;
+    }
+
+    @OnClick(R.id.email_address_row)
+    public void openEmailClient() {
+        Intent send = new Intent(Intent.ACTION_SENDTO);
+        String uriText = "mailto:" + Uri.encode("musicaleappteam@gmail.com");
+        Uri uri = Uri.parse(uriText);
+
+        send.setData(uri);
+        startActivity(Intent.createChooser(send, "Send mail..."));
     }
 
     @OnClick(R.id.last_fm_link)
     public void openLastFmInBrowser() {
         Intent i = new Intent(Intent.ACTION_VIEW);
         i.setData(Uri.parse(getString(R.string.last_fm_url)));
-        getActivity().startActivity(i);
+        startActivity(i);
     }
 
     @OnClick(R.id.spotify_link)
     public void openSpotifyInBrowser() {
         Intent i = new Intent(Intent.ACTION_VIEW);
         i.setData(Uri.parse(getString(R.string.spotify_url)));
-        getActivity().startActivity(i);
+        startActivity(i);
     }
 
     private void setUpLicenseViews() {
@@ -62,5 +73,6 @@ public class AboutMusicaleFragment extends Fragment {
         mGsonLicenseWebview.loadUrl("file:///android_asset/gson_license.html");
         mOkHttpLicenseWebview.loadUrl("file:///android_asset/okHttp_license.html");
         mPagerSlidingTabStripLicenseWebview.loadUrl("file:///android_asset/pagerSlidingTabStripLicense.html");
+        mFloatingActionButtonLicenseWebview.loadUrl("file:///android_asset/floating_action_button_license.html");
     }
 }

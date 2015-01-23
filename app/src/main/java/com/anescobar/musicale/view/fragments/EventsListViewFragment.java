@@ -1,5 +1,7 @@
 package com.anescobar.musicale.view.fragments;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,6 +23,8 @@ import com.anescobar.musicale.app.utils.EventQueryResults;
 import com.anescobar.musicale.app.exceptions.LocationNotAvailableException;
 import com.anescobar.musicale.app.exceptions.NetworkNotAvailableException;
 import com.anescobar.musicale.rest.services.EventsFinder;
+import com.anescobar.musicale.view.activities.AboutMusicaleActivity;
+import com.anescobar.musicale.view.activities.SearchActivity;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -28,6 +32,7 @@ import java.util.ArrayList;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.OnClick;
 import de.umass.lastfm.Caller;
 import de.umass.lastfm.Event;
 import de.umass.lastfm.PaginatedResult;
@@ -99,6 +104,15 @@ public class EventsListViewFragment extends LocationAwareFragment implements Eve
         }
 
         super.onStart();
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        try {
+            loadEventsToView(getCurrentLatLng());
+        } catch (LocationNotAvailableException e) {
+            Toast.makeText(getActivity(), getString(R.string.error_location_services_disabled), Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void setEventsAdapter() {
@@ -223,13 +237,10 @@ public class EventsListViewFragment extends LocationAwareFragment implements Eve
         getEventsFromServer(1, searchLatLng);
     }
 
-    @Override
-    public void onConnected(Bundle bundle) {
-        try {
-            loadEventsToView(getCurrentLatLng());
-        } catch (LocationNotAvailableException e) {
-            Toast.makeText(getActivity(), getString(R.string.error_location_services_disabled), Toast.LENGTH_SHORT).show();
-        }
+    @OnClick(R.id.search_fab)
+    public void startSearchActivity() {
+        Intent intent = new Intent(getActivity(), SearchActivity.class);
+        startActivity(intent);
     }
 
 }

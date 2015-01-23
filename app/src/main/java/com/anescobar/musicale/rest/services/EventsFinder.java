@@ -68,7 +68,7 @@ public class EventsFinder {
     private PaginatedResult<Event> getEventsQuery(double latitude, double longitude, String distance,
                                              int page, int limit, String tag) {
 
-        Map<String, String> params = new HashMap<String, String>();
+        Map<String, String> params = new HashMap<>();
         params.put("lat", String.valueOf(latitude));
         params.put("long", String.valueOf(longitude));
         params.put("distance", distance);

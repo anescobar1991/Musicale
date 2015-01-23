@@ -16,6 +16,7 @@
     <string name="spotify_url">https://www.spotify.com/</string>
     <string name="last_fm_url">http://www.last.fm/</string>
 
+    <string name="floating_action_button_license_title">Floating Action Button license</string>
     <string name="picasso_license_title">Picasso license:</string>
     <string name="butterknife_license_title">ButterKnife license:</string>
     <string name="gson_license_title">Gson license:</string>

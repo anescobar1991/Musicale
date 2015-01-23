@@ -103,6 +103,7 @@
     <orderEntry type="library" exported="" scope="TEST" name="hamcrest-core-1.1" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="espresso-idling-resource-2.0" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="espresso-core-2.0" level="project" />
+    <orderEntry type="library" exported="" name="fab-0.0.7" level="project" />
     <orderEntry type="library" exported="" name="support-annotations-21.0.3" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="javax.inject-1" level="project" />
     <orderEntry type="library" exported="" name="butterknife-6.0.0" level="project" />

@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/events_list_view_container"
     android:layout_width="match_parent"
     android:background="@color/light_background"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent">
 
     <ProgressBar
         android:id="@+id/events_list_progressbar"
@@ -34,5 +35,17 @@
             android:layout_height="match_parent"/>
 
     </android.support.v4.widget.SwipeRefreshLayout>
+
+    <com.shamanland.fab.FloatingActionButton
+        android:id="@+id/search_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:floatingActionButtonColor="@color/accent"
+        android:layout_gravity="bottom|right"
+        android:contentDescription="@string/title_activity_search"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/ic_search_white_24dp"
+        android:layout_marginRight="16dp"
+        app:floatingActionButtonSize="normal" />
 
 </FrameLayout>

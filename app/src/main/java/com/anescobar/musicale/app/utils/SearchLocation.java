@@ -10,6 +10,7 @@ public class SearchLocation {
     private static SearchLocation sInstance = null;
 
     public LatLng mSearchLatLng;
+    public String searchLocation;
 
     private SearchLocation() {
     }
