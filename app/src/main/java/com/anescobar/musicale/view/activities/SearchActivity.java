@@ -31,17 +31,4 @@ public class SearchActivity extends BaseActivity {
 
         addFragmentToActivity(R.id.container, new SearchFragment(), SEARCH_FRAGMENT_TAG);
     }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_search_view, menu);
-
-        MenuItem searchItem = menu.findItem(R.id.action_search);
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-
-        searchView.setQueryHint(getString(R.string.title_activity_search));
-
-        return super.onCreateOptionsMenu(menu);
-    }
 }

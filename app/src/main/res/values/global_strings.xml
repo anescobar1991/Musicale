@@ -15,4 +15,7 @@
     <!-- Error dialog strings -->
     <string name="cancel">Cancel</string>
 
+    <!--general-->
+    <string name="clear_text_accessibility_label">Clear text</string>
+
 </resources>

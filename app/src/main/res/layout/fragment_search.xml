@@ -1,5 +1,76 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    android:paddingTop="16dp"
+    android:paddingBottom="16dp"
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp"
     android:layout_height="match_parent" >
 
-</RelativeLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:text="@string/show_search_header_text"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:textColor="@color/accent_dark"
+            android:layout_width="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:layout_height="wrap_content" />
+
+        <!--thin line separator-->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="16dp"
+            android:background="@color/border_default_grey"/>
+
+        <EditText
+            android:hint="@string/keyword_search_edit_text_hint"
+            android:textColorHint="@color/border_default_grey"
+             android:textColor="@color/default_text_grey"
+            android:layout_width="match_parent"
+            android:textSize="16sp"
+            android:drawableRight="@drawable/ic_clear_grey600_18dp"
+            android:layout_marginBottom="48dp"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:text="@string/search_area_header"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:textColor="@color/accent_dark"
+            android:layout_width="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:layout_height="wrap_content" />
+
+        <!--thin line separator-->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="16dp"
+            android:background="@color/border_default_grey"/>
+
+        <EditText
+            android:hint="@string/search_area_edit_text_hint"
+            android:textColor="@color/default_text_grey"
+            android:textColorHint="@color/border_default_grey"
+            android:layout_width="match_parent"
+            android:textSize="16sp"
+            android:layout_marginBottom="48dp"
+            android:drawableRight="@drawable/ic_my_location_grey600_18dp"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:background="@drawable/default_raised_button"
+            android:textColor="@color/white"
+            android:text="@string/search_button_text"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="48dp" />
+
+    </LinearLayout>
+
+</ScrollView>

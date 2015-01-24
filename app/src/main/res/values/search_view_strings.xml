@@ -1,6 +1,12 @@
 <resources>
 
-    <string name="title_activity_search">Search area</string>
-    <string name="action_change_location">Change location</string>
+    <string name="title_activity_search">Search for shows</string>
+    <string name="action_search">Search</string>
+    <string name="search_button_text">Search</string>
+    <string name="search_area_edit_text_hint">Area to search in</string>
+    <string name="search_area_header">Where do you want to look?</string>
+    <string name="keyword_search_edit_text_hint">Shows to search for</string>
+    <string name="show_search_header_text">Any specific show you want to find?</string>
+    <string name="current_location_accessibility_label">Use current location</string>
 
 </resources>
