@@ -111,13 +111,13 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
             if (mCachedArtistDetailsGetterSetter.getArtistDetails().mArtist != null) {
                 setUpView(mCachedArtistDetailsGetterSetter.getArtistDetails().mArtist);
             } else {
-                new ArtistInfoSeeker().getArtistInfo(artist, this, getActivity());
+                new ArtistInfoSeeker().getArtistInfo(artist, this, getActivity().getApplicationContext());
             }
 
             if (mCachedArtistDetailsGetterSetter.getArtistDetails().mUpcomingEvents != null) {
                 populateUpcomingEventsContainer(mCachedArtistDetailsGetterSetter.getArtistDetails().mUpcomingEvents);
             } else {
-                new ArtistInfoSeeker().getArtistUpcomingEvents(artist, this, getActivity());
+                new ArtistInfoSeeker().getArtistUpcomingEvents(artist, this, getActivity().getApplicationContext());
             }
 
             if (mCachedArtistDetailsGetterSetter.getArtistDetails().mTopTracks != null) {
@@ -203,7 +203,7 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
         mArtistDetails.mArtist = artist;
         try {
             if (getActivity() != null) {
-                new ArtistInfoSeeker().getArtistTopTracks(artist.getName(), this, getActivity());
+                new ArtistInfoSeeker().getArtistTopTracks(artist.getName(), this, getActivity().getApplicationContext());
             }
         } catch (NetworkNotAvailableException e) {
             displayErrorMessage(getString(R.string.error_no_network_connectivity));
@@ -394,7 +394,7 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
 
     private void getSpotifyTrackInfo(String trackName, String artistName, String trackId) {
         try {
-            new SpotifyTrackInfoSeeker().getTrackInfo(artistName, trackName, this, getActivity(), trackId);
+            new SpotifyTrackInfoSeeker().getTrackInfo(artistName, trackName, this, getActivity().getApplicationContext(), trackId);
         } catch (NetworkNotAvailableException e) {
             e.printStackTrace();
             Toast.makeText(getActivity(), getString(R.string.error_no_network_connectivity),Toast.LENGTH_SHORT).show();

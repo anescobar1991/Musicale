@@ -5,8 +5,6 @@ import android.app.FragmentManager;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 
-import com.anescobar.musicale.app.utils.EventQueryResults;
-
 /**
  * Created by andres on 9/5/14.
  * Abstract class to be superclass for all activities

@@ -1,4 +1,6 @@
-package com.anescobar.musicale.app.utils;
+package com.anescobar.musicale.app.models;
+
+import android.location.Address;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -10,7 +12,7 @@ public class SearchLocation {
     private static SearchLocation sInstance = null;
 
     public LatLng mSearchLatLng;
-    public String searchLocation;
+    public Address searchArea;
 
     private SearchLocation() {
     }

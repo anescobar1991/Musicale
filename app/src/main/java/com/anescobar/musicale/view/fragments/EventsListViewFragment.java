@@ -1,7 +1,6 @@
 package com.anescobar.musicale.view.fragments;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,11 +18,10 @@ import android.widget.Toast;
 import com.anescobar.musicale.R;
 import com.anescobar.musicale.app.adapters.EventsAdapter;
 import com.anescobar.musicale.app.interfaces.EventFetcherListener;
-import com.anescobar.musicale.app.utils.EventQueryResults;
+import com.anescobar.musicale.app.models.EventQueryResults;
 import com.anescobar.musicale.app.exceptions.LocationNotAvailableException;
 import com.anescobar.musicale.app.exceptions.NetworkNotAvailableException;
 import com.anescobar.musicale.rest.services.EventsFinder;
-import com.anescobar.musicale.view.activities.AboutMusicaleActivity;
 import com.anescobar.musicale.view.activities.SearchActivity;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.model.LatLng;
@@ -152,7 +150,7 @@ public class EventsListViewFragment extends LocationAwareFragment implements Eve
     public void getEventsFromServer(Integer pageNumber, LatLng userLocation) {
         try {
             mEventQueryResults.numberOfEventPagesLoaded = pageNumber;
-            new EventsFinder().getEvents(pageNumber, userLocation, this, getActivity());
+            new EventsFinder().getEvents(pageNumber, userLocation, this, getActivity().getApplicationContext());
         } catch (NetworkNotAvailableException e) {
             e.printStackTrace();
 

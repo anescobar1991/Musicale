@@ -326,7 +326,7 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
 
     private void getVenueEvents(String venueId) {
         try {
-            mEventsFinder.getUpcomingEventsAtVenue(venueId, this, getActivity());
+            mEventsFinder.getUpcomingEventsAtVenue(venueId, this, getActivity().getApplicationContext());
         } catch (NetworkNotAvailableException e) {
             e.printStackTrace();
 
