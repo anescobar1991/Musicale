@@ -1,7 +1,5 @@
 package com.anescobar.musicale.app.models;
 
-import android.location.Address;
-
 import com.google.android.gms.maps.model.LatLng;
 
 /**
@@ -12,7 +10,7 @@ public class SearchLocation {
     private static SearchLocation sInstance = null;
 
     public LatLng mSearchLatLng;
-    public Address searchArea;
+    public String mSearchArea;
 
     private SearchLocation() {
     }
@@ -22,6 +20,11 @@ public class SearchLocation {
             sInstance = new SearchLocation();
         }
         return sInstance;
+    }
+
+    public void clearInstance() {
+        mSearchLatLng = null;
+        mSearchArea = null;
     }
 }
 

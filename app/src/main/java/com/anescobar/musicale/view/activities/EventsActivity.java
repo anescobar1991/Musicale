@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import com.anescobar.musicale.R;
 import com.anescobar.musicale.view.fragments.EventsListViewFragment;
 import com.anescobar.musicale.view.fragments.EventsMapViewFragment;
+import com.crashlytics.android.Crashlytics;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -22,6 +23,10 @@ public class EventsActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //starts crashlytics
+        Crashlytics.start(this);
+
         setContentView(R.layout.activity_events);
 
         ButterKnife.inject(this);

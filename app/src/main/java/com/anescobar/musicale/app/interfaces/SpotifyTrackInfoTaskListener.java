@@ -1,10 +1,6 @@
 package com.anescobar.musicale.app.interfaces;
 
-import android.view.View;
-
-import com.anescobar.musicale.rest.models.SpotifyTrack;
-
-import de.umass.lastfm.Artist;
+import com.anescobar.musicale.app.models.SpotifyTrack;
 
 /**
  * Created by Andres Escobar on 11/16/14.

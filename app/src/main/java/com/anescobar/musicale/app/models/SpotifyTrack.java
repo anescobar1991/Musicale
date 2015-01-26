@@ -1,4 +1,4 @@
-package com.anescobar.musicale.rest.models;
+package com.anescobar.musicale.app.models;
 
 /**
  * Created by andres on 11/16/14.

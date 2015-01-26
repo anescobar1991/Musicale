@@ -20,7 +20,7 @@ import de.umass.lastfm.Event;
  * Not much to it, pretty self explanatory...
  */
 public class EventDetailsPagerAdapter extends FragmentPagerAdapter {
-    private ArrayList<String> titles = new ArrayList<String>();
+    private ArrayList<String> titles = new ArrayList<>();
     private Event mEvent;
 
     public EventDetailsPagerAdapter(FragmentManager fm, Context context, Event event) {

@@ -23,11 +23,11 @@ public class EventsActivityTests extends ActivityInstrumentationTestCase2<Events
         getActivity();
     }
 
-    public void testExploreInMapButtonFunctionality() {
-        onView(withText(R.string.explore_in_map_tab_text))
-                .perform(click());
-
-        onView(withId(R.id.events_map_container))
-                .check(ViewAssertions.matches(isDisplayed()));
-    }
+//    public void testExploreInMapButtonFunctionality() {
+//        onView(withText(R.string.explore_in_map_tab_text))
+//                .perform(click());
+//
+//        onView(withId(R.id.events_map_container))
+//                .check(ViewAssertions.matches(isDisplayed()));
+//    }
 }

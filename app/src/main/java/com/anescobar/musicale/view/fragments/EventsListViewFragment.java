@@ -21,7 +21,7 @@ import com.anescobar.musicale.app.interfaces.EventFetcherListener;
 import com.anescobar.musicale.app.models.EventQueryResults;
 import com.anescobar.musicale.app.exceptions.LocationNotAvailableException;
 import com.anescobar.musicale.app.exceptions.NetworkNotAvailableException;
-import com.anescobar.musicale.rest.services.EventsFinder;
+import com.anescobar.musicale.app.services.EventsFinder;
 import com.anescobar.musicale.view.activities.SearchActivity;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.model.LatLng;
@@ -106,10 +106,12 @@ public class EventsListViewFragment extends LocationAwareFragment implements Eve
 
     @Override
     public void onConnected(Bundle bundle) {
-        try {
-            loadEventsToView(getCurrentLatLng());
-        } catch (LocationNotAvailableException e) {
-            Toast.makeText(getActivity(), getString(R.string.error_location_services_disabled), Toast.LENGTH_SHORT).show();
+        if (mSearchLocation.mSearchLatLng == null) {
+            try {
+                loadEventsToView(getCurrentLatLng());
+            } catch (LocationNotAvailableException e) {
+                Toast.makeText(getActivity(), getString(R.string.error_location_services_disabled), Toast.LENGTH_SHORT).show();
+            }
         }
     }
 

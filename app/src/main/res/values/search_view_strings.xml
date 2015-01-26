@@ -9,4 +9,6 @@
     <string name="show_search_header_text">Any specific show you want to find?</string>
     <string name="current_location_accessibility_label">Use current location</string>
 
+    <!--error messages-->
+    <string name="location_not_resolvable_error">Couldn\'t find the location you specified, try again with a valid location.</string>
 </resources>

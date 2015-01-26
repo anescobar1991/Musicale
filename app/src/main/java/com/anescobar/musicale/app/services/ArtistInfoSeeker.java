@@ -1,4 +1,4 @@
-package com.anescobar.musicale.rest.services;
+package com.anescobar.musicale.app.services;
 
 import android.content.Context;
 import android.os.AsyncTask;

@@ -25,10 +25,10 @@ import com.anescobar.musicale.app.interfaces.ArtistUpcomingEventsFetcherTaskList
 import com.anescobar.musicale.app.interfaces.SpotifyTrackInfoTaskListener;
 import com.anescobar.musicale.app.models.ArtistDetails;
 import com.anescobar.musicale.app.exceptions.NetworkNotAvailableException;
-import com.anescobar.musicale.rest.models.SpotifyTrack;
+import com.anescobar.musicale.app.models.SpotifyTrack;
 
-import com.anescobar.musicale.rest.services.ArtistInfoSeeker;
-import com.anescobar.musicale.rest.services.SpotifyTrackInfoSeeker;
+import com.anescobar.musicale.app.services.ArtistInfoSeeker;
+import com.anescobar.musicale.app.services.SpotifyTrackInfoSeeker;
 import com.anescobar.musicale.view.activities.ArtistDetailsActivity;
 import com.anescobar.musicale.view.activities.EventDetailsActivity;
 import com.crashlytics.android.Crashlytics;

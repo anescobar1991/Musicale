@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +18,7 @@ import com.anescobar.musicale.R;
 import com.anescobar.musicale.app.exceptions.LocationNotAvailableException;
 import com.anescobar.musicale.view.activities.EventDetailsActivity;
 import com.anescobar.musicale.app.interfaces.EventFetcherListener;
-import com.anescobar.musicale.rest.services.EventsFinder;
+import com.anescobar.musicale.app.services.EventsFinder;
 import com.anescobar.musicale.app.exceptions.NetworkNotAvailableException;
 import com.anescobar.musicale.app.models.EventQueryResults;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -71,13 +70,6 @@ public class EventsMapViewFragment extends LocationAwareFragment implements Goog
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-
-//        menu.findItem(R.id.action_search_events).setVisible(false);
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_events_map_view, container, false);
@@ -96,10 +88,12 @@ public class EventsMapViewFragment extends LocationAwareFragment implements Goog
 
     @Override
     public void onConnected(Bundle bundle) {
-        try {
-            setUpMapIfNeeded(getCurrentLatLng());
-        } catch (LocationNotAvailableException e) {
-            Toast.makeText(getActivity(),R.string.error_location_services_disabled, Toast.LENGTH_SHORT).show();
+        if (mSearchLocation.mSearchLatLng == null) {
+            try {
+                setUpMapIfNeeded(getCurrentLatLng());
+            } catch (LocationNotAvailableException e) {
+                Toast.makeText(getActivity(),R.string.error_location_services_disabled, Toast.LENGTH_SHORT).show();
+            }
         }
     }
 

@@ -12,7 +12,7 @@ public class EventQueryResults {
     private static EventQueryResults sInstance = null;
 
     public String searchKeyword;
-    public ArrayList<Event> events = new ArrayList<Event>();
+    public ArrayList<Event> events = new ArrayList<>();
     public int totalNumberOfEventPages = 0;
     public int numberOfEventPagesLoaded = 0;
 
@@ -24,6 +24,13 @@ public class EventQueryResults {
             sInstance = new EventQueryResults();
         }
         return sInstance;
+    }
+
+    public void clearInstance() {
+        searchKeyword = null;
+        events.clear();
+        totalNumberOfEventPages = 0;
+        numberOfEventPagesLoaded = 0;
     }
 
 }
