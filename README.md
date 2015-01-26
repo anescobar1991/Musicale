@@ -8,13 +8,13 @@ Note: APIs 17+ supported (4.2+)
 <table style="width:100%">
   <tr>
     <td>
-      <a href="http://imgur.com/BkWM0RK"><img src="http://i.imgur.com/BkWM0RKl.png" title="source:   imgur.com" /></a>
-    </td>
+      <a href="http://imgur.com/oCAvtlI"><img src="http://i.imgur.com/oCAvtlIl.png" title="source: imgur.com" /></a>     </td>
     <td>
-      <a href="http://imgur.com/zVtboJK"><img src="http://i.imgur.com/zVtboJKl.png" title="source: imgur.com" /></a>
-    </td>
+      <a href="http://imgur.com/xOff4qs"><img src="http://i.imgur.com/xOff4qsl.png" title="source: imgur.com" /></a>     </td>
     <td>
-      <a href="http://imgur.com/7w0UJDl"><img src="http://i.imgur.com/7w0UJDll.jpg" title="source: imgur.com" /></a>
+      <a href="http://imgur.com/MGUMzE6"><img src="http://i.imgur.com/MGUMzE6l.png" title="source: imgur.com" /></a>     </td>
+    <td>
+      <a href="http://imgur.com/zZS2DzK"><img src="http://i.imgur.com/zZS2DzKl.png" title="source: imgur.com" /></a>
     </td>
   </tr>
 </table>
