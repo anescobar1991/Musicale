@@ -1,5 +1,6 @@
 package com.anescobar.musicale.view.activities;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -52,7 +53,9 @@ public class EventsActivity extends BaseActivity {
         switch (item.getItemId()) {
             case R.id.action_about_musicale:
                 Intent intent = new Intent(this, AboutMusicaleActivity.class);
-                startActivity(intent);
+                ActivityOptions activityOptions = ActivityOptions.makeCustomAnimation(this, R.anim.push_down_in, R.anim.abc_fade_out);
+
+                startActivity(intent, activityOptions.toBundle());
                 return true;
             case R.id.action_view_in_list:
                 addFragmentToActivity(R.id.activity_events_container, new EventsListViewFragment(), EVENTS_LIST_VIEW_FRAGMENT_TAG);

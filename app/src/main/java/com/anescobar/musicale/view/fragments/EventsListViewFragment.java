@@ -1,5 +1,6 @@
 package com.anescobar.musicale.view.fragments;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -240,7 +241,9 @@ public class EventsListViewFragment extends LocationAwareFragment implements Eve
     @OnClick(R.id.search_fab)
     public void startSearchActivity() {
         Intent intent = new Intent(getActivity(), SearchActivity.class);
-        startActivity(intent);
+        ActivityOptions activityOptions = ActivityOptions.makeCustomAnimation(getActivity(), R.anim.push_up_in, R.anim.abc_fade_out);
+
+        startActivity(intent, activityOptions.toBundle());
     }
 
 }

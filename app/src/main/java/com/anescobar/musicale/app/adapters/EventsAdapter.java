@@ -1,7 +1,9 @@
 package com.anescobar.musicale.app.adapters;
 
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -78,7 +80,8 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
                 //starts EventDetailsActivity
                 Intent intent = new Intent(mContext, EventDetailsActivity.class);
                 intent.putExtra("EVENT", serializedEvent);
-                mContext.startActivity(intent);
+                ActivityOptions activityOptions = ActivityOptions.makeCustomAnimation(mContext, R.anim.slide_in_right, R.anim.abc_fade_out);
+                mContext.startActivity(intent, activityOptions.toBundle());
             }
         });
     }

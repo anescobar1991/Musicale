@@ -1,6 +1,7 @@
 package com.anescobar.musicale.view.fragments;
 
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -240,7 +241,8 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), ArtistDetailsActivity.class);
                 intent.putExtra("ARTIST", artist.getName());
-                startActivity(intent);
+                ActivityOptions activityOptions = ActivityOptions.makeCustomAnimation(getActivity(), R.anim.slide_in_right, R.anim.abc_fade_out);
+                getActivity().startActivity(intent, activityOptions.toBundle());
             }
         });
 
@@ -385,7 +387,9 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
                 //starts EventDetailsActivity
                 Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
                 intent.putExtra("EVENT", serializedEvent);
-                getActivity().startActivity(intent);
+                ActivityOptions activityOptions = ActivityOptions.makeCustomAnimation(getActivity(), R.anim.push_up_in, R.anim.abc_fade_out);
+
+                getActivity().startActivity(intent, activityOptions.toBundle());
             }
         });
 

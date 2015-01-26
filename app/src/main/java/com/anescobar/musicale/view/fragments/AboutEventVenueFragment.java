@@ -1,6 +1,7 @@
 package com.anescobar.musicale.view.fragments;
 
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -289,7 +290,9 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
                 //starts EventDetailsActivity
                 Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
                 intent.putExtra("EVENT", serializedEvent);
-                getActivity().startActivity(intent);
+                ActivityOptions activityOptions = ActivityOptions.makeCustomAnimation(getActivity(), R.anim.push_up_in, R.anim.abc_fade_out);
+
+                getActivity().startActivity(intent, activityOptions.toBundle());
             }
         });
 
