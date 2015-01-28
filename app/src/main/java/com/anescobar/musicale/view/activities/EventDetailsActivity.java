@@ -61,6 +61,12 @@ public class EventDetailsActivity extends BaseActivity
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onBackPressed() {
+        finish();
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+    }
+
     //adds event info header fragment and sets view pager with adapter
     private void setUpView(Event event) {
         //add event info header fragment to activity

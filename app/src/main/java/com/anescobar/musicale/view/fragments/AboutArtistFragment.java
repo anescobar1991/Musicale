@@ -241,7 +241,8 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), ArtistDetailsActivity.class);
                 intent.putExtra("ARTIST", artist.getName());
-                ActivityOptions activityOptions = ActivityOptions.makeCustomAnimation(getActivity(), R.anim.slide_in_right, R.anim.abc_fade_out);
+
+                ActivityOptions activityOptions = ActivityOptions.makeCustomAnimation(getActivity().getApplicationContext(), R.anim.slide_in_right, R.anim.slide_out_left);
                 getActivity().startActivity(intent, activityOptions.toBundle());
             }
         });
@@ -387,7 +388,7 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
                 //starts EventDetailsActivity
                 Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
                 intent.putExtra("EVENT", serializedEvent);
-                ActivityOptions activityOptions = ActivityOptions.makeCustomAnimation(getActivity(), R.anim.push_up_in, R.anim.abc_fade_out);
+                ActivityOptions activityOptions = ActivityOptions.makeCustomAnimation(getActivity().getApplicationContext(), R.anim.slide_in_right, R.anim.slide_out_left);
 
                 getActivity().startActivity(intent, activityOptions.toBundle());
             }

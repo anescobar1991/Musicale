@@ -290,7 +290,7 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
                 //starts EventDetailsActivity
                 Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
                 intent.putExtra("EVENT", serializedEvent);
-                ActivityOptions activityOptions = ActivityOptions.makeCustomAnimation(getActivity(), R.anim.push_up_in, R.anim.abc_fade_out);
+                ActivityOptions activityOptions = ActivityOptions.makeCustomAnimation(getActivity().getApplicationContext(), R.anim.slide_in_right, R.anim.slide_out_left);
 
                 getActivity().startActivity(intent, activityOptions.toBundle());
             }

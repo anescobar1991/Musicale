@@ -80,7 +80,8 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
                 //starts EventDetailsActivity
                 Intent intent = new Intent(mContext, EventDetailsActivity.class);
                 intent.putExtra("EVENT", serializedEvent);
-                ActivityOptions activityOptions = ActivityOptions.makeCustomAnimation(mContext, R.anim.slide_in_right, R.anim.abc_fade_out);
+                ActivityOptions activityOptions = ActivityOptions.makeCustomAnimation(mContext, R.anim.slide_in_right, R.anim.slide_out_left);
+
                 mContext.startActivity(intent, activityOptions.toBundle());
             }
         });

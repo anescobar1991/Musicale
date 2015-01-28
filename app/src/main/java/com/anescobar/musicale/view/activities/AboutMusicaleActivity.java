@@ -15,4 +15,10 @@ public class AboutMusicaleActivity extends BaseActivity {
 
         addFragmentToActivity(R.id.container, new AboutMusicaleFragment(),ABOUT_MUSICALE_FRAGMENT_TAG);
     }
+
+    @Override
+    public void onBackPressed() {
+        finish();
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+    }
 }

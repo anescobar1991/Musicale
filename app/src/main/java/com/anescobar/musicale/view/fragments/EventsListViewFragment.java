@@ -241,7 +241,7 @@ public class EventsListViewFragment extends LocationAwareFragment implements Eve
     @OnClick(R.id.search_fab)
     public void startSearchActivity() {
         Intent intent = new Intent(getActivity(), SearchActivity.class);
-        ActivityOptions activityOptions = ActivityOptions.makeCustomAnimation(getActivity(), R.anim.push_up_in, R.anim.abc_fade_out);
+        ActivityOptions activityOptions = ActivityOptions.makeCustomAnimation(getActivity().getApplicationContext(), R.anim.push_up_in, R.anim.abc_fade_out);
 
         startActivity(intent, activityOptions.toBundle());
     }

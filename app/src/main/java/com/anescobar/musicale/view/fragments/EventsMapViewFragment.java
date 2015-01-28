@@ -1,5 +1,6 @@
 package com.anescobar.musicale.view.fragments;
 
+import android.app.ActivityOptions;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
@@ -320,7 +321,9 @@ public class EventsMapViewFragment extends LocationAwareFragment implements Goog
 
         //starts EventDetailsActivity
         Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
+        ActivityOptions activityOptions = ActivityOptions.makeCustomAnimation(getActivity().getApplicationContext(), R.anim.slide_in_right, R.anim.slide_out_left);
+
         intent.putExtra("EVENT", serializedEvent);
-        startActivity(intent);
+        startActivity(intent, activityOptions.toBundle());
     }
 }

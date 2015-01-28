@@ -24,5 +24,4 @@ public abstract class BaseActivity extends ActionBarActivity {
                 .replace(container, fragment, fragmentTag)
                 .commit();
     }
-
 }

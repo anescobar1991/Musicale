@@ -1,6 +1,7 @@
 package com.anescobar.musicale.view.fragments;
 
 
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.location.Address;
 import android.os.Bundle;
@@ -184,7 +185,9 @@ public class SearchFragment extends LocationAwareFragment implements AddressesFe
             mSearchLocation.mSearchLatLng = new LatLng(addresses.get(0).getLatitude(), addresses.get(0).getLongitude());
 
             Intent intent = new Intent(getActivity(), EventsActivity.class);
-            startActivity(intent);
+            ActivityOptions activityOptions = ActivityOptions.makeCustomAnimation(getActivity().getApplicationContext(), R.anim.slide_in_right, R.anim.slide_out_left);
+
+            startActivity(intent, activityOptions.toBundle());
         }
     }
 }
