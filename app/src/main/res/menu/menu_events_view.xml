@@ -13,9 +13,12 @@
         app:showAsAction="always"
         android:title="@string/action_view_in_list" />
 
+    <item android:id="@+id/action_refresh_event_list"
+        android:title="@string/action_refresh_events"
+        app:showAsAction="never" />
+
     <item android:id="@+id/action_about_musicale"
         android:title="@string/action_about_musicale"
-        android:orderInCategory="100"
         app:showAsAction="never" />
 
 </menu>

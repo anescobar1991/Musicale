@@ -111,9 +111,11 @@ public class EventsMapViewFragment extends LocationAwareFragment implements Goog
     public void onPrepareOptionsMenu(Menu menu) {
         MenuItem exploreInMapButton = menu.findItem(R.id.action_explore_in_map);
         MenuItem viewInListButton = menu.findItem(R.id.action_view_in_list);
+        MenuItem refreshEventsButton = menu.findItem(R.id.action_refresh_event_list);
 
         exploreInMapButton.setVisible(false);
         viewInListButton.setVisible(true);
+        refreshEventsButton.setVisible(false);
 
         super.onPrepareOptionsMenu(menu);
     }

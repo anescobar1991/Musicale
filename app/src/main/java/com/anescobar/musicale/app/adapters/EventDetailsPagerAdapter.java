@@ -7,7 +7,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 import com.anescobar.musicale.R;
 import com.anescobar.musicale.view.fragments.AboutArtistFragment;
-import com.anescobar.musicale.view.fragments.AboutEventBuzzFragment;
+import com.anescobar.musicale.view.fragments.EventSocialMediaFragment;
 import com.anescobar.musicale.view.fragments.AboutEventVenueFragment;
 
 import java.util.ArrayList;
@@ -44,7 +44,7 @@ public class EventDetailsPagerAdapter extends FragmentPagerAdapter {
                 fragment = AboutArtistFragment.newInstance(mEvent.getHeadliner());
                 break;
             case 2:
-                fragment = new AboutEventBuzzFragment();
+                fragment = new EventSocialMediaFragment();
                 break;
         }
         return fragment;

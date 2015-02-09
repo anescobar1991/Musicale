@@ -12,16 +12,21 @@ import android.support.v7.app.ActionBarActivity;
  */
 
 public abstract class BaseActivity extends ActionBarActivity {
+    private FragmentManager mFragmentManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mFragmentManager = getFragmentManager();
     }
 
     protected void addFragmentToActivity(int container, Fragment fragment, String fragmentTag) {
-        FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.beginTransaction()
+        mFragmentManager.beginTransaction()
                 .replace(container, fragment, fragmentTag)
                 .commit();
+    }
+
+    protected Fragment getFragmentByTag(String tag) {
+        return mFragmentManager.findFragmentByTag(tag);
     }
 }

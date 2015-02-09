@@ -69,7 +69,6 @@ public class SpotifyTrackInfoSeeker {
                     mainHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            Log.d(LOG_TAG, e.toString());
                             Log.d(LOG_TAG, request.toString());
                         }
                     });

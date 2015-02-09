@@ -233,7 +233,7 @@ public class EventsListViewFragment extends LocationAwareFragment implements Eve
         mMessageContainer.setVisibility(View.VISIBLE);
     }
 
-    private void refreshEvents(LatLng searchLatLng) {
+    public void refreshEvents(LatLng searchLatLng) {
         //calls eventsListViewFragment's getEvents method, which gets events from backend and displays and stores them as needed
         getEventsFromServer(1, searchLatLng);
     }

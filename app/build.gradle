@@ -1,19 +1,19 @@
 buildscript {
     repositories {
-        maven { url 'http://download.crashlytics.com/maven' }
+        maven { url 'https://maven.fabric.io/public' }
     }
 
     dependencies {
-        classpath 'com.crashlytics.tools.gradle:crashlytics-gradle:1.14.3'
+        classpath 'io.fabric.tools:gradle:1.+'
     }
 }
+
 apply plugin: 'com.android.application'
-apply plugin: 'crashlytics'
+apply plugin: 'io.fabric'
 
 repositories {
-    maven { url 'http://download.crashlytics.com/maven' }
+    maven { url 'https://maven.fabric.io/public' }
 }
-
 
 android {
     compileSdkVersion 21
@@ -54,11 +54,18 @@ dependencies {
     compile 'com.jpardogo.materialtabstrip:library:1.0.3'
     compile 'com.squareup.picasso:picasso:2.3.3'
     compile 'com.jakewharton:butterknife:6.0.0'
-    compile 'com.crashlytics.android:crashlytics:1.1.13'
     compile 'com.google.code.gson:gson:2.3'
     compile 'com.squareup.okhttp:okhttp:2.0.0'
     compile 'com.squareup.okhttp:okhttp-urlconnection:2.0.0'
     compile 'com.shamanland:fab:0.0.7'
+
+    //fabric stuff
+    compile('com.crashlytics.sdk.android:crashlytics:2.2.1@aar') {
+        transitive = true;
+    }
+    compile('com.twitter.sdk.android:twitter:1.3.0@aar') {
+        transitive = true;
+    }
 
     //espresso
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.0'

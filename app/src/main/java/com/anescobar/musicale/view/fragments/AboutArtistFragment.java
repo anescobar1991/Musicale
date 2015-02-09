@@ -32,7 +32,6 @@ import com.anescobar.musicale.app.services.ArtistInfoSeeker;
 import com.anescobar.musicale.app.services.SpotifyTrackInfoSeeker;
 import com.anescobar.musicale.view.activities.ArtistDetailsActivity;
 import com.anescobar.musicale.view.activities.EventDetailsActivity;
-import com.crashlytics.android.Crashlytics;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
@@ -481,7 +480,6 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
                     });
                 } catch (IOException e) {
                     e.printStackTrace();
-                    Crashlytics.logException(e);
 
                     previewLoading.setVisibility(View.GONE);
                     playButton.setVisibility(View.VISIBLE);
