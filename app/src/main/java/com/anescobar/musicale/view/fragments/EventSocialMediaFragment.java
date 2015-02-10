@@ -7,18 +7,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.anescobar.musicale.R;
-import com.crashlytics.android.Crashlytics;
-import com.twitter.sdk.android.Twitter;
-import com.twitter.sdk.android.core.AppSession;
-import com.twitter.sdk.android.core.Callback;
-import com.twitter.sdk.android.core.Result;
-import com.twitter.sdk.android.core.TwitterCore;
-import com.twitter.sdk.android.core.TwitterException;
-import com.twitter.sdk.android.core.models.Search;
+import com.anescobar.musicale.app.exceptions.NetworkNotAvailableException;
+import com.anescobar.musicale.app.interfaces.TwitterGuestSessionFetcherListener;
+import com.anescobar.musicale.app.interfaces.TwitterSearchTaskListener;
+import com.anescobar.musicale.app.services.TwitterService;
+import com.twitter.sdk.android.core.Session;
 import com.twitter.sdk.android.core.models.Tweet;
-import com.twitter.sdk.android.core.services.SearchService;
 import com.twitter.sdk.android.tweetui.TweetViewAdapter;
 
 import java.util.List;
@@ -26,20 +24,17 @@ import java.util.List;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
-public class EventSocialMediaFragment extends Fragment {
-    private static final int SEARCH_COUNT = 20;
-    private static final String SEARCH_RESULT_TYPE = "recent";
-    private static final String SEARCH_QUERY = "#grammys";
+public class EventSocialMediaFragment extends Fragment implements TwitterGuestSessionFetcherListener, TwitterSearchTaskListener {
 
-    private long maxId;
-
-
-    private TweetViewAdapter mTweetsAdapter;
-
-    private boolean mTweetsLoading = false;
+    private TweetViewAdapter<? extends com.twitter.sdk.android.tweetui.BaseTweetView> mTweetsAdapter;
+    private long mMaxId;
+    private boolean mTweetsCurrentlyLoading = false;
     private boolean mEndOfSearchResults = false;
+    private TwitterService mTwitterService;
 
     @InjectView(R.id.event_tweets_list) ListView mTweetsList;
+    @InjectView(R.id.tweets_loading_progressbar) ProgressBar mLoadingProgressBar;
+    @InjectView(R.id.tweets_message_container) TextView mMessageContainer;
 
     public EventSocialMediaFragment() {
     }
@@ -49,76 +44,82 @@ public class EventSocialMediaFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_event_social_media, container, false);
+        mTwitterService = new TwitterService();
 
         ButterKnife.inject(this, view);
 
-        TwitterCore.getInstance().logInGuest(new Callback<AppSession>() {
-            @Override
-            public void success(Result<AppSession> result) {
-                setupView();
-            }
-
-            @Override
-            public void failure(TwitterException exception) {
-                // unable to get an AppSession with guest auth
-            }
-        });
+        try {
+            mTwitterService.loginAsGuest(this, getActivity().getApplicationContext());
+        } catch (NetworkNotAvailableException e) {
+            mLoadingProgressBar.setVisibility(View.GONE);
+            mMessageContainer.setText(R.string.error_no_network_connectivity);
+            mMessageContainer.setVisibility(View.VISIBLE);
+        }
 
         return view;
     }
 
-    public void setupView() {
-        mTweetsAdapter = new TweetViewAdapter(getActivity());
+    public void setupView(final Session session) {
+        mTweetsAdapter = new TweetViewAdapter<>(getActivity());
         mTweetsList.setAdapter(mTweetsAdapter);
-        loadTweets();
+        mTweetsList.setOnScrollListener(new ListView.OnScrollListener() {
 
-        mTweetsList.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) {
-            }
+            public void onScrollStateChanged(AbsListView view, int scrollState) {}
 
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount,
                                  int totalItemCount) {
-                if ((firstVisibleItem + visibleItemCount == totalItemCount) &&
-                        totalItemCount != 0) {
-                    if (!mTweetsLoading && !mEndOfSearchResults) {
-                        mTweetsLoading = true;
-                        loadTweets();
+                if (firstVisibleItem + visibleItemCount == totalItemCount) {
+                    if (!mTweetsCurrentlyLoading && !mEndOfSearchResults) {
+                        mTweetsCurrentlyLoading = true;
+                        loadTweets(session);
                     }
                 }
             }
         });
     }
 
-    private void loadTweets() {
-        final SearchService service = Twitter.getApiClient().getSearchService();
-        service.tweets(SEARCH_QUERY, null, null, null, SEARCH_RESULT_TYPE, SEARCH_COUNT, null, null,
-                maxId, true, new Callback<Search>() {
-                    @Override
-                    public void success(Result<Search> searchResult) {
-                        final List<Tweet> tweets = searchResult.data.tweets;
-                        mTweetsAdapter.getTweets().addAll(tweets);
-                        //TODO if results are empty then need to display message
-                        mTweetsAdapter.notifyDataSetChanged();
+    private void loadTweets(Session session) {
+        //TODO need to use the artists that are playing in the event AND the venue name as query
+        try {
+            mTwitterService.searchForTweets(this, getActivity().getApplicationContext(),
+                    session, "asflkasjdlkfjaklfjadf", mMaxId);
+        } catch (NetworkNotAvailableException e) {
+            mLoadingProgressBar.setVisibility(View.GONE);
+            mMessageContainer.setText(R.string.error_no_network_connectivity);
+            mMessageContainer.setVisibility(View.VISIBLE);
+        }
+    }
 
-                        if (tweets.size() > 0) {
-                            maxId = tweets.get(tweets.size() - 1).id - 1;
-                        } else {
-                            mEndOfSearchResults = true;
-                        }
-                        mTweetsLoading = false;
-                    }
+    @Override
+    public void onTwitterGuestSessionFetcherTaskAboutToStart() {}
 
-                    @Override
-                    public void failure(TwitterException error) {
-                        Crashlytics.logException(error);
+    @Override
+    public void onTwitterGuestSessionFetcherTaskSuccessful(Session session) {
+        setupView(session);
+    }
 
-                        //TODO do something here if response has error
+    @Override
+    public void onTwitterSearchTaskAboutToStart() {}
 
-                        mTweetsLoading = false;
-                    }
-                }
-        );
+    @Override
+    public void onTwitterSearchTaskSuccessful(List<Tweet> tweets) {
+        mLoadingProgressBar.setVisibility(View.GONE);
+        mTweetsCurrentlyLoading = false;
+
+        if (!tweets.isEmpty()) {
+            mTweetsAdapter.getTweets().addAll(tweets);
+            mTweetsAdapter.notifyDataSetChanged();
+
+            if (tweets.size() > 0) {
+                mMaxId = tweets.get(tweets.size() - 1).id - 1;
+            } else {
+                mEndOfSearchResults = true;
+            }
+        } else {
+            mMessageContainer.setText(R.string.no_tweets_found);
+            mMessageContainer.setVisibility(View.VISIBLE);
+        }
     }
 }

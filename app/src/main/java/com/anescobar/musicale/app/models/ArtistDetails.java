@@ -7,7 +7,8 @@ import de.umass.lastfm.Event;
 import de.umass.lastfm.Track;
 
 /**
- * Created by andres on 1/11/15.
+ * Created by Andres Escobar on 1/11/15.
+ * Model for artist details
  */
 public class ArtistDetails {
     public Artist mArtist;

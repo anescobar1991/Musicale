@@ -6,4 +6,6 @@
     <string name="event_details_about_artist_tab">About headliner</string>
     <string name="event_details_social_media_tab">Social media</string>
 
+    <string name="no_tweets_found">There seems to be no buzz for this event…</string>
+
 </resources>

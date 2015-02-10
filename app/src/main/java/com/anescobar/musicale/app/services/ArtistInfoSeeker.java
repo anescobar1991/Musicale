@@ -78,7 +78,7 @@ public class ArtistInfoSeeker {
         @Override
         protected void onPostExecute(Artist artist) {
             Result response = Caller.getInstance().getLastResult();
-            Log.w("artist_info_seeker_response", response.toString());
+            Log.w("artist_info_seeker_res", response.toString());
 
             mListener.onArtistInfoFetcherTaskCompleted(artist);
         }

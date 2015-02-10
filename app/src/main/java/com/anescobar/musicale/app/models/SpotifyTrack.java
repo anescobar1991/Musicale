@@ -1,7 +1,8 @@
 package com.anescobar.musicale.app.models;
 
 /**
- * Created by andres on 11/16/14.
+ * Created by Andres Escobar on 11/16/14.
+ * Model for spotify track
  */
 public class SpotifyTrack {
     public String trackName;
