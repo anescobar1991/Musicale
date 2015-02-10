@@ -15,28 +15,54 @@ import com.anescobar.musicale.app.exceptions.NetworkNotAvailableException;
 import com.anescobar.musicale.app.interfaces.TwitterGuestSessionFetcherListener;
 import com.anescobar.musicale.app.interfaces.TwitterSearchTaskListener;
 import com.anescobar.musicale.app.services.TwitterService;
+import com.google.gson.Gson;
 import com.twitter.sdk.android.core.Session;
 import com.twitter.sdk.android.core.models.Tweet;
 import com.twitter.sdk.android.tweetui.TweetViewAdapter;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import de.umass.lastfm.Event;
 
 public class EventSocialMediaFragment extends Fragment implements TwitterGuestSessionFetcherListener, TwitterSearchTaskListener {
 
+    private static final String ARG_EVENT = "eventArg";
     private TweetViewAdapter<? extends com.twitter.sdk.android.tweetui.BaseTweetView> mTweetsAdapter;
     private long mMaxId;
     private boolean mTweetsCurrentlyLoading = false;
     private boolean mEndOfSearchResults = false;
     private TwitterService mTwitterService;
 
+    private Event mEvent;
+
     @InjectView(R.id.event_tweets_list) ListView mTweetsList;
     @InjectView(R.id.tweets_loading_progressbar) ProgressBar mLoadingProgressBar;
     @InjectView(R.id.tweets_message_container) TextView mMessageContainer;
 
     public EventSocialMediaFragment() {
+    }
+
+    public static EventSocialMediaFragment newInstance(Event event) {
+        EventSocialMediaFragment fragment = new EventSocialMediaFragment();
+
+        //creates new instance of Gson
+        Gson gson = new Gson();
+
+        //serializes event into string using Gson
+        String serializedEvent = gson.toJson(event, Event.class);
+
+        //creates new Bundle
+        Bundle args = new Bundle();
+
+        //adds serialized event to bundle
+        args.putString(ARG_EVENT, serializedEvent);
+        fragment.setArguments(args);
+
+        return fragment;
     }
 
     @Override
@@ -47,6 +73,12 @@ public class EventSocialMediaFragment extends Fragment implements TwitterGuestSe
         mTwitterService = new TwitterService();
 
         ButterKnife.inject(this, view);
+
+        Gson gson = new Gson();
+
+        String serializedEvent = getArguments().getString(ARG_EVENT, null);
+
+        mEvent = gson.fromJson(serializedEvent, Event.class);
 
         try {
             mTwitterService.loginAsGuest(this, getActivity().getApplicationContext());
@@ -81,10 +113,9 @@ public class EventSocialMediaFragment extends Fragment implements TwitterGuestSe
     }
 
     private void loadTweets(Session session) {
-        //TODO need to use the artists that are playing in the event AND the venue name as query
         try {
             mTwitterService.searchForTweets(this, getActivity().getApplicationContext(),
-                    session, "asflkasjdlkfjaklfjadf", mMaxId);
+                    session, createSearchQuery(mEvent), mMaxId);
         } catch (NetworkNotAvailableException e) {
             mLoadingProgressBar.setVisibility(View.GONE);
             mMessageContainer.setText(R.string.error_no_network_connectivity);
@@ -121,5 +152,27 @@ public class EventSocialMediaFragment extends Fragment implements TwitterGuestSe
             mMessageContainer.setText(R.string.no_tweets_found);
             mMessageContainer.setVisibility(View.VISIBLE);
         }
+    }
+
+    private String createSearchQuery(Event event) {
+        String query = "";
+
+        for (String artist : event.getArtists()) {
+            query += " OR " + "\"" + artist + "\"";
+        }
+
+        //TODO add hashtags and look through results and see how to improve
+        query += " OR " + "\"" + event.getTitle() + "\"" + " OR " + "\"" + event.getVenue().getName() + "\"" + ")";
+
+        query = query.substring(4);
+        query = "(" + query;
+
+        try {
+            query = URLEncoder.encode(query, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        return query;
     }
 }

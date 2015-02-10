@@ -42,7 +42,7 @@ import de.umass.lastfm.Venue;
 
 public class AboutEventVenueFragment extends Fragment implements VenueEventsFetcherListener {
 
-    private static final String ARG_EVENT = "eventArg";
+    private static final String ARG_VENUE = "venueArg";
     private SupportMapFragment mMapFragment;
     private EventsFinder mEventsFinder;
     private CachedVenueDetailsGetterSetter mCachedVenueDetailsGetterSetter;
@@ -70,13 +70,13 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
         Gson gson = new Gson();
 
         //serializes event into string using Gson
-        String serializedEvent = gson.toJson(venue, Venue.class);
+        String serializedVenue = gson.toJson(venue, Venue.class);
 
         //creates new Bundle
         Bundle args = new Bundle();
 
         //adds serialized event to bundle
-        args.putString(ARG_EVENT, serializedEvent);
+        args.putString(ARG_VENUE, serializedVenue);
         fragment.setArguments(args);
 
         return fragment;
@@ -108,10 +108,6 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
 
         ButterKnife.inject(this, view);
 
-        Bundle args = getArguments();
-
-        String serializedEvent = args.getString(ARG_EVENT, null);
-
         mEventsFinder = new EventsFinder();
 
         mMapFragment = new SupportMapFragment();
@@ -122,6 +118,8 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
                 .commit();
 
         Gson gson = new Gson();
+
+        String serializedEvent = getArguments().getString(ARG_VENUE, null);
 
         mVenueDetails.mVenue = gson.fromJson(serializedEvent, Venue.class);
 

@@ -44,7 +44,7 @@ public class EventDetailsPagerAdapter extends FragmentPagerAdapter {
                 fragment = AboutArtistFragment.newInstance(mEvent.getHeadliner());
                 break;
             case 2:
-                fragment = new EventSocialMediaFragment();
+                fragment = EventSocialMediaFragment.newInstance(mEvent);
                 break;
         }
         return fragment;
