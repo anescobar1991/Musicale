@@ -93,13 +93,13 @@ public class EventsListViewFragment extends LocationAwareFragment implements Eve
 
     @Override
     public void onRefresh() {
-        refreshEvents(mSearchLocation.mSearchLatLng);
+        refreshEvents(mSearchLocation.searchLatLng);
     }
 
     @Override
     public void onStart() {
-        if (mSearchLocation.mSearchLatLng != null) {
-            loadEventsToView(mSearchLocation.mSearchLatLng);
+        if (mSearchLocation.searchLatLng != null) {
+            loadEventsToView(mSearchLocation.searchLatLng);
         }
 
         super.onStart();
@@ -107,7 +107,7 @@ public class EventsListViewFragment extends LocationAwareFragment implements Eve
 
     @Override
     public void onConnected(Bundle bundle) {
-        if (mSearchLocation.mSearchLatLng == null) {
+        if (mSearchLocation.searchLatLng == null) {
             try {
                 loadEventsToView(getCurrentLatLng());
             } catch (LocationNotAvailableException e) {
@@ -137,7 +137,7 @@ public class EventsListViewFragment extends LocationAwareFragment implements Eve
 
                     //if user has scrolled to halfway point of list and there are still pages of events left then will fetch next page
                     if (mLayoutManager.findFirstVisibleItemPosition() > loadNextPagePoint && !mCurrentlyGettingEvents && mEventQueryResults.totalNumberOfEventPages > mEventQueryResults.numberOfEventPagesLoaded) {
-                        getEventsFromServer(mEventQueryResults.numberOfEventPagesLoaded + 1, mSearchLocation.mSearchLatLng);
+                        getEventsFromServer(mEventQueryResults.numberOfEventPagesLoaded + 1, mSearchLocation.searchLatLng);
                     }
                 }
             });

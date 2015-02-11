@@ -63,7 +63,7 @@ public class EventsActivity extends BaseActivity {
             case R.id.action_refresh_event_list:
                 EventsListViewFragment eventsListViewFragment = (EventsListViewFragment) getFragmentByTag(EVENTS_LIST_VIEW_FRAGMENT_TAG);
 
-                eventsListViewFragment.refreshEvents(SearchLocation.getInstance().mSearchLatLng);
+                eventsListViewFragment.refreshEvents(SearchLocation.getInstance().searchLatLng);
                 return true;
             case R.id.action_view_in_list:
                 addFragmentToActivity(R.id.activity_events_container, new EventsListViewFragment(), EVENTS_LIST_VIEW_FRAGMENT_TAG);

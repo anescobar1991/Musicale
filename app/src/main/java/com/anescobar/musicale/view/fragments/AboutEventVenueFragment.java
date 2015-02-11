@@ -26,6 +26,7 @@ import com.anescobar.musicale.app.services.EventsFinder;
 import com.anescobar.musicale.view.activities.EventDetailsActivity;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -53,6 +54,12 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
     @InjectView(R.id.about_venue_message_container) TextView mErrorMessageContainer;
     @InjectView(R.id.venue_other_events_container) LinearLayout mOtherEventsContainer;
     @InjectView(R.id.venue_upcoming_events_card) CardView mUpcomingEventsCard;
+    @InjectView(R.id.venue_name) TextView mVenueName;
+    @InjectView(R.id.venue_phone_number) TextView mVenuePhoneNumberTextView;
+    @InjectView(R.id.venue_url) TextView mVenueUrlTextView;
+    @InjectView(R.id.venue_address) TextView mVenueAddress;
+    @InjectView(R.id.venue_image) ImageView mVenueImage;
+
 
     public AboutEventVenueFragment() {
         // Required empty public constructor
@@ -66,13 +73,11 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
     public static AboutEventVenueFragment newInstance(Venue venue) {
         AboutEventVenueFragment fragment = new AboutEventVenueFragment();
 
-        //creates new instance of Gson
         Gson gson = new Gson();
 
         //serializes event into string using Gson
         String serializedVenue = gson.toJson(venue, Venue.class);
 
-        //creates new Bundle
         Bundle args = new Bundle();
 
         //adds serialized event to bundle
@@ -108,8 +113,14 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
 
         ButterKnife.inject(this, view);
 
-        mEventsFinder = new EventsFinder();
+        return view;
+    }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        mEventsFinder = new EventsFinder();
         mMapFragment = new SupportMapFragment();
 
         //displays map fragment on screen
@@ -120,19 +131,9 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
         Gson gson = new Gson();
 
         String serializedEvent = getArguments().getString(ARG_VENUE, null);
+        mVenueDetails.venue = gson.fromJson(serializedEvent, Venue.class);
 
-        mVenueDetails.mVenue = gson.fromJson(serializedEvent, Venue.class);
-
-        setUpView(mVenueDetails.mVenue, view);
-
-        return view;
-    }
-
-    @Override
-    public void onResume(){
-        super.onResume();
-        //sets up map, with its settings, and adds event markers
-        setUpMapIfNeeded(mVenueDetails.mVenue);
+        setUpView(mVenueDetails.venue);
     }
 
     @Override
@@ -143,60 +144,57 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
 
     //sets up map if it hasnt already been setup,
     private void setUpMapIfNeeded(final Venue venue) {
-        LatLng venueLocation = new LatLng(venue.getLatitude(), venue.getLongitude());
-
-        GoogleMap mMap = mMapFragment.getMap();
-
-        //sets map's initial state
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(venueLocation, 14));
-        mMap.setBuildingsEnabled(true);
-        mMap.setIndoorEnabled(false);
-
-        //disables user interaction
-        mMap.getUiSettings().setAllGesturesEnabled(false);
-
-        //adds marker for venue location
-        mMap.addMarker(new MarkerOptions()
-                        .position(venueLocation)
-        );
-
-        //sets click listener for when user taps anywhere in map
-        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+        mMapFragment.getMapAsync(new OnMapReadyCallback() {
             @Override
-            public void onMapClick(LatLng latLng) {
-                //create dialog
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                // Add the buttons
-                builder.setPositiveButton(R.string.open_in_map, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        showVenueInMap(venue.getLatitude(), venue.getLongitude(), venue.getName());
-                    }
-                });
-                builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                    }
-                });
+            public void onMapReady(GoogleMap map) {
+                LatLng venueLocation = new LatLng(venue.getLatitude(), venue.getLongitude());
 
-                // Set dialog's message
-                builder.setMessage(R.string.open_in_map_question);
-                // Create the AlertDialog
-                builder.show();
+                //sets map's initial state
+                map.moveCamera(CameraUpdateFactory.newLatLngZoom(venueLocation, 14));
+                map.setBuildingsEnabled(true);
+                map.setIndoorEnabled(false);
+
+                //disables user interaction
+                map.getUiSettings().setAllGesturesEnabled(false);
+
+                //adds marker for venue location
+                map.addMarker(new MarkerOptions()
+                                .position(venueLocation)
+                );
+
+                //sets click listener for when user taps anywhere in map
+                map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                    @Override
+                    public void onMapClick(LatLng latLng) {
+                        //create dialog
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                        // Add the buttons
+                        builder.setPositiveButton(R.string.open_in_map, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                showVenueInMap(venue.getLatitude(), venue.getLongitude(), venue.getName());
+                            }
+                        });
+                        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                            }
+                        });
+
+                        // Set dialog's message
+                        builder.setMessage(R.string.open_in_map_question);
+                        // Create the AlertDialog
+                        builder.show();
+                    }
+                });
             }
         });
     }
 
-    private void setUpView(final Venue venue, final View view) {
-        TextView venueName = (TextView) view.findViewById(R.id.venue_name);
-        TextView venuePhoneNumberTextView = (TextView) view.findViewById(R.id.venue_phone_number);
-        TextView venueUrlTextView = (TextView) view.findViewById(R.id.venue_url);
-        TextView venueAddress = (TextView) view.findViewById(R.id.venue_address);
-        ImageView venueImage = (ImageView) view.findViewById(R.id.venue_image);
-
-        if (mCachedVenueDetailsGetterSetter.getVenueDetails().mUpcomingEvents != null) {
-            populateOtherEventsContainer(mCachedVenueDetailsGetterSetter.getVenueDetails().mUpcomingEvents);
+    private void setUpView(final Venue venue) {
+        if (mCachedVenueDetailsGetterSetter.getVenueDetails().upcomingEvents != null) {
+            populateOtherEventsContainer(mCachedVenueDetailsGetterSetter.getVenueDetails().upcomingEvents);
         } else {
             //gets venue Events from backend
-            getVenueEvents(mVenueDetails.mVenue.getId());
+            getVenueEvents(mVenueDetails.venue.getId());
         }
 
         //-------------loads all dynamic data into view-----------------
@@ -207,37 +205,40 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
                     .placeholder(R.drawable.placeholder)
                     .centerInside()
                     .resize(360, 360)
-                    .into(venueImage);
+                    .into(mVenueImage);
             //else will load placeholder image into view
         } else {
-            venueImage.setImageResource(R.drawable.placeholder);
+            mVenueImage.setImageResource(R.drawable.placeholder);
         }
 
         //hide venueUrl textview and image if there is no venue Url available
         if (venue.getWebsite().length() == 0) {
-            venueUrlTextView.setVisibility(View.GONE);
+            mVenueUrlTextView.setVisibility(View.GONE);
         } else {
-            venueUrlTextView.setText(venue.getWebsite());
+            mVenueUrlTextView.setText(venue.getWebsite());
         }
 
         //hide venue phone number textview and image if there is no venue phone number available
         if (venue.getPhonenumber().length() == 0) {
-            venuePhoneNumberTextView.setVisibility(View.GONE);
+            mVenuePhoneNumberTextView.setVisibility(View.GONE);
         } else {
-            venuePhoneNumberTextView.setText(venue.getPhonenumber());
+            mVenuePhoneNumberTextView.setText(venue.getPhonenumber());
         }
 
-        venueName.setText(venue.getName());
+        mVenueName.setText(venue.getName());
 
         if (venue.getStreet().length() == 0) {
-            venueAddress.setText(venue.getCity() + getString(R.string.event_address_separator) + venue.getCountry());
+            mVenueAddress.setText(venue.getCity() + getString(R.string.event_address_separator) + venue.getCountry());
         } else if (venue.getCity().length() == 0) {
-            venueAddress.setText(venue.getStreet() + getString(R.string.event_address_separator) + venue.getCountry());
+            mVenueAddress.setText(venue.getStreet() + getString(R.string.event_address_separator) + venue.getCountry());
         } else if (venue.getCountry().length() == 0) {
-            venueAddress.setText(venue.getStreet() + getString(R.string.event_address_separator) + venue.getCity());
+            mVenueAddress.setText(venue.getStreet() + getString(R.string.event_address_separator) + venue.getCity());
         } else {
-            venueAddress.setText(venue.getStreet() + getString(R.string.event_address_separator) + venue.getCity() + getString(R.string.event_address_separator) + venue.getCountry());
+            mVenueAddress.setText(venue.getStreet() + getString(R.string.event_address_separator) + venue.getCity() + getString(R.string.event_address_separator) + venue.getCountry());
         }
+
+        //sets up map, with its settings, and adds event markers
+        setUpMapIfNeeded(mVenueDetails.venue);
     }
 
     //sends intent to open Google maps application at specified location with specified label
@@ -303,7 +304,7 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
 
     @Override
     public void onVenueEventsFetcherTaskCompleted(Collection<Event> events) {
-        mVenueDetails.mUpcomingEvents = events;
+        mVenueDetails.upcomingEvents = events;
         populateOtherEventsContainer(events);
     }
 

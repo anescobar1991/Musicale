@@ -11,9 +11,9 @@ import de.umass.lastfm.Track;
  * Model for artist details
  */
 public class ArtistDetails {
-    public Artist mArtist;
-    public Collection<Track> mTopTracks;
-    public Collection<Event> mUpcomingEvents;
+    public Artist artist;
+    public Collection<Track> topTracks;
+    public Collection<Event> upcomingEvents;
 
     public ArtistDetails() {}
 }

@@ -89,7 +89,7 @@ public class EventsMapViewFragment extends LocationAwareFragment implements Goog
 
     @Override
     public void onConnected(Bundle bundle) {
-        if (mSearchLocation.mSearchLatLng == null) {
+        if (mSearchLocation.searchLatLng == null) {
             try {
                 setUpMapIfNeeded(getCurrentLatLng());
             } catch (LocationNotAvailableException e) {
@@ -102,8 +102,8 @@ public class EventsMapViewFragment extends LocationAwareFragment implements Goog
     public void onResume(){
         super.onResume();
 
-        if (mSearchLocation.mSearchLatLng != null) {
-            setUpMapIfNeeded(mSearchLocation.mSearchLatLng);
+        if (mSearchLocation.searchLatLng != null) {
+            setUpMapIfNeeded(mSearchLocation.searchLatLng);
         }
     }
 

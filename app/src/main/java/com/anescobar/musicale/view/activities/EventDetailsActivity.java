@@ -30,15 +30,14 @@ public class EventDetailsActivity extends BaseActivity
     @InjectView(R.id.event_details_view_pager) ViewPager mPager;
     @InjectView(R.id.event_details_tabs) PagerSlidingTabStrip mTabs;
 
+    private Event mEvent;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_details);
 
         ButterKnife.inject(this);
-
-        //gets extras that were passed into activity
-        Bundle extras = getIntent().getExtras();
 
         if (mToolbar != null) {
             setSupportActionBar(mToolbar);
@@ -47,14 +46,27 @@ public class EventDetailsActivity extends BaseActivity
 
         Gson gson = new Gson();
 
-        setUpView(gson.fromJson(extras.getString("EVENT"), Event.class));
+        mEvent = gson.fromJson(getIntent().
+                getExtras().
+                getString("EVENT"), Event.class);
+
+        addFragmentToActivity(R.id.event_info_header_container, EventInfoHeaderFragment.newInstance(mEvent), EVENT_INFO_HEADER_FRAGMENT);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Set the pager with an adapter
+        mPager.setAdapter(new EventDetailsPagerAdapter(getSupportFragmentManager(), this, mEvent));
+
+        // Bind the tabs to the ViewPager
+        mTabs.setViewPager(mPager);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        //if home/up button pressed it will go back to previous fragment
         if (id == android.R.id.home) {
             onBackPressed();
         }
@@ -65,19 +77,6 @@ public class EventDetailsActivity extends BaseActivity
     public void onBackPressed() {
         finish();
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
-    }
-
-    //adds event info header fragment and sets view pager with adapter
-    private void setUpView(Event event) {
-        //add event info header fragment to activity
-        addFragmentToActivity(R.id.event_info_header_container, EventInfoHeaderFragment.newInstance(event), EVENT_INFO_HEADER_FRAGMENT);
-
-        //Set the pager with an adapter
-        mPager.setAdapter(new EventDetailsPagerAdapter(getSupportFragmentManager(), this, event));
-        mPager.setOffscreenPageLimit(1);
-
-        // Bind the tabs to the ViewPager
-        mTabs.setViewPager(mPager);
     }
 
     @Override

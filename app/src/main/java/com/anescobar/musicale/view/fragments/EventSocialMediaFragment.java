@@ -51,13 +51,11 @@ public class EventSocialMediaFragment extends Fragment implements TwitterGuestSe
     public static EventSocialMediaFragment newInstance(Event event) {
         EventSocialMediaFragment fragment = new EventSocialMediaFragment();
 
-        //creates new instance of Gson
         Gson gson = new Gson();
 
         //serializes event into string using Gson
         String serializedEvent = gson.toJson(event, Event.class);
 
-        //creates new Bundle
         Bundle args = new Bundle();
 
         //adds serialized event to bundle
@@ -82,6 +80,13 @@ public class EventSocialMediaFragment extends Fragment implements TwitterGuestSe
 
         mEvent = gson.fromJson(serializedEvent, Event.class);
 
+        return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
         try {
             mTwitterService.loginAsGuest(this, getActivity().getApplicationContext());
         } catch (NetworkNotAvailableException e) {
@@ -89,8 +94,6 @@ public class EventSocialMediaFragment extends Fragment implements TwitterGuestSe
             mMessageContainer.setText(R.string.error_no_network_connectivity);
             mMessageContainer.setVisibility(View.VISIBLE);
         }
-
-        return view;
     }
 
     public void setupView(final Session session) {

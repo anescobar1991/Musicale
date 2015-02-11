@@ -63,8 +63,8 @@ public class SearchFragment extends LocationAwareFragment implements AddressesFe
 
     @Override
     public void onConnected(Bundle bundle) {
-        if (mSearchLocation.mSearchArea != null) {
-            mSearchAreaField.setText(mSearchLocation.mSearchArea);
+        if (mSearchLocation.searchArea != null) {
+            mSearchAreaField.setText(mSearchLocation.searchArea);
         } else {
             getAndDisplayCurrentLocation();
         }
@@ -129,7 +129,7 @@ public class SearchFragment extends LocationAwareFragment implements AddressesFe
         if (addresses.isEmpty()) {
             Toast.makeText(getActivity(),R.string.error_generic, Toast.LENGTH_SHORT).show();
         } else {
-            mSearchLocation.mSearchArea = sanitizeAddressToDisplay(addresses.get(0));
+            mSearchLocation.searchArea = sanitizeAddressToDisplay(addresses.get(0));
             mSearchAreaField.setText(sanitizeAddressToDisplay(addresses.get(0)));
         }
     }
@@ -181,8 +181,8 @@ public class SearchFragment extends LocationAwareFragment implements AddressesFe
             mSearchLocation.clearInstance();
             EventQueryResults.getInstance().clearInstance();
 
-            mSearchLocation.mSearchArea = sanitizeAddressToDisplay(addresses.get(0));
-            mSearchLocation.mSearchLatLng = new LatLng(addresses.get(0).getLatitude(), addresses.get(0).getLongitude());
+            mSearchLocation.searchArea = sanitizeAddressToDisplay(addresses.get(0));
+            mSearchLocation.searchLatLng = new LatLng(addresses.get(0).getLatitude(), addresses.get(0).getLongitude());
 
             Intent intent = new Intent(getActivity(), EventsActivity.class);
             ActivityOptions activityOptions = ActivityOptions.makeCustomAnimation(getActivity().getApplicationContext(), R.anim.slide_in_right, R.anim.slide_out_left);

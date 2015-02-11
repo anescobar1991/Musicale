@@ -9,8 +9,8 @@ import com.google.android.gms.maps.model.LatLng;
 public class SearchLocation {
     private static SearchLocation sInstance = null;
 
-    public LatLng mSearchLatLng;
-    public String mSearchArea;
+    public LatLng searchLatLng;
+    public String searchArea;
 
     private SearchLocation() {
     }
@@ -23,8 +23,8 @@ public class SearchLocation {
     }
 
     public void clearInstance() {
-        mSearchLatLng = null;
-        mSearchArea = null;
+        searchLatLng = null;
+        searchArea = null;
     }
 }
 

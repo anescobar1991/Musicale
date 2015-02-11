@@ -10,8 +10,8 @@ import de.umass.lastfm.Venue;
  * Model for venue details
  */
 public class VenueDetails {
-    public Venue mVenue;
-    public Collection<Event> mUpcomingEvents;
+    public Venue venue;
+    public Collection<Event> upcomingEvents;
 
     public VenueDetails() {}
 }

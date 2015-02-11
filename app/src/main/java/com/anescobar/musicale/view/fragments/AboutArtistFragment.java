@@ -69,6 +69,7 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
     @InjectView(R.id.artist_image) ImageView mArtistImage;
 
     private MediaPlayer mMediaPlayer;
+    private String mArtist;
 
     public AboutArtistFragment() {
         //required empty constructor
@@ -82,7 +83,6 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
     public static AboutArtistFragment newInstance(String artist) {
         AboutArtistFragment fragment = new AboutArtistFragment();
 
-        //creates new Bundle
         Bundle args = new Bundle();
 
         //adds serialized event to bundle
@@ -103,25 +103,30 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
         mMediaPlayer = new MediaPlayer();
         mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
-        Bundle args = getArguments();
+        mArtist = getArguments().getString(ARG_ARTIST, null);
 
-        String artist = args.getString(ARG_ARTIST, null);
+        return rootView;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
 
         try {
-            if (mCachedArtistDetailsGetterSetter.getArtistDetails().mArtist != null) {
-                setUpView(mCachedArtistDetailsGetterSetter.getArtistDetails().mArtist);
+            if (mCachedArtistDetailsGetterSetter.getArtistDetails().artist != null) {
+                setUpView(mCachedArtistDetailsGetterSetter.getArtistDetails().artist);
             } else {
-                new ArtistInfoSeeker().getArtistInfo(artist, this, getActivity().getApplicationContext());
+                new ArtistInfoSeeker().getArtistInfo(mArtist, this, getActivity().getApplicationContext());
             }
 
-            if (mCachedArtistDetailsGetterSetter.getArtistDetails().mUpcomingEvents != null) {
-                populateUpcomingEventsContainer(mCachedArtistDetailsGetterSetter.getArtistDetails().mUpcomingEvents);
+            if (mCachedArtistDetailsGetterSetter.getArtistDetails().upcomingEvents != null) {
+                populateUpcomingEventsContainer(mCachedArtistDetailsGetterSetter.getArtistDetails().upcomingEvents);
             } else {
-                new ArtistInfoSeeker().getArtistUpcomingEvents(artist, this, getActivity().getApplicationContext());
+                new ArtistInfoSeeker().getArtistUpcomingEvents(mArtist, this, getActivity().getApplicationContext());
             }
 
-            if (mCachedArtistDetailsGetterSetter.getArtistDetails().mTopTracks != null) {
-                populateTopTracksContainer(mCachedArtistDetailsGetterSetter.getArtistDetails().mTopTracks);
+            if (mCachedArtistDetailsGetterSetter.getArtistDetails().topTracks != null) {
+                populateTopTracksContainer(mCachedArtistDetailsGetterSetter.getArtistDetails().topTracks);
             }
 
         } catch (NetworkNotAvailableException e) {
@@ -129,8 +134,6 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
 
             displayErrorMessage(getString(R.string.error_no_network_connectivity));
         }
-
-        return rootView;
     }
 
     @Override
@@ -200,7 +203,7 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
 
     @Override
     public void onArtistInfoFetcherTaskCompleted(Artist artist) {
-        mArtistDetails.mArtist = artist;
+        mArtistDetails.artist = artist;
         try {
             if (getActivity() != null) {
                 new ArtistInfoSeeker().getArtistTopTracks(artist.getName(), this, getActivity().getApplicationContext());
@@ -287,7 +290,7 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
 
     @Override
     public void onArtistTopTrackFetcherTaskCompleted(Collection<Track> tracks) {
-        mArtistDetails.mTopTracks = tracks;
+        mArtistDetails.topTracks = tracks;
 
         populateTopTracksContainer(tracks);
     }
@@ -332,7 +335,7 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
 
     @Override
     public void onArtistUpcomingEventsFetcherTaskCompleted(PaginatedResult<Event> events) {
-        mArtistDetails.mUpcomingEvents = events.getPageResults();
+        mArtistDetails.upcomingEvents = events.getPageResults();
 
         populateUpcomingEventsContainer(events.getPageResults());
     }

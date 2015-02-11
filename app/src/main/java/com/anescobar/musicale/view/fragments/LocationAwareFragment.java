@@ -65,11 +65,11 @@ public abstract class LocationAwareFragment extends Fragment implements GoogleAp
         Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 
         if (lastLocation != null) {
-            mSearchLocation.mSearchLatLng = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
+            mSearchLocation.searchLatLng = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
         } else {
             throw new LocationNotAvailableException("LastLocation not available");
         }
 
-        return mSearchLocation.mSearchLatLng;
+        return mSearchLocation.searchLatLng;
     }
 }
