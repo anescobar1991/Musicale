@@ -1,4 +1,4 @@
-package com.anescobar.musicale.app.interfaces;
+package com.anescobar.musicale.app.services.interfaces;
 
 import android.location.Address;
 

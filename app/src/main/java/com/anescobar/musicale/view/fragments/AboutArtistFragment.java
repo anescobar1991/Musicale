@@ -20,12 +20,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.anescobar.musicale.R;
-import com.anescobar.musicale.app.interfaces.ArtistInfoFetcherTaskListener;
-import com.anescobar.musicale.app.interfaces.ArtistTopTracksFetcherTaskListener;
-import com.anescobar.musicale.app.interfaces.ArtistUpcomingEventsFetcherTaskListener;
-import com.anescobar.musicale.app.interfaces.SpotifyTrackInfoTaskListener;
+import com.anescobar.musicale.app.services.interfaces.ArtistInfoFetcherTaskListener;
+import com.anescobar.musicale.app.services.interfaces.ArtistTopTracksFetcherTaskListener;
+import com.anescobar.musicale.app.services.interfaces.ArtistUpcomingEventsFetcherTaskListener;
+import com.anescobar.musicale.app.services.interfaces.SpotifyTrackInfoTaskListener;
 import com.anescobar.musicale.app.models.ArtistDetails;
-import com.anescobar.musicale.app.exceptions.NetworkNotAvailableException;
+import com.anescobar.musicale.app.services.exceptions.NetworkNotAvailableException;
 import com.anescobar.musicale.app.models.SpotifyTrack;
 
 import com.anescobar.musicale.app.services.ArtistInfoSeeker;

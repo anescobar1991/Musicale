@@ -4,9 +4,9 @@ import android.content.Context;
 import android.location.Address;
 import android.os.AsyncTask;
 
-import com.anescobar.musicale.app.exceptions.NetworkNotAvailableException;
-import com.anescobar.musicale.app.interfaces.AddressesFetcherTaskListener;
-import com.anescobar.musicale.app.interfaces.LatLngFromAddressFetcherTaskListener;
+import com.anescobar.musicale.app.services.exceptions.NetworkNotAvailableException;
+import com.anescobar.musicale.app.services.interfaces.AddressesFetcherTaskListener;
+import com.anescobar.musicale.app.services.interfaces.LatLngFromAddressFetcherTaskListener;
 import com.anescobar.musicale.app.utils.NetworkUtil;
 import com.google.android.gms.maps.model.LatLng;
 

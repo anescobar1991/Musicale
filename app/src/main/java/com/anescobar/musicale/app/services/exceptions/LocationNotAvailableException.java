@@ -1,4 +1,4 @@
-package com.anescobar.musicale.app.exceptions;
+package com.anescobar.musicale.app.services.exceptions;
 
 public class LocationNotAvailableException extends Exception {
 

@@ -2,9 +2,9 @@ package com.anescobar.musicale.app.services;
 
 import android.content.Context;
 
-import com.anescobar.musicale.app.exceptions.NetworkNotAvailableException;
-import com.anescobar.musicale.app.interfaces.TwitterGuestSessionFetcherListener;
-import com.anescobar.musicale.app.interfaces.TwitterSearchTaskListener;
+import com.anescobar.musicale.app.services.exceptions.NetworkNotAvailableException;
+import com.anescobar.musicale.app.services.interfaces.TwitterGuestSessionFetcherListener;
+import com.anescobar.musicale.app.services.interfaces.TwitterSearchTaskListener;
 import com.anescobar.musicale.app.utils.NetworkUtil;
 import com.crashlytics.android.Crashlytics;
 import com.twitter.sdk.android.Twitter;

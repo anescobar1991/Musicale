@@ -16,11 +16,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.anescobar.musicale.R;
-import com.anescobar.musicale.app.exceptions.LocationNotAvailableException;
+import com.anescobar.musicale.app.services.exceptions.LocationNotAvailableException;
 import com.anescobar.musicale.view.activities.EventDetailsActivity;
-import com.anescobar.musicale.app.interfaces.EventFetcherListener;
+import com.anescobar.musicale.app.services.interfaces.EventFetcherListener;
 import com.anescobar.musicale.app.services.EventsFinder;
-import com.anescobar.musicale.app.exceptions.NetworkNotAvailableException;
+import com.anescobar.musicale.app.services.exceptions.NetworkNotAvailableException;
 import com.anescobar.musicale.app.models.EventQueryResults;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;

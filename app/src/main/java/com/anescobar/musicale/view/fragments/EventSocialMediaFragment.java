@@ -12,9 +12,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.anescobar.musicale.R;
-import com.anescobar.musicale.app.exceptions.NetworkNotAvailableException;
-import com.anescobar.musicale.app.interfaces.TwitterGuestSessionFetcherListener;
-import com.anescobar.musicale.app.interfaces.TwitterSearchTaskListener;
+import com.anescobar.musicale.app.services.exceptions.NetworkNotAvailableException;
+import com.anescobar.musicale.app.services.interfaces.TwitterGuestSessionFetcherListener;
+import com.anescobar.musicale.app.services.interfaces.TwitterSearchTaskListener;
 import com.anescobar.musicale.app.services.TwitterService;
 import com.google.gson.Gson;
 import com.twitter.sdk.android.core.Session;

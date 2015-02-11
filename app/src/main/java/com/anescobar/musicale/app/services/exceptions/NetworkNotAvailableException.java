@@ -1,4 +1,4 @@
-package com.anescobar.musicale.app.exceptions;
+package com.anescobar.musicale.app.services.exceptions;
 
 /**
  * Created by andres on 11/2/14.

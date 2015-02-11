@@ -4,10 +4,10 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.anescobar.musicale.app.interfaces.ArtistInfoFetcherTaskListener;
-import com.anescobar.musicale.app.interfaces.ArtistTopTracksFetcherTaskListener;
-import com.anescobar.musicale.app.interfaces.ArtistUpcomingEventsFetcherTaskListener;
-import com.anescobar.musicale.app.exceptions.NetworkNotAvailableException;
+import com.anescobar.musicale.app.services.interfaces.ArtistInfoFetcherTaskListener;
+import com.anescobar.musicale.app.services.interfaces.ArtistTopTracksFetcherTaskListener;
+import com.anescobar.musicale.app.services.interfaces.ArtistUpcomingEventsFetcherTaskListener;
+import com.anescobar.musicale.app.services.exceptions.NetworkNotAvailableException;
 import com.anescobar.musicale.app.utils.NetworkUtil;
 
 import java.util.Collection;

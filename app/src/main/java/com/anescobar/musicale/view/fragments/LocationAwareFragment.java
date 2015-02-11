@@ -5,7 +5,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.app.Fragment;
 
-import com.anescobar.musicale.app.exceptions.LocationNotAvailableException;
+import com.anescobar.musicale.app.services.exceptions.LocationNotAvailableException;
 import com.anescobar.musicale.app.models.SearchLocation;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
