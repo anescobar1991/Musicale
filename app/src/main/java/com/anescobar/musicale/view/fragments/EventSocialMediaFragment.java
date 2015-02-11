@@ -9,6 +9,7 @@ import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.anescobar.musicale.R;
 import com.anescobar.musicale.app.exceptions.NetworkNotAvailableException;
@@ -36,6 +37,7 @@ public class EventSocialMediaFragment extends Fragment implements TwitterGuestSe
     private boolean mTweetsCurrentlyLoading = false;
     private boolean mEndOfSearchResults = false;
     private TwitterService mTwitterService;
+    private boolean mTweetsDisplayed;
 
     private Event mEvent;
 
@@ -117,9 +119,13 @@ public class EventSocialMediaFragment extends Fragment implements TwitterGuestSe
             mTwitterService.searchForTweets(this, getActivity().getApplicationContext(),
                     session, createSearchQuery(mEvent), mMaxId);
         } catch (NetworkNotAvailableException e) {
-            mLoadingProgressBar.setVisibility(View.GONE);
-            mMessageContainer.setText(R.string.error_no_network_connectivity);
-            mMessageContainer.setVisibility(View.VISIBLE);
+            if (mTweetsDisplayed) {
+                Toast.makeText(getActivity(), R.string.error_no_network_connectivity, Toast.LENGTH_SHORT).show();
+            } else {
+                mLoadingProgressBar.setVisibility(View.GONE);
+                mMessageContainer.setText(R.string.error_no_network_connectivity);
+                mMessageContainer.setVisibility(View.VISIBLE);
+            }
         }
     }
 
@@ -140,6 +146,7 @@ public class EventSocialMediaFragment extends Fragment implements TwitterGuestSe
         mTweetsCurrentlyLoading = false;
 
         if (!tweets.isEmpty()) {
+            mTweetsDisplayed = true;
             mTweetsAdapter.getTweets().addAll(tweets);
             mTweetsAdapter.notifyDataSetChanged();
 
@@ -149,26 +156,29 @@ public class EventSocialMediaFragment extends Fragment implements TwitterGuestSe
                 mEndOfSearchResults = true;
             }
         } else {
-            mMessageContainer.setText(R.string.no_tweets_found);
-            mMessageContainer.setVisibility(View.VISIBLE);
+            if (mTweetsDisplayed) {
+                Toast.makeText(getActivity(), R.string.no_tweets_found, Toast.LENGTH_SHORT).show();
+            } else {
+                mMessageContainer.setText(R.string.no_tweets_found);
+                mMessageContainer.setVisibility(View.VISIBLE);
+            }
         }
     }
 
     private String createSearchQuery(Event event) {
         String query = "";
 
+        int count = 0;
         for (String artist : event.getArtists()) {
-            query += " OR " + "\"" + artist + "\"";
+            if (count < 5) {
+                count ++;
+                query += " OR " + "\"" + artist + "\" ";
+            }
         }
-
-        //TODO add hashtags and look through results and see how to improve
-        query += " OR " + "\"" + event.getTitle() + "\"" + " OR " + "\"" + event.getVenue().getName() + "\"" + ")";
-
-        query = query.substring(4);
-        query = "(" + query;
+        query += " OR " + "\"" + event.getTitle() + "\"" + " OR " + "\"" + event.getVenue().getName() + "\"";
 
         try {
-            query = URLEncoder.encode(query, "UTF-8");
+            query = URLEncoder.encode(query.substring(4), "UTF-8");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }

@@ -14,17 +14,10 @@ import com.anescobar.musicale.view.fragments.EventsMapViewFragment;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import com.twitter.sdk.android.Twitter;
-import io.fabric.sdk.android.Fabric;
 
 import com.crashlytics.android.Crashlytics;
-import com.twitter.sdk.android.core.TwitterAuthConfig;
 
 public class EventsActivity extends BaseActivity {
-
-    // Note: Your consumer key and secret should be obfuscated in your source code before shipping.
-    private static final String TWITTER_KEY = "CCedkOaSl9mpDCANsDJPatKKm";
-    private static final String TWITTER_SECRET = "Bx6w5Q2Nv8UXEBI2CcSAXjcLsWjKBbMmiOB4iiSHM4HHUW4Ik4";
 
 
     private static final String EVENTS_LIST_VIEW_FRAGMENT_TAG = "eventsListViewFragment";
@@ -39,10 +32,6 @@ public class EventsActivity extends BaseActivity {
         setContentView(R.layout.activity_events);
 
         ButterKnife.inject(this);
-
-        TwitterAuthConfig authConfig = new TwitterAuthConfig(TWITTER_KEY, TWITTER_SECRET);
-
-        Fabric.with(this, new Crashlytics(), new Twitter(authConfig));
 
         if (mToolbar != null) {
             setSupportActionBar(mToolbar);

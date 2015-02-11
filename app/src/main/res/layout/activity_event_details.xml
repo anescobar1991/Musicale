@@ -28,8 +28,8 @@
             app:pstsIndicatorHeight="2dp"
             android:layout_centerHorizontal="true"
             app:pstsTextAllCaps="false"
-            app:pstsIndicatorColor="@color/primary"
-            android:background="@color/light_background"/>
+            app:pstsTabBackground="@drawable/musicale_tab_background"
+            app:pstsIndicatorColor="@color/primary" />
 
     </RelativeLayout>
 

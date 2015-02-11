@@ -82,7 +82,7 @@
                 android:layout_height="wrap_content" />
             <Button
                 android:id="@+id/submit_search_button"
-                android:background="@drawable/default_raised_button"
+                android:background="@drawable/musicale_raised_button"
                 android:textColor="@color/white"
                 android:text="@string/search_button_text"
                 android:layout_gravity="center_horizontal"

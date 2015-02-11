@@ -16,6 +16,7 @@ import com.twitter.sdk.android.core.TwitterCore;
 import com.twitter.sdk.android.core.TwitterException;
 import com.twitter.sdk.android.core.models.Search;
 
+
 /**
  * Created by Andres Escobar on 2/9/15.
  * Provides methods for using Twitter API Client
@@ -23,6 +24,7 @@ import com.twitter.sdk.android.core.models.Search;
 public class TwitterService {
     private static final int SEARCH_COUNT = 20;
     private static final String SEARCH_RESULT_TYPE = "mixed";
+    private static final String SEARCH_RESULT_LANGUAGE = "en";
 
     private NetworkUtil mNetworkUtil = new NetworkUtil();
 
@@ -60,21 +62,21 @@ public class TwitterService {
 
             Twitter.getApiClient(session)
                     .getSearchService()
-                    .tweets(searchQuery, null, null, null, SEARCH_RESULT_TYPE, SEARCH_COUNT, null, null,
-                    maxId, true, new Callback<Search>() {
+                    .tweets(searchQuery, null, SEARCH_RESULT_LANGUAGE, null, SEARCH_RESULT_TYPE, SEARCH_COUNT, null, null,
+                            maxId, true, new Callback<Search>() {
 
-                        @Override
-                        public void success(Result<Search> searchResult) {
-                            twitterSearchTaskListener.onTwitterSearchTaskSuccessful(searchResult.data.tweets);
-                        }
+                                @Override
+                                public void success(Result<Search> searchResult) {
+                                    twitterSearchTaskListener.onTwitterSearchTaskSuccessful(searchResult.data.tweets);
+                                }
 
-                        @Override
-                        public void failure(TwitterException exception) {
-                            Crashlytics.logException(exception);
-                            Crashlytics.log("Twitter search for Tweets failed");
-                            throw exception;
-                        }
-                    });
+                                @Override
+                                public void failure(TwitterException exception) {
+                                    Crashlytics.logException(exception);
+                                    Crashlytics.log("Twitter search for Tweets failed");
+                                    throw exception;
+                                }
+                            });
         } else {
             throw new NetworkNotAvailableException("Not connected to network...");
         }
