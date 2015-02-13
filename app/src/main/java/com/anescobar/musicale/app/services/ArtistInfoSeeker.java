@@ -96,7 +96,6 @@ public class ArtistInfoSeeker {
             //necessary to fix bug in last fm library
             Caller.getInstance().setCache(null);
 
-            //send server request to get upcoming events for given artist
             return Artist.getEvents(artists[0], false, 1, 20, API_KEY);
         }
 

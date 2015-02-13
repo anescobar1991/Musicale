@@ -22,7 +22,6 @@ public abstract class LocationAwareFragment extends Fragment implements GoogleAp
 
 
     public LocationAwareFragment() {
-        // Required empty public constructor
     }
 
     @Override
@@ -40,13 +39,11 @@ public abstract class LocationAwareFragment extends Fragment implements GoogleAp
     public void onStart() {
         super.onStart();
 
-        // Connect the client
         mGoogleApiClient.connect();
     }
 
     @Override
     public void onStop() {
-        // Disconnecting the client invalidates it.
         if (mGoogleApiClient.isConnected()) {
             mGoogleApiClient.disconnect();
         }

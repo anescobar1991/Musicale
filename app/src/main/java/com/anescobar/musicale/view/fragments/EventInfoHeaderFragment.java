@@ -30,10 +30,8 @@ public class EventInfoHeaderFragment extends Fragment {
     @InjectView(R.id.event_image) ImageView mEventImageView;
 
     public EventInfoHeaderFragment() {
-        // Required empty public constructor
     }
 
-    //always use this to create new instance of this fragment
     public static EventInfoHeaderFragment newInstance(Event event) {
         EventInfoHeaderFragment eventInfoHeaderFragment = new EventInfoHeaderFragment();
 
@@ -57,14 +55,12 @@ public class EventInfoHeaderFragment extends Fragment {
 
         final Gson gson = new Gson();
 
-        //deserializes event using Gson
         Event event = gson.fromJson(serializedEvent, Event.class);
 
         ButterKnife.inject(this, rootview);
 
         setUpView(event);
 
-        // Inflate the layout for this fragment
         return rootview;
     }
 
@@ -84,10 +80,7 @@ public class EventInfoHeaderFragment extends Fragment {
         //sets eventsArtists textview to display formatted artists
         mEventArtistsTextView.setText(formattedArtists);
 
-        //gets imageUrl
         String eventImageUrl = event.getImageURL(ImageSize.EXTRALARGE);
-
-        // if there is an image for the event, load it into view
         if (eventImageUrl.length() > 0) {
             //set event image
             Picasso.with(getActivity()).load(eventImageUrl)
@@ -96,11 +89,9 @@ public class EventInfoHeaderFragment extends Fragment {
                     .centerCrop()
                     .into(mEventImageView);
         } else {
-            //else load placeholder into view
             mEventImageView.setImageResource(R.drawable.placeholder);
         }
 
-        //sets all textviews to display events data
         mEventTitleTextView.setText(event.getTitle());
         mVenueNameTextView.setText("@ " + event.getVenue().getName());
         mEventDateTextView.setText(event.getStartDate().toLocaleString().substring(0, 12));

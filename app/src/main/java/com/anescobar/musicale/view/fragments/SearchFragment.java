@@ -42,7 +42,6 @@ public class SearchFragment extends LocationAwareFragment implements AddressesFe
     @InjectView(R.id.loading_progressbar) ProgressBar mLoadingProgressbar;
 
     public SearchFragment() {
-        // Required empty public constructor
     }
 
     @Override

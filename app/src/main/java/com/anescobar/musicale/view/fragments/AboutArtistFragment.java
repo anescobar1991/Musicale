@@ -72,7 +72,6 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
     private String mArtist;
 
     public AboutArtistFragment() {
-        //required empty constructor
     }
 
     public interface CachedArtistDetailsGetterSetter {
@@ -85,7 +84,6 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
 
         Bundle args = new Bundle();
 
-        //adds serialized event to bundle
         args.putString(ARG_ARTIST, artist);
         fragment.setArguments(args);
 
@@ -102,7 +100,6 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
 
         mMediaPlayer = new MediaPlayer();
         mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-
         mArtist = getArguments().getString(ARG_ARTIST, null);
 
         return rootView;
@@ -154,7 +151,6 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
     }
 
     private void setUpView(final Artist artist) {
-        //-------------Loads dynamic data into view------------------
         mArtistName.setText(artist.getName());
 
         if (!artist.getWikiSummary().isEmpty()) {
@@ -167,7 +163,6 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
 
         String formattedTags = "";
 
-        //add tags to formattedTags string
         for(String tag : tags) {
             formattedTags += tag + ", ";
         }
@@ -175,25 +170,20 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
             //remove last comma from formatted tags string
             formattedTags = formattedTags.substring(0, formattedTags.length()-2);
 
-            //sets artistTags textview to display formatted tags string
             mArtistTags.setText(formattedTags.toUpperCase());
         }
 
         String artistImageUrl = artist.getImageURL(ImageSize.EXTRALARGE);
-
-        //downloads artist image into view if there is image
         if (artistImageUrl.length() > 0) {
             Picasso.with(getActivity()).load(artistImageUrl)
                     .placeholder(R.drawable.placeholder)
                     .centerInside()
                     .resize(400, 400)
                     .into(mArtistImage);
-            //else will load placeholder image into view
         } else {
             mArtistImage.setImageResource(R.drawable.placeholder);
         }
 
-        //display similar artists on screen
         displaySimilarArtists(artist.getSimilar());
     }
 
@@ -223,11 +213,9 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
         ImageView artistImageView = (ImageView) view.findViewById(R.id.artist_image);
         TextView artistTitleTextView = (TextView) view.findViewById(R.id.artist_name);
 
-        //sets artist card details
         artistTitleTextView.setText(artist.getName());
 
         String eventImageUrl = artist.getImageURL(ImageSize.EXTRALARGE);
-        // if there is an image for the artist load it into view. Else load placeholder into view
         if (eventImageUrl.length() > 0) {
             Picasso.with(getActivity())
                     .load(eventImageUrl)
@@ -238,7 +226,6 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
             artistImageView.setImageResource(R.drawable.placeholder);
         }
 
-        //sets onClickListener for entire card
         artistCard.setOnClickListener(new LinearLayout.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), ArtistDetailsActivity.class);
@@ -272,7 +259,6 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
 
         trackTextView.setText(track.getName());
 
-        //sets click listener for when user taps on layout
         trackLayout.setOnClickListener(new LinearLayout.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -347,7 +333,6 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
                 setUpEventCard(event, mUpcomingEventsContainer);
             }
 
-            //sets other Events area visible
             mUpcomingEventsContainer.setVisibility(View.VISIBLE);
         }
     }
@@ -367,8 +352,6 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
         venueLocationTextView.setText(event.getVenue().getCity() + " " + event.getVenue().getCountry());
 
         String eventImageUrl = event.getVenue().getImageURL(ImageSize.EXTRALARGE);
-
-        // if there is an image for the event load it into view. Else dont show image at all
         if (eventImageUrl.length() > 0) {
             Picasso.with(getActivity())
                     .load(eventImageUrl)
@@ -379,15 +362,12 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
             venueImageImageView.setImageResource(R.drawable.placeholder);
         }
 
-        //sets onClickListener for moreDetails button
         upcomingEventCard.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
                 Gson gson = new Gson();
 
-                //serialize event using GSON
                 String serializedEvent = gson.toJson(event, Event.class);
 
-                //starts EventDetailsActivity
                 Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
                 intent.putExtra("EVENT", serializedEvent);
                 ActivityOptions activityOptions = ActivityOptions.makeCustomAnimation(getActivity().getApplicationContext(), R.anim.slide_in_right, R.anim.slide_out_left);
@@ -419,7 +399,6 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
             ImageView playButton = (ImageView) view.findViewById(R.id.track_play_button);
             ProgressBar previewLoading = (ProgressBar) view.findViewById(R.id.track_loading_preview);
 
-            //display loading progressbar
             playButton.setVisibility(View.GONE);
             previewLoading.setVisibility(View.VISIBLE);
         }
@@ -494,7 +473,6 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
                 previewLoading.setVisibility(View.GONE);
                 playButton.setVisibility(View.VISIBLE);
 
-                //if preview is not available for song on spotify display toast to let user know
                 Toast.makeText(getActivity(), getString(R.string.preview_not_available),Toast.LENGTH_SHORT).show();
             }
         }

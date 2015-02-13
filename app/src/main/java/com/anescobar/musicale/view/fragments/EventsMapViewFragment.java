@@ -63,10 +63,8 @@ public class EventsMapViewFragment extends LocationAwareFragment implements Goog
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //lets it know that this fragment has its own menu implementation
         setHasOptionsMenu(true);
 
-        //creates MapFragment
         mMapFragment = new MapFragment();
     }
 
@@ -120,7 +118,6 @@ public class EventsMapViewFragment extends LocationAwareFragment implements Goog
         super.onPrepareOptionsMenu(menu);
     }
 
-    //gets events from backend
     public void getEventsFromServer(Integer pageNumber, LatLng searchAreaLatLng) {
         try {
             new EventsFinder().getEvents(pageNumber, searchAreaLatLng, this, getActivity());
@@ -129,13 +126,10 @@ public class EventsMapViewFragment extends LocationAwareFragment implements Goog
         }
     }
 
-    //sets up map if it hasnt already been setup,
     private void setUpMapIfNeeded(LatLng searchAreaLatLng) {
-        // Do a null check to confirm that we have not already instantiated the map.
         if (mMap == null) {
             mMap = mMapFragment.getMap();
 
-            //set custom marker info window adapter
             mMap.setInfoWindowAdapter(new EventMarkerInfoWindowAdapter(getActivity()));
         }
         setUpMap(searchAreaLatLng);
@@ -146,7 +140,6 @@ public class EventsMapViewFragment extends LocationAwareFragment implements Goog
      * This should only be called once and when we are sure that {@link #mMap} is not null.
      */
     private void setUpMap(LatLng searchAreaLatLng) {
-        //sets map's initial state
         UiSettings mapSettings = mMap.getUiSettings();
         mMap.setMyLocationEnabled(true);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(searchAreaLatLng, 10));
@@ -156,67 +149,48 @@ public class EventsMapViewFragment extends LocationAwareFragment implements Goog
         mapSettings.setTiltGesturesEnabled(false);
         mapSettings.setRotateGesturesEnabled(false);
 
-        //if there are no events from previous saved session then fetch events from backend
-        //else use events from previous saved session to populate cards
         if (mEventQueryResults.events.isEmpty()) {
             getEventsFromServer(1, searchAreaLatLng);
         } else {
             displayEventsInMap();
         }
 
-        //sets maps' onInfoWindow click listener
         mMap.setOnInfoWindowClickListener(this);
     }
 
-    //iterates through arrayList of Events and displays them on map
     private void displayEventsInMap() {
-        //clears old events from map
         mMap.clear();
 
         ArrayList<Event> events = mEventQueryResults.events;
-        //iterate through events list
         for (Event event : events) {
             float lat = event.getVenue().getLatitude();
             float lng = event.getVenue().getLongitude();
             LatLng venueLatLng = new LatLng(lat, lng);
 
-            //adds marker that represents Event venue to map
             createMapMarker(venueLatLng, event);
         }
     }
 
     @Override
     public void onEventFetcherTaskAboutToStart() {
-        //display loading overlay
         mLoadingOverlay.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void onEventFetcherTaskCompleted(PaginatedResult<Event> eventsNearby) {
-        //if last call was successful then load events to screen
         if (Caller.getInstance().getLastResult().isSuccessful()) {
             ArrayList<Event> events= new ArrayList<>(eventsNearby.getPageResults());
 
-            //sets variable that keeps track of how many pages of results are cached
             mEventQueryResults.numberOfEventPagesLoaded = 1;
-
-            //set variable that stores total number of pages
             mEventQueryResults.totalNumberOfEventPages = eventsNearby.getTotalPages();
-
-            //clears events list before adding events to it
             mEventQueryResults.events.clear();
-
-            //add events to cache
             mEventQueryResults.events.addAll(events);
 
-            //set events adapter with new events
             displayEventsInMap();
         } else {
-            //if call to backend was not successful
             Toast.makeText(getActivity(),getString(R.string.error_generic),Toast.LENGTH_SHORT).show();
         }
 
-        //hide loading overlay
         mLoadingOverlay.setVisibility(View.GONE);
     }
 
@@ -258,7 +232,6 @@ public class EventsMapViewFragment extends LocationAwareFragment implements Goog
 
             LayoutInflater inflater = (LayoutInflater) mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
 
-            // Getting view from the layout file info_window_layout
             View infoWindow = inflater.inflate(R.layout.event_info_window, null);
 
             TextView eventTitleTextfield = (TextView) infoWindow.findViewById(R.id.event_name);
@@ -272,8 +245,6 @@ public class EventsMapViewFragment extends LocationAwareFragment implements Goog
             venueNameTextfield.setText("@ " + mMarkers.get(marker.getId()).getVenue().getName());
 
             String eventImageUrl = mMarkers.get(marker.getId()).getImageURL(ImageSize.EXTRALARGE);
-
-            //load event image into eventImage imageView if event has an image
             if (eventImageUrl.length() > 0) {
                 Picasso.with(mContext)
                         .load(eventImageUrl)
@@ -282,7 +253,6 @@ public class EventsMapViewFragment extends LocationAwareFragment implements Goog
             }
 
 
-            // Returning the view containing InfoWindow contents
             return infoWindow;
         }
 
@@ -307,21 +277,17 @@ public class EventsMapViewFragment extends LocationAwareFragment implements Goog
             }
 
             @Override
-            public void onError() {
-            }
+            public void onError() {}
         };
     }
 
     @Override
     public void onInfoWindowClick(Marker marker) {
         Gson gson = new Gson();
-        //get Event for marker
         Event event = mMarkers.get(marker.getId());
 
-        //serialize event using GSON
         String serializedEvent = gson.toJson(event, Event.class);
 
-        //starts EventDetailsActivity
         Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
         ActivityOptions activityOptions = ActivityOptions.makeCustomAnimation(getActivity().getApplicationContext(), R.anim.slide_in_right, R.anim.slide_out_left);
 

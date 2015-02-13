@@ -53,12 +53,10 @@ public class EventSocialMediaFragment extends Fragment implements TwitterGuestSe
 
         Gson gson = new Gson();
 
-        //serializes event into string using Gson
         String serializedEvent = gson.toJson(event, Event.class);
 
         Bundle args = new Bundle();
 
-        //adds serialized event to bundle
         args.putString(ARG_EVENT, serializedEvent);
         fragment.setArguments(args);
 
@@ -168,13 +166,16 @@ public class EventSocialMediaFragment extends Fragment implements TwitterGuestSe
         }
     }
 
+
+    //creates search query that Twitter API will understand given an event
+    // creates query to search twitter for tweets containing any of first 5 artists at event, event name, or venue name
     private String createSearchQuery(Event event) {
         String query = "";
 
-        int count = 0;
+        int counter = 0;
         for (String artist : event.getArtists()) {
-            if (count < 5) {
-                count ++;
+            if (counter < 5) {
+                counter ++;
                 query += " OR " + "\"" + artist + "\" ";
             }
         }

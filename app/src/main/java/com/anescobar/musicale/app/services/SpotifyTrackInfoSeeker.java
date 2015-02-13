@@ -40,12 +40,10 @@ public class SpotifyTrackInfoSeeker {
                              final SpotifyTrackInfoTaskListener listener, final Context context, final String trackId) throws NetworkNotAvailableException {
 
         if (mNetworkUtil.isNetworkAvailable(context)) {
-            //let listener know that task is about to start
             listener.onSpotifyTrackInfoFetcherTaskAboutToStart(trackId);
 
             OkHttpClient client = new OkHttpClient();
 
-            //create url for request
             String sanitizedArtist = null;
             String sanitizedTrackName = null;
             try {

@@ -56,10 +56,9 @@ public class EventDetailsActivity extends BaseActivity
     @Override
     public void onResume() {
         super.onResume();
-        // Set the pager with an adapter
-        mPager.setAdapter(new EventDetailsPagerAdapter(getSupportFragmentManager(), this, mEvent));
 
-        // Bind the tabs to the ViewPager
+        mPager.setAdapter(new EventDetailsPagerAdapter(getSupportFragmentManager(), this, mEvent));
+        mPager.setOffscreenPageLimit(3);
         mTabs.setViewPager(mPager);
     }
 

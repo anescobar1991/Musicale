@@ -33,13 +33,11 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
     private ArrayList<Event> mEvents;
     private Context mContext;
 
-    // Adapter's Constructor
     public EventsAdapter(Context context, ArrayList<Event> events) {
         mEvents = events;
         mContext = context;
     }
 
-    // Create new views. This is invoked by the layout manager.
     @Override
     public EventsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
                                                          int viewType) {
@@ -49,17 +47,15 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         return new ViewHolder(view);
     }
 
-    // Replace the contents of a view. This is invoked by the layout manager.
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
-        //sets event card details
         holder.mEventTitleTextView.setText(mEvents.get(position).getTitle());
         //gets event date as Date object but only needs MMDDYYYY, not the timestamp
         holder.mEventDateTextView.setText(mEvents.get(position).getStartDate().toLocaleString().substring(0, 12));
         holder.mEventVenueNameTextView.setText("@ " + mEvents.get(position).getVenue().getName());
         holder.mVenueLocationTextView.setText(mEvents.get(position).getVenue().getCity() + " " + mEvents.get(position).getVenue().getCountry());
+
         String eventImageUrl = mEvents.get(position).getImageURL(ImageSize.EXTRALARGE);
-        // if there is an image for the event load it into view. Else load placeholder into view
         if (eventImageUrl.length() > 0) {
             Picasso.with(mContext)
                     .load(eventImageUrl)
@@ -69,15 +65,12 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
             holder.mEventImage.setImageResource(R.drawable.placeholder);
         }
 
-//        sets onClickListener for entire card
         holder.mEventCard.setOnClickListener(new RelativeLayout.OnClickListener() {
             public void onClick(View v) {
                 Gson gson = new Gson();
 
-                //serialize event using GSON
                 String serializedEvent = gson.toJson(mEvents.get(position), Event.class);
 
-                //starts EventDetailsActivity
                 Intent intent = new Intent(mContext, EventDetailsActivity.class);
                 intent.putExtra("EVENT", serializedEvent);
                 ActivityOptions activityOptions = ActivityOptions.makeCustomAnimation(mContext, R.anim.slide_in_right, R.anim.slide_out_left);
@@ -88,13 +81,11 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
     }
 
 
-    // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
         return mEvents.size();
     }
 
-    // Create the ViewHolder class to keep references to your views
     public static class ViewHolder extends RecyclerView.ViewHolder {
         @InjectView(R.id.event_card) RelativeLayout mEventCard;
         @InjectView(R.id.event_image) ImageView mEventImage;
@@ -103,10 +94,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         @InjectView(R.id.event_venue_name) TextView mEventVenueNameTextView;
         @InjectView(R.id.event_venue_location) TextView mVenueLocationTextView;
 
-        /**
-         * Constructor
-         * @param view The container view which holds the elements from the row item xml
-         */
+
         public ViewHolder(View view) {
             super(view);
             ButterKnife.inject(this, view);

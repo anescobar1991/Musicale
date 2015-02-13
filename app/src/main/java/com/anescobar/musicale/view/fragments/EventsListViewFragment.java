@@ -53,7 +53,6 @@ public class EventsListViewFragment extends LocationAwareFragment implements Eve
     private boolean mAdapterSet = false;
 
     public EventsListViewFragment() {
-        // Required empty public constructor
     }
 
     @Override
@@ -117,15 +116,9 @@ public class EventsListViewFragment extends LocationAwareFragment implements Eve
     }
 
     private void setEventsAdapter() {
-        // only sets up adapter if it hasnt been setup already
         if (!mAdapterSet) {
-            // Create the adapter
             mAdapter = new EventsAdapter(getActivity(), mEventQueryResults.events);
-
-            //set recycler view with adapter
             mRecyclerView.setAdapter(mAdapter);
-
-            //sets the onScrollListener that will inform us of when user has scrolled to bottom of recycleView
             mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
 
                 @Override
@@ -135,7 +128,6 @@ public class EventsListViewFragment extends LocationAwareFragment implements Eve
                 public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                     int loadNextPagePoint = mAdapter.getItemCount()/2;
 
-                    //if user has scrolled to halfway point of list and there are still pages of events left then will fetch next page
                     if (mLayoutManager.findFirstVisibleItemPosition() > loadNextPagePoint && !mCurrentlyGettingEvents && mEventQueryResults.totalNumberOfEventPages > mEventQueryResults.numberOfEventPagesLoaded) {
                         getEventsFromServer(mEventQueryResults.numberOfEventPagesLoaded + 1, mSearchLocation.searchLatLng);
                     }
@@ -144,12 +136,10 @@ public class EventsListViewFragment extends LocationAwareFragment implements Eve
 
             mAdapterSet = true;
         } else {
-            //notifies adapter of data set change so that it can update view
             mAdapter.notifyDataSetChanged();
         }
     }
 
-    //gets events from backend, keeps track of how many pages are already loaded and cached
     public void getEventsFromServer(Integer pageNumber, LatLng userLocation) {
         try {
             mEventQueryResults.numberOfEventPagesLoaded = pageNumber;
@@ -166,13 +156,11 @@ public class EventsListViewFragment extends LocationAwareFragment implements Eve
         }
     }
 
-    //called onPreExecute of eventsFetcherTask
     @Override
     public void onEventFetcherTaskAboutToStart() {
         mCurrentlyGettingEvents = true;
         mMessageContainer.setVisibility(View.GONE);
 
-        //display loading progressbar in middle of screen if it is loading first page of events
         if (mEventQueryResults.numberOfEventPagesLoaded == 1) {
             mRecyclerView.setVisibility(View.INVISIBLE);
             if (!mEventsListSwipeRefreshLayout.isRefreshing()) {
@@ -181,27 +169,21 @@ public class EventsListViewFragment extends LocationAwareFragment implements Eve
         }
     }
 
-    //called onPostExecute of eventsFetcherTask
     @Override
     public void onEventFetcherTaskCompleted(PaginatedResult<Event> eventsNearby) {
         mEventsListSwipeRefreshLayout.setRefreshing(false);
         mCurrentlyGettingEvents = false;
 
-        //if last call was successful then load events to screen
         if (Caller.getInstance().getLastResult().isSuccessful()) {
             ArrayList<Event> events= new ArrayList<>(eventsNearby.getPageResults());
 
-            //set variable that stores total number of pages
             mEventQueryResults.totalNumberOfEventPages = eventsNearby.getTotalPages();
 
             if (mEventQueryResults.numberOfEventPagesLoaded == 1) {
-                //clears events list before adding events to it
                 mEventQueryResults.events.clear();
             }
-            //add events to mEvents
             mEventQueryResults.events.addAll(events);
 
-            //set events adapter with new events
             setEventsAdapter();
         } else {
             setErrorMessage(getString(R.string.error_generic));
@@ -234,7 +216,6 @@ public class EventsListViewFragment extends LocationAwareFragment implements Eve
     }
 
     public void refreshEvents(LatLng searchLatLng) {
-        //calls eventsListViewFragment's getEvents method, which gets events from backend and displays and stores them as needed
         getEventsFromServer(1, searchLatLng);
     }
 

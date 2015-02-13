@@ -25,7 +25,6 @@ public class AboutMusicaleFragment extends Fragment {
     @InjectView(R.id.floating_action_button_license) WebView mFloatingActionButtonLicenseWebview;
 
     public AboutMusicaleFragment() {
-        // Required empty public constructor
     }
 
     @Override

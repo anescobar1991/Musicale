@@ -193,32 +193,25 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
         if (mCachedVenueDetailsGetterSetter.getVenueDetails().upcomingEvents != null) {
             populateOtherEventsContainer(mCachedVenueDetailsGetterSetter.getVenueDetails().upcomingEvents);
         } else {
-            //gets venue Events from backend
             getVenueEvents(mVenueDetails.venue.getId());
         }
 
-        //-------------loads all dynamic data into view-----------------
-
-        //downloads venue image into view if there is image
         if (venue.getImageURL(ImageSize.EXTRALARGE).length() > 0) {
             Picasso.with(getActivity()).load(venue.getImageURL(ImageSize.EXTRALARGE))
                     .placeholder(R.drawable.placeholder)
                     .centerInside()
                     .resize(360, 360)
                     .into(mVenueImage);
-            //else will load placeholder image into view
         } else {
             mVenueImage.setImageResource(R.drawable.placeholder);
         }
 
-        //hide venueUrl textview and image if there is no venue Url available
         if (venue.getWebsite().length() == 0) {
             mVenueUrlTextView.setVisibility(View.GONE);
         } else {
             mVenueUrlTextView.setText(venue.getWebsite());
         }
 
-        //hide venue phone number textview and image if there is no venue phone number available
         if (venue.getPhonenumber().length() == 0) {
             mVenuePhoneNumberTextView.setVisibility(View.GONE);
         } else {
@@ -237,11 +230,9 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
             mVenueAddress.setText(venue.getStreet() + getString(R.string.event_address_separator) + venue.getCity() + getString(R.string.event_address_separator) + venue.getCountry());
         }
 
-        //sets up map, with its settings, and adds event markers
         setUpMapIfNeeded(mVenueDetails.venue);
     }
 
-    //sends intent to open Google maps application at specified location with specified label
     private void showVenueInMap(Float venueLat, Float venueLng, String venueName) {
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(Uri.parse("geo:0,0?q=" + venueLat + "," + venueLng + "(" + venueName + ")"));
@@ -261,14 +252,13 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
         TextView eventVenueNameTextView = (TextView) view.findViewById(R.id.event_venue_name);
         TextView venueLocationTextView = (TextView) view.findViewById(R.id.event_venue_location);
 
-        //sets event card details
         eventTitleTextView.setText(event.getTitle());
         //gets event date as Date object but only needs MMDDYYYY, not the timestamp
         eventDateTextView.setText(event.getStartDate().toLocaleString().substring(0, 12));
         eventVenueNameTextView.setText("@ " + event.getVenue().getName());
         venueLocationTextView.setText(event.getVenue().getCity() + " " + event.getVenue().getCountry());
+
         String eventImageUrl = event.getImageURL(ImageSize.EXTRALARGE);
-        // if there is an image for the event load it into view. Else load placeholder into view
         if (eventImageUrl.length() > 0) {
             Picasso.with(getActivity())
                     .load(eventImageUrl)
@@ -278,15 +268,12 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
             eventImage.setImageResource(R.drawable.placeholder);
         }
 
-        //sets onClickListener for event card button
         eventCard.setOnClickListener(new RelativeLayout.OnClickListener() {
             public void onClick(View v) {
                 Gson gson = new Gson();
 
-                //serialize event using GSON
                 String serializedEvent = gson.toJson(event, Event.class);
 
-                //starts EventDetailsActivity
                 Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
                 intent.putExtra("EVENT", serializedEvent);
                 ActivityOptions activityOptions = ActivityOptions.makeCustomAnimation(getActivity().getApplicationContext(), R.anim.slide_in_right, R.anim.slide_out_left);

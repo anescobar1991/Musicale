@@ -27,9 +27,8 @@ public class EventDetailsPagerAdapter extends FragmentPagerAdapter {
         super(fm);
 
         mEvent = event;
-        //add titles to lists
-        titles.add(context.getString(R.string.event_details_about_venue_tab));
         titles.add(context.getString(R.string.event_details_about_artist_tab));
+        titles.add(context.getString(R.string.event_details_about_venue_tab));
         titles.add(context.getString(R.string.event_details_social_media_tab));
     }
 
@@ -38,10 +37,10 @@ public class EventDetailsPagerAdapter extends FragmentPagerAdapter {
         Fragment fragment = null;
         switch (position) {
             case 0:
-                fragment = AboutEventVenueFragment.newInstance(mEvent.getVenue());
+                fragment = AboutArtistFragment.newInstance(mEvent.getHeadliner());
                 break;
             case 1:
-                fragment = AboutArtistFragment.newInstance(mEvent.getHeadliner());
+                fragment = AboutEventVenueFragment.newInstance(mEvent.getVenue());
                 break;
             case 2:
                 fragment = EventSocialMediaFragment.newInstance(mEvent);
