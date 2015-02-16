@@ -53,7 +53,7 @@ public class EventsActivity extends BaseActivity {
         switch (item.getItemId()) {
             case R.id.action_about_musicale:
                 Intent intent = new Intent(this, AboutMusicaleActivity.class);
-                ActivityOptions activityOptions = ActivityOptions.makeCustomAnimation(this, R.anim.push_down_in, R.anim.abc_fade_out);
+                ActivityOptions activityOptions = ActivityOptions.makeCustomAnimation(this, R.anim.slide_in_right, R.anim.slide_out_left);
 
                 Crashlytics.log("User entered About Musicale screen");
 

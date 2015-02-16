@@ -71,7 +71,6 @@ public class SearchFragment extends LocationAwareFragment implements AddressesFe
 
 // Will use this in next iteration
 
-//    @SuppressWarnings("unused") // it's actually used, just injected by Butter Knife
 //    @OnTextChanged(R.id.keyword_search_edit_text) void onTextChanged(CharSequence text) {
 //        if (text.length() > 0) {
 //            mKeywordSearchField.getCompoundDrawables()[2].setAlpha(255);
@@ -81,7 +80,6 @@ public class SearchFragment extends LocationAwareFragment implements AddressesFe
 //    }
 //
 //    //onTouch listener for keyword search clear button
-//    @SuppressWarnings("unused") // it's actually used, just injected by Butter Knife
 //    @OnTouch(R.id.keyword_search_edit_text) boolean onClearTextButtonTouch(MotionEvent event) {
 //        if (event.getAction() == MotionEvent.ACTION_UP) {
 //            int leftEdgeOfRightDrawable = mKeywordSearchField.getRight()
@@ -104,7 +102,6 @@ public class SearchFragment extends LocationAwareFragment implements AddressesFe
         }
     }
 
-    //onTouch listener for keyword search clear button
     @SuppressWarnings("unused") // it's actually used, just injected by Butter Knife
     @OnTouch(R.id.search_area_edit_text) boolean onUseCurrentLocationButtonTouch(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_UP) {
