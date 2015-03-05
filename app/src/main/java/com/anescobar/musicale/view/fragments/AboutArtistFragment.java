@@ -7,6 +7,7 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -67,6 +68,7 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
     @InjectView(R.id.artist_tags) TextView mArtistTags;
     @InjectView(R.id.similar_artists_container) LinearLayout mSimilarArtistsContainer;
     @InjectView(R.id.artist_image) ImageView mArtistImage;
+    @InjectView(R.id.artist_top_tracks_card) CardView mTopTracksCard;
 
     private MediaPlayer mMediaPlayer;
     private String mArtist;
@@ -284,12 +286,15 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
     private void populateTopTracksContainer(Collection<Track> tracks) {
         //if activity has been killed then no need to attempt to populate view with tracks
         if (getActivity() != null) {
-            //displays first 5 top tracks
-            int counter = 0;
-            for(Track track : tracks) {
-                if (counter < 5) {
-                    counter ++;
-                    addTopTrackLink(track, mTopTracksContainer);
+            if (tracks.isEmpty()) {
+                mTopTracksCard.setVisibility(View.GONE);
+            } else {
+                int counter = 0;
+                for(Track track : tracks) {
+                    if (counter < 5) {
+                        counter ++;
+                        addTopTrackLink(track, mTopTracksContainer);
+                    }
                 }
             }
             mContainer.setVisibility(View.VISIBLE);

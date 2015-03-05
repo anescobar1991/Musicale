@@ -13,7 +13,6 @@
         android:clipToPadding="false"
         android:layout_height="wrap_content">
 
-        <!--TODO replace this with musicale logo once it exists-->
         <ImageView
             android:id="@+id/musicale_logo"
             android:layout_width="80dp"
@@ -21,7 +20,7 @@
             android:adjustViewBounds="true"
             android:layout_height="80dp"
             android:contentDescription="@string/app_name"
-            android:src="@drawable/placeholder"/>
+            android:src="@drawable/ic_musicale_logo"/>
 
         <TextView
             android:id="@+id/musicale_description"
