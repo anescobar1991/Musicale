@@ -60,14 +60,17 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
 
     @InjectView(R.id.content) LinearLayout mContainer;
     @InjectView(R.id.about_artist_progressbar) ProgressBar mContentLoadingProgressBar;
-    @InjectView(R.id.upcoming_events_container) LinearLayout mUpcomingEventsContainer;
-    @InjectView(R.id.top_tracks_container) LinearLayout mTopTracksContainer;
     @InjectView(R.id.message_container) TextView mErrorMessageContainer;
+    @InjectView(R.id.about_artist_card) CardView mAboutArtistCard;
     @InjectView(R.id.artist_name) TextView mArtistName;
     @InjectView(R.id.artist_bio) TextView mArtistBio;
     @InjectView(R.id.artist_tags) TextView mArtistTags;
-    @InjectView(R.id.similar_artists_container) LinearLayout mSimilarArtistsContainer;
     @InjectView(R.id.artist_image) ImageView mArtistImage;
+    @InjectView(R.id.upcoming_events_container) LinearLayout mUpcomingEventsContainer;
+    @InjectView(R.id.artist_upcoming_events_card) CardView mUpcomingEventsCard;
+    @InjectView(R.id.similar_artists_container) LinearLayout mSimilarArtistsContainer;
+    @InjectView(R.id.artist_similar_artists_card) CardView mSimilarArtistsCard;
+    @InjectView(R.id.top_tracks_container) LinearLayout mTopTracksContainer;
     @InjectView(R.id.artist_top_tracks_card) CardView mTopTracksCard;
 
     private MediaPlayer mMediaPlayer;
@@ -136,6 +139,26 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+
+        mCachedArtistDetailsGetterSetter.setArtistDetails(mArtistDetails);
+
+        mMediaPlayer.release();
+
+        //reset all track's play buttons
+        resetPlayButtonForTracksNotPlaying(null);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        mMediaPlayer = new MediaPlayer();
+        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+    }
+
+    @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
@@ -187,24 +210,27 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
         }
 
         displaySimilarArtists(artist.getSimilar());
+
+        mAboutArtistCard.setVisibility(View.VISIBLE);
+        mContainer.setVisibility(View.VISIBLE);
+        mContentLoadingProgressBar.setVisibility(View.GONE);
     }
 
     @Override
-    public void onArtistInfoFetcherTaskAboutToStart() {
-    }
+    public void onArtistInfoFetcherTaskAboutToStart() {}
 
     @Override
     public void onArtistInfoFetcherTaskCompleted(Artist artist) {
-        mArtistDetails.artist = artist;
-        try {
-            if (getActivity() != null) {
+        if (getActivity() != null) {
+            mArtistDetails.artist = artist;
+            try {
                 new ArtistInfoSeeker().getArtistTopTracks(artist.getName(), this, getActivity().getApplicationContext());
+            } catch (NetworkNotAvailableException e) {
+                displayErrorMessage(getString(R.string.error_no_network_connectivity));
             }
-        } catch (NetworkNotAvailableException e) {
-            displayErrorMessage(getString(R.string.error_no_network_connectivity));
-        }
 
-        setUpView(artist);
+            setUpView(artist);
+        }
     }
 
     private void setUpArtistCard(final Artist artist, final LinearLayout parentView) {
@@ -273,73 +299,74 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
 
 
     @Override
-    public void onArtistTopTrackFetcherTaskAboutToStart() {
-    }
+    public void onArtistTopTrackFetcherTaskAboutToStart() {}
 
     @Override
     public void onArtistTopTrackFetcherTaskCompleted(Collection<Track> tracks) {
-        mArtistDetails.topTracks = tracks;
+        //if activity has been killed then no need to attempt to populate view with tracks
+        if (getActivity() != null && !tracks.isEmpty()) {
+            mArtistDetails.topTracks = tracks;
 
-        populateTopTracksContainer(tracks);
+            populateTopTracksContainer(tracks);
+        }
     }
 
     private void populateTopTracksContainer(Collection<Track> tracks) {
-        //if activity has been killed then no need to attempt to populate view with tracks
-        if (getActivity() != null) {
-            if (tracks.isEmpty()) {
-                mTopTracksCard.setVisibility(View.GONE);
-            } else {
-                int counter = 0;
-                for(Track track : tracks) {
-                    if (counter < 5) {
-                        counter ++;
-                        addTopTrackLink(track, mTopTracksContainer);
-                    }
-                }
+        int counter = 0;
+        for(Track track : tracks) {
+            if (counter < 5) {
+                counter ++;
+                addTopTrackLink(track, mTopTracksContainer);
             }
-            mContainer.setVisibility(View.VISIBLE);
-            mContentLoadingProgressBar.setVisibility(View.GONE);
         }
+
+        mTopTracksCard.setVisibility(View.VISIBLE);
+        mContainer.setVisibility(View.VISIBLE);
+        mContentLoadingProgressBar.setVisibility(View.GONE);
     }
 
     private void displaySimilarArtists(Collection<Artist> artists) {
         //only populates view with similar artists if activity hasnt been killed
         if (getActivity() != null) {
-            for (Artist artist : artists) {
-                setUpArtistCard(artist, mSimilarArtistsContainer);
-            }
-            if (artists.isEmpty()) {
-                mSimilarArtistsContainer.setVisibility(View.GONE);
+            if (!artists.isEmpty()) {
+                populateSimilarArtistsContainer(artists);
+
+                mSimilarArtistsCard.setVisibility(View.VISIBLE);
+                mContainer.setVisibility(View.VISIBLE);
+                mContentLoadingProgressBar.setVisibility(View.GONE);
             }
         }
     }
 
-    private void displayErrorMessage(String message) {
-        mContentLoadingProgressBar.setVisibility(View.GONE);
-        mErrorMessageContainer.setText(message);
-        mErrorMessageContainer.setVisibility(View.VISIBLE);
+    private void populateSimilarArtistsContainer(Collection<Artist> artists) {
+        for (Artist artist : artists) {
+            setUpArtistCard(artist, mSimilarArtistsContainer);
+        }
     }
 
     @Override
-    public void onArtistUpcomingEventsFetcherTaskAboutToStart() {
-    }
+    public void onArtistUpcomingEventsFetcherTaskAboutToStart() {}
 
     @Override
     public void onArtistUpcomingEventsFetcherTaskCompleted(PaginatedResult<Event> events) {
-        mArtistDetails.upcomingEvents = events.getPageResults();
+        //if activity is null(b/c user navigated away from screen) then shouldnt load events to screen
+        if (getActivity() != null) {
+            mArtistDetails.upcomingEvents = events.getPageResults();
 
-        populateUpcomingEventsContainer(events.getPageResults());
+            if (!events.isEmpty()) {
+                populateUpcomingEventsContainer(events.getPageResults());
+            }
+        }
     }
 
     private void populateUpcomingEventsContainer(Collection<Event> events) {
-        //if activity is null(b/c user navigated away from screen) then shouldnt load events to screen
-        if (getActivity() != null && !events.isEmpty()) {
-            for (Event event : events) {
-                setUpEventCard(event, mUpcomingEventsContainer);
-            }
-
-            mUpcomingEventsContainer.setVisibility(View.VISIBLE);
+        for (Event event : events) {
+            setUpEventCard(event, mUpcomingEventsContainer);
         }
+
+        mUpcomingEventsCard.setVisibility(View.VISIBLE);
+        mContainer.setVisibility(View.VISIBLE);
+        mContentLoadingProgressBar.setVisibility(View.GONE);
     }
 
     private void setUpEventCard(final Event event, final LinearLayout parentView) {
@@ -440,9 +467,7 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
                 try {
 
                     mMediaPlayer.reset();
-
                     mMediaPlayer.setDataSource(track.previewUrl);
-
                     mMediaPlayer.prepareAsync();
 
                     mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
@@ -483,26 +508,6 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
         }
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-
-        mCachedArtistDetailsGetterSetter.setArtistDetails(mArtistDetails);
-
-        mMediaPlayer.release();
-
-        //reset all track's play buttons
-        resetPlayButtonForTracksNotPlaying(null);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        mMediaPlayer = new MediaPlayer();
-        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-    }
-
     private void resetPlayButtonForTracksNotPlaying(String currentlyPlayingTrackId) {
         for (View trackLink : mTrackLinks) {
             if (trackLink.getTag() != currentlyPlayingTrackId) {
@@ -515,5 +520,11 @@ public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTa
                 stopButton.setVisibility(View.GONE);
             }
         }
+    }
+
+    private void displayErrorMessage(String message) {
+        mContentLoadingProgressBar.setVisibility(View.GONE);
+        mErrorMessageContainer.setText(message);
+        mErrorMessageContainer.setVisibility(View.VISIBLE);
     }
 }

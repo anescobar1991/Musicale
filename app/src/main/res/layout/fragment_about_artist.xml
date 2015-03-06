@@ -37,6 +37,7 @@
                 xmlns:card_view="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/about_artist_card"
                 android:layout_gravity="center"
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_margin="8dp"
                 card_view:cardBackgroundColor="@color/white"
@@ -93,50 +94,9 @@
 
             <android.support.v7.widget.CardView
                 xmlns:card_view="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/artist_top_tracks_card"
-                android:layout_gravity="center"
-                android:layout_width="match_parent"
-                android:layout_margin="8dp"
-                card_view:cardBackgroundColor="@color/white"
-                android:layout_height="wrap_content"
-                card_view:cardCornerRadius="4dp">
-
-                <LinearLayout
-                    android:id="@+id/top_tracks_container"
-                    android:layout_width="match_parent"
-                    android:orientation="vertical"
-                    android:paddingBottom="16dp"
-                    android:paddingTop="16dp"
-                    android:paddingLeft="8dp"
-                    android:paddingRight="8dp"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:id="@+id/artist_top_tracks_card_title"
-                        android:layout_width="wrap_content"
-                        android:textSize="20sp"
-                        android:text="@string/about_artist_top_tracks_text"
-                        android:textStyle="bold"
-                        android:layout_gravity="center_horizontal"
-                        android:textColor="@color/accent"
-                        android:layout_marginBottom="4dp"
-                        android:layout_height="wrap_content"/>
-
-                    <!--Thin line separator-->
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginBottom="16dp"
-                        android:background="@color/border_default_grey"/>
-
-                </LinearLayout>
-
-            </android.support.v7.widget.CardView>
-
-            <android.support.v7.widget.CardView
-                xmlns:card_view="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/artist_similar_artists_card"
                 android:layout_gravity="center"
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_margin="8dp"
                 card_view:cardBackgroundColor="@color/white"
@@ -179,6 +139,7 @@
                 xmlns:card_view="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/artist_upcoming_events_card"
                 android:layout_gravity="center"
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_margin="8dp"
                 card_view:cardBackgroundColor="@color/white"
@@ -189,7 +150,6 @@
                     android:id="@+id/upcoming_events_container"
                     android:layout_width="match_parent"
                     android:orientation="vertical"
-                    android:visibility="gone"
                     android:paddingBottom="16dp"
                     android:paddingTop="16dp"
                     android:paddingLeft="8dp"
@@ -211,6 +171,49 @@
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         android:layout_marginTop="4dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@color/border_default_grey"/>
+
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/artist_top_tracks_card"
+                android:visibility="gone"
+                android:layout_gravity="center"
+                android:layout_width="match_parent"
+                android:layout_margin="8dp"
+                card_view:cardBackgroundColor="@color/white"
+                android:layout_height="wrap_content"
+                card_view:cardCornerRadius="4dp">
+
+                <LinearLayout
+                    android:id="@+id/top_tracks_container"
+                    android:layout_width="match_parent"
+                    android:orientation="vertical"
+                    android:paddingBottom="16dp"
+                    android:paddingTop="16dp"
+                    android:paddingLeft="8dp"
+                    android:paddingRight="8dp"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/artist_top_tracks_card_title"
+                        android:layout_width="wrap_content"
+                        android:textSize="20sp"
+                        android:text="@string/about_artist_top_tracks_text"
+                        android:textStyle="bold"
+                        android:layout_gravity="center_horizontal"
+                        android:textColor="@color/accent"
+                        android:layout_marginBottom="4dp"
+                        android:layout_height="wrap_content"/>
+
+                    <!--Thin line separator-->
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
                         android:layout_marginBottom="16dp"
                         android:background="@color/border_default_grey"/>
 

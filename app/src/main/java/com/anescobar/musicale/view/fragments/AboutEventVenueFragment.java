@@ -2,10 +2,7 @@ package com.anescobar.musicale.view.fragments;
 
 import android.app.Activity;
 import android.app.ActivityOptions;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
@@ -61,9 +58,7 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
     @InjectView(R.id.venue_image) ImageView mVenueImage;
 
 
-    public AboutEventVenueFragment() {
-        // Required empty public constructor
-    }
+    public AboutEventVenueFragment() {}
 
     public interface CachedVenueDetailsGetterSetter {
         VenueDetails getVenueDetails();
@@ -75,12 +70,9 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
 
         Gson gson = new Gson();
 
-        //serializes event into string using Gson
         String serializedVenue = gson.toJson(venue, Venue.class);
-
         Bundle args = new Bundle();
 
-        //adds serialized event to bundle
         args.putString(ARG_VENUE, serializedVenue);
         fragment.setArguments(args);
 
@@ -153,38 +145,12 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
                 map.moveCamera(CameraUpdateFactory.newLatLngZoom(venueLocation, 14));
                 map.setBuildingsEnabled(true);
                 map.setIndoorEnabled(false);
-
-                //disables user interaction
                 map.getUiSettings().setAllGesturesEnabled(false);
 
                 //adds marker for venue location
                 map.addMarker(new MarkerOptions()
                                 .position(venueLocation)
                 );
-
-                //sets click listener for when user taps anywhere in map
-                map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-                    @Override
-                    public void onMapClick(LatLng latLng) {
-                        //create dialog
-                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                        // Add the buttons
-                        builder.setPositiveButton(R.string.open_in_map, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                showVenueInMap(venue.getLatitude(), venue.getLongitude(), venue.getName());
-                            }
-                        });
-                        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                            }
-                        });
-
-                        // Set dialog's message
-                        builder.setMessage(R.string.open_in_map_question);
-                        // Create the AlertDialog
-                        builder.show();
-                    }
-                });
             }
         });
     }
@@ -233,14 +199,6 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
         setUpMapIfNeeded(mVenueDetails.venue);
     }
 
-    private void showVenueInMap(Float venueLat, Float venueLng, String venueName) {
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(Uri.parse("geo:0,0?q=" + venueLat + "," + venueLng + "(" + venueName + ")"));
-        if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
-            getActivity().startActivity(intent);
-        }
-    }
-
     private void setUpEventCard(final Event event, final ViewGroup parentView) {
         LayoutInflater vi = LayoutInflater.from(getActivity());
         View view = vi.inflate(R.layout.event_card, parentView, false);
@@ -286,8 +244,7 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
     }
 
     @Override
-    public void onVenueEventsFetcherTaskAboutToStart() {
-    }
+    public void onVenueEventsFetcherTaskAboutToStart() {}
 
     @Override
     public void onVenueEventsFetcherTaskCompleted(Collection<Event> events) {
@@ -308,7 +265,6 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
 
             mLoadingProgressbar.setVisibility(View.GONE);
 
-            //sets content area visible
             mAboutVenueContainer.setVisibility(View.VISIBLE);
         }
     }

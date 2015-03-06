@@ -55,9 +55,7 @@ public class EventsMapViewFragment extends LocationAwareFragment implements Goog
     private HashMap<String, Event> mMarkers = new HashMap<>();
     private ArrayList<LatLng> mMarkerPositions = new ArrayList<>();
 
-    public EventsMapViewFragment() {
-        // Required empty public constructor
-    }
+    public EventsMapViewFragment() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -89,19 +87,12 @@ public class EventsMapViewFragment extends LocationAwareFragment implements Goog
     public void onConnected(Bundle bundle) {
         if (mSearchLocation.searchLatLng == null) {
             try {
-                setUpMapIfNeeded(getCurrentLatLng());
+                setUpMap(getCurrentLatLng());
             } catch (LocationNotAvailableException e) {
                 Toast.makeText(getActivity(),R.string.error_location_services_disabled, Toast.LENGTH_SHORT).show();
             }
-        }
-    }
-
-    @Override
-    public void onResume(){
-        super.onResume();
-
-        if (mSearchLocation.searchLatLng != null) {
-            setUpMapIfNeeded(mSearchLocation.searchLatLng);
+        } else {
+            setUpMap(mSearchLocation.searchLatLng);
         }
     }
 
@@ -126,24 +117,16 @@ public class EventsMapViewFragment extends LocationAwareFragment implements Goog
         }
     }
 
-    private void setUpMapIfNeeded(LatLng searchAreaLatLng) {
+    private void setUpMap(LatLng searchAreaLatLng) {
         if (mMap == null) {
             mMap = mMapFragment.getMap();
-
-            mMap.setInfoWindowAdapter(new EventMarkerInfoWindowAdapter(getActivity()));
         }
-        setUpMap(searchAreaLatLng);
-    }
 
-    /**
-     * This is where map is setup with home and with current or searched location as center
-     * This should only be called once and when we are sure that {@link #mMap} is not null.
-     */
-    private void setUpMap(LatLng searchAreaLatLng) {
         UiSettings mapSettings = mMap.getUiSettings();
         mMap.setMyLocationEnabled(true);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(searchAreaLatLng, 10));
         mMap.setMyLocationEnabled(true);
+        mMap.setInfoWindowAdapter(new EventMarkerInfoWindowAdapter(getActivity()));
         mapSettings.setZoomControlsEnabled(false);
         mapSettings.setMyLocationButtonEnabled(false);
         mapSettings.setTiltGesturesEnabled(false);

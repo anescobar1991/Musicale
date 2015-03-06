@@ -15,8 +15,6 @@ import com.anescobar.musicale.view.fragments.EventsMapViewFragment;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
-import com.crashlytics.android.Crashlytics;
-
 public class EventsActivity extends BaseActivity {
 
 
@@ -55,8 +53,6 @@ public class EventsActivity extends BaseActivity {
                 Intent intent = new Intent(this, AboutMusicaleActivity.class);
                 ActivityOptions activityOptions = ActivityOptions.makeCustomAnimation(this, R.anim.slide_in_right, R.anim.slide_out_left);
 
-                Crashlytics.log("User entered About Musicale screen");
-
                 startActivity(intent, activityOptions.toBundle());
                 return true;
             case R.id.action_refresh_event_list:
@@ -69,8 +65,6 @@ public class EventsActivity extends BaseActivity {
                 return true;
             case R.id.action_explore_in_map:
                 addFragmentToActivity(R.id.activity_events_container, new EventsMapViewFragment(), EVENTS_MAP_VIEW_FRAGMENT_TAG);
-
-                Crashlytics.log("User entered explore in map screen");
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

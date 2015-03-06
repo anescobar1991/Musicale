@@ -29,8 +29,7 @@ public class EventInfoHeaderFragment extends Fragment {
     @InjectView(R.id.event_date) TextView mEventDateTextView;
     @InjectView(R.id.event_image) ImageView mEventImageView;
 
-    public EventInfoHeaderFragment() {
-    }
+    public EventInfoHeaderFragment() {}
 
     public static EventInfoHeaderFragment newInstance(Event event) {
         EventInfoHeaderFragment eventInfoHeaderFragment = new EventInfoHeaderFragment();
@@ -65,7 +64,6 @@ public class EventInfoHeaderFragment extends Fragment {
     }
 
     private void setUpView(Event event) {
-
         Collection<String> artistList = event.getArtists();
 
         String formattedArtists = "With ";

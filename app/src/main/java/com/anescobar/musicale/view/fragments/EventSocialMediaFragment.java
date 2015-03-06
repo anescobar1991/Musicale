@@ -45,8 +45,7 @@ public class EventSocialMediaFragment extends Fragment implements TwitterGuestSe
     @InjectView(R.id.tweets_loading_progressbar) ProgressBar mLoadingProgressBar;
     @InjectView(R.id.tweets_message_container) TextView mMessageContainer;
 
-    public EventSocialMediaFragment() {
-    }
+    public EventSocialMediaFragment() {}
 
     public static EventSocialMediaFragment newInstance(Event event) {
         EventSocialMediaFragment fragment = new EventSocialMediaFragment();
