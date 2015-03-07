@@ -5,6 +5,7 @@ import android.app.ActivityOptions;
 import android.content.Intent;
 import android.location.Address;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -30,6 +31,7 @@ import java.util.List;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import butterknife.OnEditorAction;
 import butterknife.OnTouch;
 
 public class SearchFragment extends LocationAwareFragment implements AddressesFetcherTaskListener, LatLngFromAddressFetcherTaskListener {
@@ -69,7 +71,12 @@ public class SearchFragment extends LocationAwareFragment implements AddressesFe
         }
     }
 
-// Will use this in next iteration
+    @SuppressWarnings("unused") // it's actually used, just injected by Butter Knife
+    @OnEditorAction(R.id.search_area_edit_text) boolean onEditorAction(KeyEvent key) {
+        submitSearch();
+        return true;
+    }
+    // Will use this in next iteration
 
 //    @OnTextChanged(R.id.keyword_search_edit_text) void onTextChanged(CharSequence text) {
 //        if (text.length() > 0) {
