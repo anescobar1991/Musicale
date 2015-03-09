@@ -21,10 +21,11 @@ import com.anescobar.musicale.app.models.VenueDetails;
 import com.anescobar.musicale.app.services.exceptions.NetworkNotAvailableException;
 import com.anescobar.musicale.app.services.EventsFinder;
 import com.anescobar.musicale.view.activities.EventDetailsActivity;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
@@ -41,7 +42,6 @@ import de.umass.lastfm.Venue;
 public class AboutEventVenueFragment extends Fragment implements VenueEventsFetcherListener {
 
     private static final String ARG_VENUE = "venueArg";
-    private SupportMapFragment mMapFragment;
     private EventsFinder mEventsFinder;
     private CachedVenueDetailsGetterSetter mCachedVenueDetailsGetterSetter;
     private VenueDetails mVenueDetails = new VenueDetails();
@@ -113,12 +113,6 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
         super.onStart();
 
         mEventsFinder = new EventsFinder();
-        mMapFragment = new SupportMapFragment();
-
-        //displays map fragment on screen
-        android.support.v4.app.FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-        transaction.add(R.id.venue_map_container, mMapFragment)
-                .commit();
 
         Gson gson = new Gson();
 
@@ -136,17 +130,24 @@ public class AboutEventVenueFragment extends Fragment implements VenueEventsFetc
 
     //sets up map if it hasnt already been setup,
     private void setUpMapIfNeeded(final Venue venue) {
-        mMapFragment.getMapAsync(new OnMapReadyCallback() {
+        SupportMapFragment mapFragment;
+
+        final LatLng venueLocation = new LatLng(venue.getLatitude(), venue.getLongitude());
+        GoogleMapOptions options = new GoogleMapOptions();
+
+        options.camera(CameraPosition.fromLatLngZoom(venueLocation, 14));
+        options.liteMode(true);
+
+        mapFragment = SupportMapFragment.newInstance(options);
+
+        //displays map fragment on screen
+        android.support.v4.app.FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+        transaction.add(R.id.venue_map_container, mapFragment)
+                .commit();
+
+        mapFragment.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap map) {
-                LatLng venueLocation = new LatLng(venue.getLatitude(), venue.getLongitude());
-
-                //sets map's initial state
-                map.moveCamera(CameraUpdateFactory.newLatLngZoom(venueLocation, 14));
-                map.setBuildingsEnabled(true);
-                map.setIndoorEnabled(false);
-                map.getUiSettings().setAllGesturesEnabled(false);
-
                 //adds marker for venue location
                 map.addMarker(new MarkerOptions()
                                 .position(venueLocation)
