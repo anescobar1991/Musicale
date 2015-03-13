@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<navigationModel
+  ns = "http://schemas.android.com?import=com.android.tools.idea.editors.navigation.model.*">
+  <locations  
+    class = "java.util.ArrayList">
+    <statePointEntry>
+      <state      
+        class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
+        className = "com.anescobar.musicale.view.activities.SearchActivity"/>
+      <point      
+        x = "490"      
+        y = "2111"/>
+    </statePointEntry>
+    <statePointEntry>
+      <state      
+        class = "com.android.tools.idea.editors.navigation.model.MenuState"      
+        className = "com.anescobar.musicale.view.activities.EventsActivity"/>
+      <point      
+        x = "2077"      
+        y = "91"/>
+    </statePointEntry>
+    <statePointEntry>
+      <state      
+        class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
+        className = "com.anescobar.musicale.view.activities.EventsActivity"/>
+      <point      
+        x = "490"      
+        y = "91"/>
+    </statePointEntry>
+    <statePointEntry>
+      <state      
+        class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
+        className = "com.anescobar.musicale.view.activities.ArtistDetailsActivity"/>
+      <point      
+        x = "550"      
+        y = "2170"/>
+    </statePointEntry>
+    <statePointEntry>
+      <state      
+        class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
+        className = "com.anescobar.musicale.view.activities.EventDetailsActivity"/>
+      <point      
+        x = "600"      
+        y = "2220"/>
+    </statePointEntry>
+    <statePointEntry>
+      <state      
+        class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
+        className = "com.anescobar.musicale.view.activities.AboutMusicaleActivity"/>
+      <point      
+        x = "3651"      
+        y = "91"/>
+    </statePointEntry>
+  </locations>
+</navigationModel>
