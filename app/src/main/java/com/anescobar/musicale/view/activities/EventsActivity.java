@@ -64,6 +64,7 @@ public class EventsActivity extends BaseActivity {
                 addFragmentToActivity(R.id.activity_events_container, new EventsListViewFragment(), EVENTS_LIST_VIEW_FRAGMENT_TAG);
                 return true;
             case R.id.action_explore_in_map:
+                mAnalyticsUtil.sendAnalyticsScreenHit(EventsMapViewFragment.class.getSimpleName());
                 addFragmentToActivity(R.id.activity_events_container, new EventsMapViewFragment(), EVENTS_MAP_VIEW_FRAGMENT_TAG);
                 return true;
             default:

@@ -5,6 +5,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBarActivity;
 
+import com.anescobar.musicale.app.utils.AnalyticsUtil;
+
 /**
  * Created by andres on 9/5/14.
  * Abstract class to be superclass for all activities
@@ -13,10 +15,16 @@ import android.support.v7.app.ActionBarActivity;
 
 public abstract class BaseActivity extends ActionBarActivity {
     private FragmentManager mFragmentManager;
+    protected AnalyticsUtil mAnalyticsUtil;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mAnalyticsUtil = new AnalyticsUtil(getApplication());
+
+        mAnalyticsUtil.sendAnalyticsScreenHit(getClass().getSimpleName());
+
         mFragmentManager = getSupportFragmentManager();
     }
 
@@ -29,4 +37,5 @@ public abstract class BaseActivity extends ActionBarActivity {
     protected Fragment getFragmentByTag(String tag) {
         return mFragmentManager.findFragmentByTag(tag);
     }
+
 }
