@@ -1,8 +1,8 @@
 package com.anescobar.musicale.view.activities;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBarActivity;
 
 /**
@@ -17,7 +17,7 @@ public abstract class BaseActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mFragmentManager = getFragmentManager();
+        mFragmentManager = getSupportFragmentManager();
     }
 
     protected void addFragmentToActivity(int container, Fragment fragment, String fragmentTag) {

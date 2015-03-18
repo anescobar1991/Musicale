@@ -3,7 +3,6 @@ package com.anescobar.musicale.view.fragments;
 
 import android.location.Location;
 import android.os.Bundle;
-import android.app.Fragment;
 
 import com.anescobar.musicale.app.services.exceptions.LocationNotAvailableException;
 import com.anescobar.musicale.app.models.SearchLocation;
@@ -16,7 +15,7 @@ import com.google.android.gms.maps.model.LatLng;
  * This fragment should be extended by any fragment that needs location services
  * It adds GoogleAPiClient and some methods to be used with it
  */
-public abstract class LocationAwareFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public abstract class LocationAwareFragment extends BaseFragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     protected GoogleApiClient mGoogleApiClient;
     protected SearchLocation mSearchLocation = SearchLocation.getInstance();
 

@@ -2,7 +2,6 @@ package com.anescobar.musicale.view.fragments;
 
 
 import android.os.Bundle;
-import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +19,7 @@ import butterknife.InjectView;
 import de.umass.lastfm.Event;
 import de.umass.lastfm.ImageSize;
 
-public class EventInfoHeaderFragment extends Fragment {
+public class EventInfoHeaderFragment extends BaseFragment {
     private static final String ARG_EVENT = "event";
 
     @InjectView(R.id.event_title) TextView mEventTitleTextView;

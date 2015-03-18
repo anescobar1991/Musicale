@@ -70,6 +70,9 @@
         <meta-data
             android:name="com.crashlytics.ApiKey"
             android:value="4a25a0ef7f41118ba2930c2af73141cfb60e93de" />
+        <meta-data
+            android:name="com.google.android.gms.analytics.globalConfigResource"
+            android:resource="@xml/global_tracker" />
 
     </application>
 

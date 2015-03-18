@@ -190,7 +190,7 @@ public class SearchFragment extends LocationAwareFragment implements AddressesFe
             Intent intent = new Intent(getActivity(), EventsActivity.class);
             ActivityOptions activityOptions = ActivityOptions.makeCustomAnimation(getActivity().getApplicationContext(), R.anim.slide_in_right, R.anim.slide_out_left);
 
-            startActivity(intent, activityOptions.toBundle());
+            getActivity().startActivity(intent, activityOptions.toBundle());
         }
     }
 }

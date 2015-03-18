@@ -1,10 +1,10 @@
 package com.anescobar.musicale.view.fragments;
 
 import android.app.ActivityOptions;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,7 +24,7 @@ import com.anescobar.musicale.app.services.exceptions.NetworkNotAvailableExcepti
 import com.anescobar.musicale.app.models.EventQueryResults;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -46,7 +46,7 @@ import de.umass.lastfm.PaginatedResult;
 public class EventsMapViewFragment extends LocationAwareFragment implements GoogleMap.OnInfoWindowClickListener,
         EventFetcherListener {
 
-    private MapFragment mMapFragment;
+    private SupportMapFragment mMapFragment;
     private GoogleMap mMap;
 
     @InjectView(R.id.loading_overlay) RelativeLayout mLoadingOverlay;
@@ -63,7 +63,7 @@ public class EventsMapViewFragment extends LocationAwareFragment implements Goog
 
         setHasOptionsMenu(true);
 
-        mMapFragment = new MapFragment();
+        mMapFragment = new SupportMapFragment();
     }
 
     @Override
@@ -275,6 +275,6 @@ public class EventsMapViewFragment extends LocationAwareFragment implements Goog
         ActivityOptions activityOptions = ActivityOptions.makeCustomAnimation(getActivity().getApplicationContext(), R.anim.slide_in_right, R.anim.slide_out_left);
 
         intent.putExtra("EVENT", serializedEvent);
-        startActivity(intent, activityOptions.toBundle());
+        getActivity().startActivity(intent, activityOptions.toBundle());
     }
 }

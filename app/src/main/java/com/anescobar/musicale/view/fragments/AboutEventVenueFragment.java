@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,7 +38,7 @@ import de.umass.lastfm.Event;
 import de.umass.lastfm.ImageSize;
 import de.umass.lastfm.Venue;
 
-public class AboutEventVenueFragment extends Fragment implements VenueEventsFetcherListener {
+public class AboutEventVenueFragment extends BaseFragment implements VenueEventsFetcherListener {
 
     private static final String ARG_VENUE = "venueArg";
     private EventsFinder mEventsFinder;

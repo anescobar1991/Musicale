@@ -1,7 +1,6 @@
 package com.anescobar.musicale.view.fragments;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,7 +28,7 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import de.umass.lastfm.Event;
 
-public class EventSocialMediaFragment extends Fragment implements TwitterGuestSessionFetcherListener, TwitterSearchTaskListener {
+public class EventSocialMediaFragment extends BaseFragment implements TwitterGuestSessionFetcherListener, TwitterSearchTaskListener {
 
     private static final String ARG_EVENT = "eventArg";
     private TweetViewAdapter<? extends com.twitter.sdk.android.tweetui.BaseTweetView> mTweetsAdapter;
@@ -115,16 +114,19 @@ public class EventSocialMediaFragment extends Fragment implements TwitterGuestSe
     }
 
     private void loadTweets(Session session) {
-        try {
-            mTwitterService.searchForTweets(this, getActivity().getApplicationContext(),
-                    session, createSearchQuery(mEvent), mMaxId);
-        } catch (NetworkNotAvailableException e) {
-            if (mTweetsDisplayed) {
-                Toast.makeText(getActivity(), R.string.error_no_network_connectivity, Toast.LENGTH_SHORT).show();
-            } else {
-                mLoadingProgressBar.setVisibility(View.GONE);
-                mMessageContainer.setText(R.string.error_no_network_connectivity);
-                mMessageContainer.setVisibility(View.VISIBLE);
+        //if activity is null (b/c user navigated away from screen) then shouldnt load events to screen
+        if (getActivity() != null) {
+            try {
+                mTwitterService.searchForTweets(this, getActivity().getApplicationContext(),
+                        session, createSearchQuery(mEvent), mMaxId);
+            } catch (NetworkNotAvailableException e) {
+                if (mTweetsDisplayed) {
+                    Toast.makeText(getActivity(), R.string.error_no_network_connectivity, Toast.LENGTH_SHORT).show();
+                } else {
+                    mLoadingProgressBar.setVisibility(View.GONE);
+                    mMessageContainer.setText(R.string.error_no_network_connectivity);
+                    mMessageContainer.setVisibility(View.VISIBLE);
+                }
             }
         }
     }
@@ -142,25 +144,28 @@ public class EventSocialMediaFragment extends Fragment implements TwitterGuestSe
 
     @Override
     public void onTwitterSearchTaskSuccessful(List<Tweet> tweets) {
-        mLoadingProgressBar.setVisibility(View.GONE);
-        mTweetsCurrentlyLoading = false;
+        //if activity is null (b/c user navigated away from screen) then shouldnt load events to screen
+        if (getActivity() != null) {
+            mLoadingProgressBar.setVisibility(View.GONE);
+            mTweetsCurrentlyLoading = false;
 
-        if (!tweets.isEmpty()) {
-            mTweetsDisplayed = true;
-            mTweetsAdapter.getTweets().addAll(tweets);
-            mTweetsAdapter.notifyDataSetChanged();
+            if (!tweets.isEmpty()) {
+                mTweetsDisplayed = true;
+                mTweetsAdapter.getTweets().addAll(tweets);
+                mTweetsAdapter.notifyDataSetChanged();
 
-            if (tweets.size() > 0) {
-                mMaxId = tweets.get(tweets.size() - 1).id - 1;
+                if (tweets.size() > 0) {
+                    mMaxId = tweets.get(tweets.size() - 1).id - 1;
+                } else {
+                    mEndOfSearchResults = true;
+                }
             } else {
-                mEndOfSearchResults = true;
-            }
-        } else {
-            if (mTweetsDisplayed) {
-                Toast.makeText(getActivity(), R.string.no_tweets_found, Toast.LENGTH_SHORT).show();
-            } else {
-                mMessageContainer.setText(R.string.no_tweets_found);
-                mMessageContainer.setVisibility(View.VISIBLE);
+                if (mTweetsDisplayed) {
+                    Toast.makeText(getActivity(), R.string.no_tweets_found, Toast.LENGTH_SHORT).show();
+                } else {
+                    mMessageContainer.setText(R.string.no_tweets_found);
+                    mMessageContainer.setVisibility(View.VISIBLE);
+                }
             }
         }
     }

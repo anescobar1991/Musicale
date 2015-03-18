@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -49,7 +48,7 @@ import de.umass.lastfm.ImageSize;
 import de.umass.lastfm.PaginatedResult;
 import de.umass.lastfm.Track;
 
-public class AboutArtistFragment extends Fragment implements ArtistInfoFetcherTaskListener,
+public class AboutArtistFragment extends BaseFragment implements ArtistInfoFetcherTaskListener,
         ArtistTopTracksFetcherTaskListener, ArtistUpcomingEventsFetcherTaskListener,
         SpotifyTrackInfoTaskListener {
 

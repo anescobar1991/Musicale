@@ -30,10 +30,7 @@ public class ArtistDetailsActivity extends BaseActivity implements AboutArtistFr
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.about_artist_container, AboutArtistFragment.newInstance(getIntent().getExtras().getString("ARTIST")), ABOUT_ARTIST_FRAGMENT)
-                .commit();
+        addFragmentToActivity(R.id.about_artist_container, AboutArtistFragment.newInstance(getIntent().getExtras().getString("ARTIST")), ABOUT_ARTIST_FRAGMENT);
     }
 
     @Override
