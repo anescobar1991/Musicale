@@ -60,6 +60,19 @@ public class EventDetailsActivity extends BaseActivity
         mPager.setAdapter(new EventDetailsPagerAdapter(getSupportFragmentManager(), this, mEvent));
         mPager.setOffscreenPageLimit(3);
         mTabs.setViewPager(mPager);
+        mTabs.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
+
+            @Override
+            public void onPageSelected(int position) {
+                String screenName = mPager.getAdapter().getPageTitle(position).toString();
+                mAnalyticsUtil.sendAnalyticsScreenHit(screenName);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {}
+        });
     }
 
     @Override

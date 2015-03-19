@@ -113,6 +113,8 @@ public class AboutArtistFragment extends BaseFragment implements ArtistInfoFetch
     public void onStart() {
         super.onStart();
 
+        mAnalyticsUtil.sendAnalyticsScreenHit(getClass().getSimpleName());
+
         try {
             if (mCachedArtistDetailsGetterSetter.getArtistDetails().artist != null) {
                 setUpView(mCachedArtistDetailsGetterSetter.getArtistDetails().artist);

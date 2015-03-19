@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBarActivity;
 
+import com.anescobar.musicale.app.MusicaleApp;
 import com.anescobar.musicale.app.utils.AnalyticsUtil;
 
 /**
@@ -21,7 +22,8 @@ public abstract class BaseActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mAnalyticsUtil = new AnalyticsUtil(getApplication());
+
+        mAnalyticsUtil = ((MusicaleApp) getApplication()).analyticsUtil;
 
         mAnalyticsUtil.sendAnalyticsScreenHit(getClass().getSimpleName());
 
