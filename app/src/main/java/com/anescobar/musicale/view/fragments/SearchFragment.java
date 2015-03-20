@@ -102,6 +102,8 @@ public class SearchFragment extends LocationAwareFragment implements AddressesFe
     @OnClick(R.id.submit_search_button)
     public void submitSearch() {
         try {
+            mAnalyticsUtil.sendAnalyticsEvent(getString(R.string.ga_action_event), getString(R.string.ga_event_search_submitted), mSearchAreaField.getText().toString());
+
             new Geocoder().getLatLngFromAddress(mSearchAreaField.getText().toString(), this, getActivity().getApplicationContext());
         } catch (NetworkNotAvailableException e) {
             e.printStackTrace();

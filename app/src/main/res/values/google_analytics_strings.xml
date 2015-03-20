@@ -1,5 +1,7 @@
 <resources>
 
-    <string name="action_event">event</string>
+    <string name="ga_action_event">event</string>
+    <string name="ga_event_search_submitted">Event search submitted</string>
+    <string name="ga_event_track_played">Track played</string>
 
 </resources>

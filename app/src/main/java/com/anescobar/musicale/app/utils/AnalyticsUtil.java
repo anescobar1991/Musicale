@@ -30,7 +30,6 @@ public class AnalyticsUtil {
         Tracker t = ((MusicaleApp) mApplication).getTracker(
                 MusicaleApp.TrackerName.APP_TRACKER);
 
-        // Build and send an Event.
         t.send(new HitBuilders.EventBuilder()
                 .setCategory(category)
                 .setAction(action)

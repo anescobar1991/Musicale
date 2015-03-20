@@ -291,6 +291,9 @@ public class AboutArtistFragment extends BaseFragment implements ArtistInfoFetch
         trackLayout.setOnClickListener(new LinearLayout.OnClickListener() {
             @Override
             public void onClick(View view) {
+                mAnalyticsUtil.sendAnalyticsEvent(getString(R.string.ga_action_event), getString(R.string.ga_event_track_played), null);
+
+
                 getSpotifyTrackInfo(track.getName(), track.getArtist(), trackId);
             }
         });
