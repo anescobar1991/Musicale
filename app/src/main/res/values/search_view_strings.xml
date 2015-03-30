@@ -7,7 +7,7 @@
     <string name="search_area_header">Where do you want to look?</string>
     <string name="keyword_search_edit_text_hint">Shows to search for</string>
     <string name="show_search_header_text">Any specific show you want to find?</string>
-    <string name="current_location_accessibility_label">Use current location</string>
+    <string name="use_current_location_button_text">Use current location</string>
 
     <!--error messages-->
     <string name="location_not_resolvable_error">Couldn\'t find the location you specified, try again with a valid location.</string>

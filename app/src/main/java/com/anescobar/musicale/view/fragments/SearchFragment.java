@@ -32,6 +32,7 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import butterknife.OnEditorAction;
+import butterknife.OnTextChanged;
 import butterknife.OnTouch;
 
 public class SearchFragment extends LocationAwareFragment implements AddressesFetcherTaskListener, LatLngFromAddressFetcherTaskListener {
@@ -42,6 +43,7 @@ public class SearchFragment extends LocationAwareFragment implements AddressesFe
     @InjectView(R.id.search_area_edit_text) EditText mSearchAreaField;
     @InjectView(R.id.submit_search_button) Button mSubmitSearchButton;
     @InjectView(R.id.loading_progressbar) ProgressBar mLoadingProgressbar;
+    @InjectView(R.id.use_current_loc_button) Button mUseCurrentLocationButton;
 
     public SearchFragment() {
     }
@@ -58,18 +60,16 @@ public class SearchFragment extends LocationAwareFragment implements AddressesFe
 //        if (mKeywordSearchField.getText().length() == 0) {
 //            mKeywordSearchField.getCompoundDrawables()[2].setAlpha(0);
 //        }
+        if (mSearchAreaField.getText().length() == 0) {
+            mSubmitSearchButton.setEnabled(false);
+            mSearchAreaField.getCompoundDrawables()[2].setAlpha(0);
+        }
 
         return rootView;
     }
 
     @Override
-    public void onConnected(Bundle bundle) {
-        if (mSearchLocation.searchArea != null) {
-            mSearchAreaField.setText(mSearchLocation.searchArea);
-        } else {
-            getAndDisplayCurrentLocation();
-        }
-    }
+    public void onConnected(Bundle bundle) {}
 
     @SuppressWarnings("unused") // it's actually used, just injected by Butter Knife
     @OnEditorAction(R.id.search_area_edit_text) boolean onEditorAction(KeyEvent key) {
@@ -99,6 +99,29 @@ public class SearchFragment extends LocationAwareFragment implements AddressesFe
 //        return false;
 //    }
 
+    @OnTextChanged(R.id.search_area_edit_text) void onTextChanged(CharSequence text) {
+        if (text.length() > 0) {
+            mSubmitSearchButton.setEnabled(true);
+            mSearchAreaField.getCompoundDrawables()[2].setAlpha(255);
+        } else if (text.length() == 0) {
+            mSubmitSearchButton.setEnabled(false);
+            mSearchAreaField.getCompoundDrawables()[2].setAlpha(0);
+        }
+    }
+
+    //onTouch listener for search area clear button
+    @OnTouch(R.id.search_area_edit_text) boolean onClearTextButtonTouch(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_UP) {
+            int leftEdgeOfRightDrawable = mSearchAreaField.getRight()
+                    - mSearchAreaField.getCompoundDrawables()[2].getBounds().width();
+            if (event.getRawX() >= leftEdgeOfRightDrawable) {
+                mSearchAreaField.setText("");
+                return true;
+            }
+        }
+        return false;
+    }
+
     @OnClick(R.id.submit_search_button)
     public void submitSearch() {
         try {
@@ -111,45 +134,53 @@ public class SearchFragment extends LocationAwareFragment implements AddressesFe
         }
     }
 
-    @SuppressWarnings("unused") // it's actually used, just injected by Butter Knife
-    @OnTouch(R.id.search_area_edit_text) boolean onUseCurrentLocationButtonTouch(MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_UP) {
-            int leftEdgeOfRightDrawable = mSearchAreaField.getRight()
-                    - mSearchAreaField.getCompoundDrawables()[2].getBounds().width();
-            if (event.getRawX() >= leftEdgeOfRightDrawable) {
-                getAndDisplayCurrentLocation();
-                return true;
-            }
-        }
-        return false;
+    @OnClick(R.id.use_current_loc_button)
+    public void submitCurrentLocationSearch(View view) {
+        getLatLng();
     }
 
 
     @Override
     public void onAddressFetcherTaskAboutToStart() {
+        mSubmitSearchButton.setVisibility(View.INVISIBLE);
+        mUseCurrentLocationButton.setVisibility(View.INVISIBLE);
+        mLoadingProgressbar.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void onAddressFetcherTaskCompleted(List<Address> addresses) {
+        mSubmitSearchButton.setVisibility(View.VISIBLE);
+        mUseCurrentLocationButton.setVisibility(View.VISIBLE);
+        mLoadingProgressbar.setVisibility(View.GONE);
+
         if (addresses.isEmpty()) {
             Toast.makeText(getActivity(),R.string.error_generic, Toast.LENGTH_SHORT).show();
         } else {
-            mSearchLocation.searchArea = sanitizeAddressToDisplay(addresses.get(0));
-            mSearchAreaField.setText(sanitizeAddressToDisplay(addresses.get(0)));
+            mSearchLocation.clearInstance();
+            EventQueryResults.getInstance().clearInstance();
+
+            mSearchLocation.searchArea = getSanitizedAddress(addresses.get(0));
+            mSearchLocation.searchLatLng = new LatLng(addresses.get(0).getLatitude(), addresses.get(0).getLongitude());
+
+            startEventsActivity();
         }
     }
 
-    private void getAndDisplayCurrentLocation() {
+    private void getLatLng() {
         try {
-            new Geocoder().getAddresses(getCurrentLatLng(), this, getActivity().getApplicationContext());
+            if (mGoogleApiClient.isConnected()) {
+                new Geocoder().getAddresses(getCurrentLatLng(), this, getActivity().getApplicationContext());
+            } else {
+                getLatLng();
+            }
         } catch (NetworkNotAvailableException e) {
-            Toast.makeText(getActivity(),R.string.error_no_network_connectivity, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), R.string.error_no_network_connectivity, Toast.LENGTH_SHORT).show();
         } catch (LocationNotAvailableException e) {
             e.printStackTrace();
         }
     }
 
-    private String sanitizeAddressToDisplay(Address address) {
+    private String getSanitizedAddress(Address address) {
         String displayLocation;
 
         if (address.getLocality() == null) {
@@ -171,14 +202,16 @@ public class SearchFragment extends LocationAwareFragment implements AddressesFe
 
     @Override
     public void onLatLngFromAddressFetcherTaskAboutToStart() {
-        mSubmitSearchButton.setVisibility(View.GONE);
+        mSubmitSearchButton.setVisibility(View.INVISIBLE);
+        mUseCurrentLocationButton.setVisibility(View.INVISIBLE);
         mLoadingProgressbar.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void onLatLngFromAddressFetcherTaskCompleted(List<Address> addresses) {
-        mLoadingProgressbar.setVisibility(View.GONE);
         mSubmitSearchButton.setVisibility(View.VISIBLE);
+        mUseCurrentLocationButton.setVisibility(View.VISIBLE);
+        mLoadingProgressbar.setVisibility(View.GONE);
 
         if (addresses.isEmpty()) {
             Toast.makeText(getActivity(), R.string.location_not_resolvable_error, Toast.LENGTH_SHORT).show();
@@ -186,13 +219,17 @@ public class SearchFragment extends LocationAwareFragment implements AddressesFe
             mSearchLocation.clearInstance();
             EventQueryResults.getInstance().clearInstance();
 
-            mSearchLocation.searchArea = sanitizeAddressToDisplay(addresses.get(0));
+            mSearchLocation.searchArea = getSanitizedAddress(addresses.get(0));
             mSearchLocation.searchLatLng = new LatLng(addresses.get(0).getLatitude(), addresses.get(0).getLongitude());
 
-            Intent intent = new Intent(getActivity(), EventsActivity.class);
-            ActivityOptions activityOptions = ActivityOptions.makeCustomAnimation(getActivity().getApplicationContext(), R.anim.slide_in_right, R.anim.slide_out_left);
-
-            getActivity().startActivity(intent, activityOptions.toBundle());
+            startEventsActivity();
         }
+    }
+
+    private void startEventsActivity() {
+        Intent intent = new Intent(getActivity(), EventsActivity.class);
+        ActivityOptions activityOptions = ActivityOptions.makeCustomAnimation(getActivity().getApplicationContext(), R.anim.slide_in_right, R.anim.slide_out_left);
+
+        getActivity().startActivity(intent, activityOptions.toBundle());
     }
 }

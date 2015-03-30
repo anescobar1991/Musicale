@@ -12,7 +12,7 @@
     <color name="white">#FFFFFF</color>
     <color name="default_text_grey">#ff2f2f2f</color>
 
-    <color name="raised_button_disabled">#ccc</color>
+    <color name="raised_button_disabled">#ff9c9c9c</color>
     <color name="raised_button_pressed">#ff1a1d69</color>
 
     <!--For shadow view-->
