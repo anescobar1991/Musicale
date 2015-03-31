@@ -57,24 +57,11 @@
             android:layout_marginBottom="16dp"
             android:background="@color/border_default_grey"/>
 
-        <!--<EditText-->
-            <!--android:id="@+id/search_area_edit_text"-->
-            <!--android:hint="@string/search_area_edit_text_hint"-->
-            <!--android:textColor="@color/default_text_grey"-->
-            <!--android:textColorHint="@color/border_default_grey"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:textSize="16sp"-->
-            <!--android:layout_marginBottom="48dp"-->
-            <!--android:singleLine="true"-->
-            <!--android:imeOptions="actionSearch"-->
-            <!--android:drawableRight="@drawable/ic_my_location_grey600_18dp"-->
-            <!--android:layout_height="wrap_content" />-->
-
         <EditText
             android:id="@+id/search_area_edit_text"
-            android:hint="@string/search_area_edit_text_hint"
+            android:hint="@string/current_location_button"
             android:textColor="@color/default_text_grey"
-            android:textColorHint="@color/border_default_grey"
+            android:textColorHint="@color/default_text_grey"
             android:layout_width="match_parent"
             android:textSize="16sp"
             android:drawableRight="@drawable/ic_clear_grey600_18dp"
@@ -83,41 +70,12 @@
             android:imeOptions="actionSearch"
             android:layout_height="wrap_content" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <Button
-                android:id="@+id/submit_search_button"
-                android:background="@drawable/musicale_raised_button"
-                android:textColor="@color/white"
-                android:text="@string/search_button_text"
-                android:layout_gravity="center_horizontal"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_marginRight="4dp"
-                android:layout_height="48dp" />
-
-            <ProgressBar
-                android:id="@+id/loading_progressbar"
-                android:visibility="gone"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <Button
-                android:id="@+id/use_current_loc_button"
-                android:background="@drawable/musicale_raised_button"
-                android:textColor="@color/white"
-                android:text="@string/use_current_location_button_text"
-                android:layout_gravity="center_horizontal"
-                android:layout_width="0dp"
-                android:layout_marginLeft="4dp"
-                android:layout_weight="1"
-                android:layout_height="48dp" />
-
-
-        </LinearLayout>
-
+        <ProgressBar
+            android:id="@+id/loading_progressbar"
+            android:visibility="gone"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 

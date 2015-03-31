@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -30,7 +29,6 @@ import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import butterknife.OnClick;
 import butterknife.OnEditorAction;
 import butterknife.OnTextChanged;
 import butterknife.OnTouch;
@@ -41,9 +39,7 @@ public class SearchFragment extends LocationAwareFragment implements AddressesFe
 
 //    @InjectView(R.id.keyword_search_edit_text) EditText mKeywordSearchField;
     @InjectView(R.id.search_area_edit_text) EditText mSearchAreaField;
-    @InjectView(R.id.submit_search_button) Button mSubmitSearchButton;
     @InjectView(R.id.loading_progressbar) ProgressBar mLoadingProgressbar;
-    @InjectView(R.id.use_current_loc_button) Button mUseCurrentLocationButton;
 
     public SearchFragment() {
     }
@@ -61,7 +57,7 @@ public class SearchFragment extends LocationAwareFragment implements AddressesFe
 //            mKeywordSearchField.getCompoundDrawables()[2].setAlpha(0);
 //        }
         if (mSearchAreaField.getText().length() == 0) {
-            mSubmitSearchButton.setEnabled(false);
+//            mSubmitSearchButton.setEnabled(false);
             mSearchAreaField.getCompoundDrawables()[2].setAlpha(0);
         }
 
@@ -101,10 +97,8 @@ public class SearchFragment extends LocationAwareFragment implements AddressesFe
 
     @OnTextChanged(R.id.search_area_edit_text) void onTextChanged(CharSequence text) {
         if (text.length() > 0) {
-            mSubmitSearchButton.setEnabled(true);
             mSearchAreaField.getCompoundDrawables()[2].setAlpha(255);
         } else if (text.length() == 0) {
-            mSubmitSearchButton.setEnabled(false);
             mSearchAreaField.getCompoundDrawables()[2].setAlpha(0);
         }
     }
@@ -122,35 +116,28 @@ public class SearchFragment extends LocationAwareFragment implements AddressesFe
         return false;
     }
 
-    @OnClick(R.id.submit_search_button)
-    public void submitSearch() {
-        try {
-            mAnalyticsUtil.sendAnalyticsEvent(getString(R.string.ga_action_event), getString(R.string.ga_event_search_submitted), mSearchAreaField.getText().toString());
+    private void submitSearch() {
+        mAnalyticsUtil.sendAnalyticsEvent(getString(R.string.ga_action_event), getString(R.string.ga_event_search_submitted), mSearchAreaField.getText().toString());
 
-            new Geocoder().getLatLngFromAddress(mSearchAreaField.getText().toString(), this, getActivity().getApplicationContext());
-        } catch (NetworkNotAvailableException e) {
-            e.printStackTrace();
-            Toast.makeText(getActivity(),R.string.error_no_network_connectivity, Toast.LENGTH_SHORT).show();
+        if (mSearchAreaField.getText().length() == 0) {
+            useCurrentLocation();
+        } else {
+            try {
+                new Geocoder().getLatLngFromAddress(mSearchAreaField.getText().toString(), this, getActivity().getApplicationContext());
+            } catch (NetworkNotAvailableException e) {
+                e.printStackTrace();
+                Toast.makeText(getActivity(),R.string.error_no_network_connectivity, Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
-    @OnClick(R.id.use_current_loc_button)
-    public void submitCurrentLocationSearch(View view) {
-        getLatLng();
-    }
-
-
     @Override
     public void onAddressFetcherTaskAboutToStart() {
-        mSubmitSearchButton.setVisibility(View.INVISIBLE);
-        mUseCurrentLocationButton.setVisibility(View.INVISIBLE);
         mLoadingProgressbar.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void onAddressFetcherTaskCompleted(List<Address> addresses) {
-        mSubmitSearchButton.setVisibility(View.VISIBLE);
-        mUseCurrentLocationButton.setVisibility(View.VISIBLE);
         mLoadingProgressbar.setVisibility(View.GONE);
 
         if (addresses.isEmpty()) {
@@ -166,12 +153,41 @@ public class SearchFragment extends LocationAwareFragment implements AddressesFe
         }
     }
 
-    private void getLatLng() {
+    @Override
+    public void onLatLngFromAddressFetcherTaskAboutToStart() {
+        mLoadingProgressbar.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onLatLngFromAddressFetcherTaskCompleted(List<Address> addresses) {
+        mLoadingProgressbar.setVisibility(View.GONE);
+
+        if (addresses.isEmpty()) {
+            Toast.makeText(getActivity(), R.string.location_not_resolvable_error, Toast.LENGTH_SHORT).show();
+        } else {
+            mSearchLocation.clearInstance();
+            EventQueryResults.getInstance().clearInstance();
+
+            mSearchLocation.searchArea = getSanitizedAddress(addresses.get(0));
+            mSearchLocation.searchLatLng = new LatLng(addresses.get(0).getLatitude(), addresses.get(0).getLongitude());
+
+            startEventsActivity();
+        }
+    }
+
+    private void startEventsActivity() {
+        Intent intent = new Intent(getActivity(), EventsActivity.class);
+        ActivityOptions activityOptions = ActivityOptions.makeCustomAnimation(getActivity().getApplicationContext(), R.anim.slide_in_right, R.anim.slide_out_left);
+
+        getActivity().startActivity(intent, activityOptions.toBundle());
+    }
+
+    private void useCurrentLocation() {
         try {
             if (mGoogleApiClient.isConnected()) {
                 new Geocoder().getAddresses(getCurrentLatLng(), this, getActivity().getApplicationContext());
             } else {
-                getLatLng();
+                useCurrentLocation();
             }
         } catch (NetworkNotAvailableException e) {
             Toast.makeText(getActivity(), R.string.error_no_network_connectivity, Toast.LENGTH_SHORT).show();
@@ -198,38 +214,5 @@ public class SearchFragment extends LocationAwareFragment implements AddressesFe
         }
 
         return displayLocation;
-    }
-
-    @Override
-    public void onLatLngFromAddressFetcherTaskAboutToStart() {
-        mSubmitSearchButton.setVisibility(View.INVISIBLE);
-        mUseCurrentLocationButton.setVisibility(View.INVISIBLE);
-        mLoadingProgressbar.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void onLatLngFromAddressFetcherTaskCompleted(List<Address> addresses) {
-        mSubmitSearchButton.setVisibility(View.VISIBLE);
-        mUseCurrentLocationButton.setVisibility(View.VISIBLE);
-        mLoadingProgressbar.setVisibility(View.GONE);
-
-        if (addresses.isEmpty()) {
-            Toast.makeText(getActivity(), R.string.location_not_resolvable_error, Toast.LENGTH_SHORT).show();
-        } else {
-            mSearchLocation.clearInstance();
-            EventQueryResults.getInstance().clearInstance();
-
-            mSearchLocation.searchArea = getSanitizedAddress(addresses.get(0));
-            mSearchLocation.searchLatLng = new LatLng(addresses.get(0).getLatitude(), addresses.get(0).getLongitude());
-
-            startEventsActivity();
-        }
-    }
-
-    private void startEventsActivity() {
-        Intent intent = new Intent(getActivity(), EventsActivity.class);
-        ActivityOptions activityOptions = ActivityOptions.makeCustomAnimation(getActivity().getApplicationContext(), R.anim.slide_in_right, R.anim.slide_out_left);
-
-        getActivity().startActivity(intent, activityOptions.toBundle());
     }
 }
