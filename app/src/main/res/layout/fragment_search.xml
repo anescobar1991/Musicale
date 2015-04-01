@@ -59,9 +59,9 @@
 
         <EditText
             android:id="@+id/search_area_edit_text"
-            android:hint="@string/current_location_button"
+            android:hint="@string/search_area_edit_text_hint"
             android:textColor="@color/default_text_grey"
-            android:textColorHint="@color/default_text_grey"
+            android:textColorHint="@color/border_default_grey"
             android:layout_width="match_parent"
             android:textSize="16sp"
             android:drawableRight="@drawable/ic_clear_grey600_18dp"
@@ -69,6 +69,20 @@
             android:singleLine="true"
             android:imeOptions="actionSearch"
             android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/use_current_loc_button"
+            android:textColor="@color/white"
+            android:background="@drawable/musicale_raised_button"
+            android:text="@string/current_location_button"
+            android:layout_width="match_parent"
+            android:layout_height="36dp" />
+
+        <View
+            android:id="@+id/use_current_loc_button_shadow"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:background="@drawable/drop_shadow"/>
 
         <ProgressBar
             android:id="@+id/loading_progressbar"

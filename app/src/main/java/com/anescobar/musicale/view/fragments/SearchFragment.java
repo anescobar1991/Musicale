@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -29,6 +30,7 @@ import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.OnClick;
 import butterknife.OnEditorAction;
 import butterknife.OnTextChanged;
 import butterknife.OnTouch;
@@ -40,9 +42,10 @@ public class SearchFragment extends LocationAwareFragment implements AddressesFe
 //    @InjectView(R.id.keyword_search_edit_text) EditText mKeywordSearchField;
     @InjectView(R.id.search_area_edit_text) EditText mSearchAreaField;
     @InjectView(R.id.loading_progressbar) ProgressBar mLoadingProgressbar;
+    @InjectView(R.id.use_current_loc_button) Button mUseCurrentLocButton;
+    @InjectView(R.id.use_current_loc_button_shadow) View mCurrentLocButtonShadow;
 
-    public SearchFragment() {
-    }
+    public SearchFragment() {}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -116,12 +119,24 @@ public class SearchFragment extends LocationAwareFragment implements AddressesFe
         return false;
     }
 
-    private void submitSearch() {
-        mAnalyticsUtil.sendAnalyticsEvent(getString(R.string.ga_action_event), getString(R.string.ga_event_search_submitted), mSearchAreaField.getText().toString());
+    @OnClick(R.id.use_current_loc_button)
+    public void useCurrentLocation(View view) {
+        try {
+            if (mGoogleApiClient.isConnected()) {
+                new Geocoder().getAddresses(getCurrentLatLng(), this, getActivity().getApplicationContext());
+            } else {
+                useCurrentLocation(view);
+            }
+        } catch (NetworkNotAvailableException e) {
+            Toast.makeText(getActivity(), R.string.error_no_network_connectivity, Toast.LENGTH_SHORT).show();
+        } catch (LocationNotAvailableException e) {
+            e.printStackTrace();
+        }
+    }
 
-        if (mSearchAreaField.getText().length() == 0) {
-            useCurrentLocation();
-        } else {
+    private void submitSearch() {
+        if (mSearchAreaField.getText().length() > 0) {
+            mAnalyticsUtil.sendAnalyticsEvent(getString(R.string.ga_action_event), getString(R.string.ga_event_search_submitted), mSearchAreaField.getText().toString());
             try {
                 new Geocoder().getLatLngFromAddress(mSearchAreaField.getText().toString(), this, getActivity().getApplicationContext());
             } catch (NetworkNotAvailableException e) {
@@ -134,11 +149,15 @@ public class SearchFragment extends LocationAwareFragment implements AddressesFe
     @Override
     public void onAddressFetcherTaskAboutToStart() {
         mLoadingProgressbar.setVisibility(View.VISIBLE);
+        mUseCurrentLocButton.setVisibility(View.GONE);
+        mCurrentLocButtonShadow.setVisibility(View.GONE);
     }
 
     @Override
     public void onAddressFetcherTaskCompleted(List<Address> addresses) {
         mLoadingProgressbar.setVisibility(View.GONE);
+        mUseCurrentLocButton.setVisibility(View.VISIBLE);
+        mCurrentLocButtonShadow.setVisibility(View.VISIBLE);
 
         if (addresses.isEmpty()) {
             Toast.makeText(getActivity(),R.string.error_generic, Toast.LENGTH_SHORT).show();
@@ -156,11 +175,15 @@ public class SearchFragment extends LocationAwareFragment implements AddressesFe
     @Override
     public void onLatLngFromAddressFetcherTaskAboutToStart() {
         mLoadingProgressbar.setVisibility(View.VISIBLE);
+        mUseCurrentLocButton.setVisibility(View.GONE);
+        mCurrentLocButtonShadow.setVisibility(View.GONE);
     }
 
     @Override
     public void onLatLngFromAddressFetcherTaskCompleted(List<Address> addresses) {
         mLoadingProgressbar.setVisibility(View.GONE);
+        mUseCurrentLocButton.setVisibility(View.VISIBLE);
+        mCurrentLocButtonShadow.setVisibility(View.VISIBLE);
 
         if (addresses.isEmpty()) {
             Toast.makeText(getActivity(), R.string.location_not_resolvable_error, Toast.LENGTH_SHORT).show();
@@ -180,20 +203,6 @@ public class SearchFragment extends LocationAwareFragment implements AddressesFe
         ActivityOptions activityOptions = ActivityOptions.makeCustomAnimation(getActivity().getApplicationContext(), R.anim.slide_in_right, R.anim.slide_out_left);
 
         getActivity().startActivity(intent, activityOptions.toBundle());
-    }
-
-    private void useCurrentLocation() {
-        try {
-            if (mGoogleApiClient.isConnected()) {
-                new Geocoder().getAddresses(getCurrentLatLng(), this, getActivity().getApplicationContext());
-            } else {
-                useCurrentLocation();
-            }
-        } catch (NetworkNotAvailableException e) {
-            Toast.makeText(getActivity(), R.string.error_no_network_connectivity, Toast.LENGTH_SHORT).show();
-        } catch (LocationNotAvailableException e) {
-            e.printStackTrace();
-        }
     }
 
     private String getSanitizedAddress(Address address) {
