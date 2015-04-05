@@ -17,6 +17,6 @@ public abstract class BaseFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        mAnalyticsUtil = ((MusicaleApp) getActivity().getApplication()).analyticsUtil;
+        mAnalyticsUtil = ((MusicaleApp) getActivity().getApplication()).mAnalyticsUtil;
     }
 }

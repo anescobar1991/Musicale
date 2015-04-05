@@ -16,10 +16,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.anescobar.musicale.R;
+import com.anescobar.musicale.app.services.LastFmServiceProvider;
 import com.anescobar.musicale.app.services.exceptions.LocationNotAvailableException;
 import com.anescobar.musicale.view.activities.EventDetailsActivity;
 import com.anescobar.musicale.app.services.interfaces.EventFetcherListener;
-import com.anescobar.musicale.app.services.EventsFinder;
 import com.anescobar.musicale.app.services.exceptions.NetworkNotAvailableException;
 import com.anescobar.musicale.app.models.EventQueryResults;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -48,6 +48,7 @@ public class EventsMapViewFragment extends LocationAwareFragment implements Goog
 
     private SupportMapFragment mMapFragment;
     private GoogleMap mMap;
+    private LastFmServiceProvider mLastFmServiceProvider;
 
     @InjectView(R.id.loading_overlay) RelativeLayout mLoadingOverlay;
 
@@ -64,6 +65,7 @@ public class EventsMapViewFragment extends LocationAwareFragment implements Goog
         setHasOptionsMenu(true);
 
         mMapFragment = new SupportMapFragment();
+        mLastFmServiceProvider = new LastFmServiceProvider(getActivity().getApplicationContext());
     }
 
     @Override
@@ -111,7 +113,7 @@ public class EventsMapViewFragment extends LocationAwareFragment implements Goog
 
     public void getEventsFromServer(Integer pageNumber, LatLng searchAreaLatLng) {
         try {
-            new EventsFinder().getEvents(pageNumber, searchAreaLatLng, this, getActivity());
+            mLastFmServiceProvider.getEvents(pageNumber, searchAreaLatLng, this, getActivity());
         } catch (NetworkNotAvailableException e) {
             Toast.makeText(getActivity(), getString(R.string.error_no_network_connectivity), Toast.LENGTH_SHORT).show();
         }

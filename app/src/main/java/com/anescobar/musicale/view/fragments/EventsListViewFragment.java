@@ -18,11 +18,11 @@ import android.widget.Toast;
 
 import com.anescobar.musicale.R;
 import com.anescobar.musicale.app.adapters.EventsAdapter;
+import com.anescobar.musicale.app.services.LastFmServiceProvider;
 import com.anescobar.musicale.app.services.interfaces.EventFetcherListener;
 import com.anescobar.musicale.app.models.EventQueryResults;
 import com.anescobar.musicale.app.services.exceptions.LocationNotAvailableException;
 import com.anescobar.musicale.app.services.exceptions.NetworkNotAvailableException;
-import com.anescobar.musicale.app.services.EventsFinder;
 import com.anescobar.musicale.view.activities.SearchActivity;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.model.LatLng;
@@ -41,6 +41,7 @@ public class EventsListViewFragment extends LocationAwareFragment implements Eve
 
     private LinearLayoutManager mLayoutManager;
     private EventsAdapter mAdapter;
+    private LastFmServiceProvider mLastFmServiceProvider;
 
     @InjectView(R.id.events_recyclerview) RecyclerView mRecyclerView;
     @InjectView(R.id.events_list_message_container) TextView mMessageContainer;
@@ -97,6 +98,8 @@ public class EventsListViewFragment extends LocationAwareFragment implements Eve
 
     @Override
     public void onStart() {
+        mLastFmServiceProvider = new LastFmServiceProvider(getActivity().getApplicationContext());
+
         if (mSearchLocation.searchLatLng != null) {
             loadEventsToView(mSearchLocation.searchLatLng);
         }
@@ -143,7 +146,7 @@ public class EventsListViewFragment extends LocationAwareFragment implements Eve
     public void getEventsFromServer(Integer pageNumber, LatLng userLocation) {
         try {
             mEventQueryResults.numberOfEventPagesLoaded = pageNumber;
-            new EventsFinder().getEvents(pageNumber, userLocation, this, getActivity().getApplicationContext());
+            mLastFmServiceProvider.getEvents(pageNumber, userLocation, this, getActivity().getApplicationContext());
         } catch (NetworkNotAvailableException e) {
             e.printStackTrace();
 

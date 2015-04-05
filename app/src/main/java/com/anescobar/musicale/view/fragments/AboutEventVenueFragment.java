@@ -15,10 +15,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.anescobar.musicale.R;
+import com.anescobar.musicale.app.services.LastFmServiceProvider;
 import com.anescobar.musicale.app.services.interfaces.VenueEventsFetcherListener;
 import com.anescobar.musicale.app.models.VenueDetails;
 import com.anescobar.musicale.app.services.exceptions.NetworkNotAvailableException;
-import com.anescobar.musicale.app.services.EventsFinder;
 import com.anescobar.musicale.view.activities.EventDetailsActivity;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
@@ -41,7 +41,7 @@ import de.umass.lastfm.Venue;
 public class AboutEventVenueFragment extends BaseFragment implements VenueEventsFetcherListener {
 
     private static final String ARG_VENUE = "venueArg";
-    private EventsFinder mEventsFinder;
+    private LastFmServiceProvider mLastFmServiceProvider;
     private CachedVenueDetailsGetterSetter mCachedVenueDetailsGetterSetter;
     private VenueDetails mVenueDetails = new VenueDetails();
 
@@ -111,7 +111,7 @@ public class AboutEventVenueFragment extends BaseFragment implements VenueEvents
     public void onStart() {
         super.onStart();
 
-        mEventsFinder = new EventsFinder();
+        mLastFmServiceProvider = new LastFmServiceProvider(getActivity().getApplicationContext());
 
         Gson gson = new Gson();
 
@@ -271,7 +271,7 @@ public class AboutEventVenueFragment extends BaseFragment implements VenueEvents
 
     private void getVenueEvents(String venueId) {
         try {
-            mEventsFinder.getUpcomingEventsAtVenue(venueId, this, getActivity().getApplicationContext());
+            mLastFmServiceProvider.getUpcomingEventsAtVenue(venueId, this, getActivity().getApplicationContext());
         } catch (NetworkNotAvailableException e) {
             e.printStackTrace();
 

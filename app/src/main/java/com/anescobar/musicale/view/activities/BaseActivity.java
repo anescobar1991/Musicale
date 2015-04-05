@@ -23,7 +23,7 @@ public abstract class BaseActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
 
 
-        mAnalyticsUtil = ((MusicaleApp) getApplication()).analyticsUtil;
+        mAnalyticsUtil = ((MusicaleApp) getApplication()).mAnalyticsUtil;
 
         mAnalyticsUtil.sendAnalyticsScreenHit(getClass().getSimpleName());
 

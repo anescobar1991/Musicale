@@ -79,6 +79,7 @@ public class SpotifyTrackInfoSeeker {
                         public void run() {
                             Log.d(LOG_TAG, response.toString());
                             try {
+                                //TODO convert to GSON
                                 JSONObject jObject = new JSONObject(streamToString(response.body().byteStream()));
 
                                 SpotifyTrack track = new SpotifyTrack();

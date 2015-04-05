@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.anescobar.musicale.R;
+import com.anescobar.musicale.app.services.LastFmServiceProvider;
 import com.anescobar.musicale.app.services.interfaces.ArtistInfoFetcherTaskListener;
 import com.anescobar.musicale.app.services.interfaces.ArtistTopTracksFetcherTaskListener;
 import com.anescobar.musicale.app.services.interfaces.ArtistUpcomingEventsFetcherTaskListener;
@@ -28,7 +29,6 @@ import com.anescobar.musicale.app.models.ArtistDetails;
 import com.anescobar.musicale.app.services.exceptions.NetworkNotAvailableException;
 import com.anescobar.musicale.app.models.SpotifyTrack;
 
-import com.anescobar.musicale.app.services.ArtistInfoSeeker;
 import com.anescobar.musicale.app.services.SpotifyTrackInfoSeeker;
 import com.anescobar.musicale.view.activities.ArtistDetailsActivity;
 import com.anescobar.musicale.view.activities.EventDetailsActivity;
@@ -56,6 +56,7 @@ public class AboutArtistFragment extends BaseFragment implements ArtistInfoFetch
     private ArtistDetails mArtistDetails = new ArtistDetails();
     private CachedArtistDetailsGetterSetter mCachedArtistDetailsGetterSetter;
     private ArrayList<View> mTrackLinks = new ArrayList<>();
+    private LastFmServiceProvider mLastFmServiceProvider;
 
     @InjectView(R.id.content) LinearLayout mContainer;
     @InjectView(R.id.about_artist_progressbar) ProgressBar mContentLoadingProgressBar;
@@ -114,18 +115,19 @@ public class AboutArtistFragment extends BaseFragment implements ArtistInfoFetch
         super.onStart();
 
         mAnalyticsUtil.sendAnalyticsScreenHit(getClass().getSimpleName());
+        mLastFmServiceProvider = new LastFmServiceProvider(getActivity().getApplicationContext());
 
         try {
             if (mCachedArtistDetailsGetterSetter.getArtistDetails().artist != null) {
                 setUpView(mCachedArtistDetailsGetterSetter.getArtistDetails().artist);
             } else {
-                new ArtistInfoSeeker().getArtistInfo(mArtist, this, getActivity().getApplicationContext());
+                mLastFmServiceProvider.getArtistInfo(mArtist, this);
             }
 
             if (mCachedArtistDetailsGetterSetter.getArtistDetails().upcomingEvents != null) {
                 populateUpcomingEventsContainer(mCachedArtistDetailsGetterSetter.getArtistDetails().upcomingEvents);
             } else {
-                new ArtistInfoSeeker().getArtistUpcomingEvents(mArtist, this, getActivity().getApplicationContext());
+                mLastFmServiceProvider.getArtistUpcomingEvents(mArtist, this);
             }
 
             if (mCachedArtistDetailsGetterSetter.getArtistDetails().topTracks != null) {
@@ -225,7 +227,7 @@ public class AboutArtistFragment extends BaseFragment implements ArtistInfoFetch
         if (getActivity() != null) {
             mArtistDetails.artist = artist;
             try {
-                new ArtistInfoSeeker().getArtistTopTracks(artist.getName(), this, getActivity().getApplicationContext());
+                mLastFmServiceProvider.getArtistTopTracks(artist.getName(), this);
             } catch (NetworkNotAvailableException e) {
                 displayErrorMessage(getString(R.string.error_no_network_connectivity));
             }
