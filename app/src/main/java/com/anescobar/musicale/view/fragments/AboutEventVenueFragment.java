@@ -1,5 +1,6 @@
 package com.anescobar.musicale.view.fragments;
 
+import android.accounts.NetworkErrorException;
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.Intent;
@@ -18,7 +19,6 @@ import com.anescobar.musicale.R;
 import com.anescobar.musicale.app.services.LastFmServiceProvider;
 import com.anescobar.musicale.app.services.interfaces.VenueEventsFetcherListener;
 import com.anescobar.musicale.app.models.VenueDetails;
-import com.anescobar.musicale.app.services.exceptions.NetworkNotAvailableException;
 import com.anescobar.musicale.view.activities.EventDetailsActivity;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
@@ -272,7 +272,7 @@ public class AboutEventVenueFragment extends BaseFragment implements VenueEvents
     private void getVenueEvents(String venueId) {
         try {
             mLastFmServiceProvider.getUpcomingEventsAtVenue(venueId, this, getActivity().getApplicationContext());
-        } catch (NetworkNotAvailableException e) {
+        } catch (NetworkErrorException e) {
             e.printStackTrace();
 
             displayErrorMessage(getString(R.string.error_no_network_connectivity));

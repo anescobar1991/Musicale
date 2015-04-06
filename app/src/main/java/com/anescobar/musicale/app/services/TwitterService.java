@@ -1,8 +1,10 @@
 package com.anescobar.musicale.app.services;
 
+import android.accounts.NetworkErrorException;
 import android.content.Context;
+import android.util.Log;
 
-import com.anescobar.musicale.app.services.exceptions.NetworkNotAvailableException;
+import com.anescobar.musicale.BuildConfig;
 import com.anescobar.musicale.app.services.interfaces.TwitterGuestSessionFetcherListener;
 import com.anescobar.musicale.app.services.interfaces.TwitterSearchTaskListener;
 import com.anescobar.musicale.app.utils.NetworkUtil;
@@ -25,6 +27,8 @@ public class TwitterService {
     private static final int SEARCH_COUNT = 20;
     private static final String SEARCH_RESULT_TYPE = "mixed";
     private static final String SEARCH_RESULT_LANGUAGE = "en";
+    private static final String LOG_TAG = "TwitterService";
+
 
     private NetworkUtil mNetworkUtil = new NetworkUtil();
 
@@ -32,7 +36,7 @@ public class TwitterService {
     }
 
     //publicly accessible method that gets guest session from Twitter API client
-    public void loginAsGuest(final TwitterGuestSessionFetcherListener twitterGuestSessionFetcherListener, Context context) throws NetworkNotAvailableException, TwitterException {
+    public void loginAsGuest(final TwitterGuestSessionFetcherListener twitterGuestSessionFetcherListener, Context context) throws NetworkErrorException, TwitterException {
         if (mNetworkUtil.isNetworkAvailable(context)) {
             twitterGuestSessionFetcherListener.onTwitterGuestSessionFetcherTaskAboutToStart();
             TwitterCore.getInstance().logInGuest(new Callback<AppSession>() {
@@ -44,18 +48,21 @@ public class TwitterService {
 
                 @Override
                 public void failure(TwitterException exception) {
-                    Crashlytics.logException(exception);
-                    Crashlytics.log("Twitter guest session getter failed");
+                    if (BuildConfig.DEBUG) {
+                        if (BuildConfig.DEBUG) {
+                            Log.d(LOG_TAG, exception.getMessage());
+                        }
+                    }
                     throw exception;
                 }
             });
         } else {
-            throw new NetworkNotAvailableException("Not connected to network...");
+            throw new NetworkErrorException("Not connected to network...");
         }
     }
 
     public void searchForTweets(final TwitterSearchTaskListener twitterSearchTaskListener, Context context,
-                                Session session, String searchQuery, Long maxId) throws NetworkNotAvailableException, TwitterException {
+                                Session session, String searchQuery, Long maxId) throws NetworkErrorException, TwitterException {
 
         if (mNetworkUtil.isNetworkAvailable(context)) {
             twitterSearchTaskListener.onTwitterSearchTaskAboutToStart();
@@ -78,7 +85,7 @@ public class TwitterService {
                                 }
                             });
         } else {
-            throw new NetworkNotAvailableException("Not connected to network...");
+            throw new NetworkErrorException("Not connected to network...");
         }
     }
 

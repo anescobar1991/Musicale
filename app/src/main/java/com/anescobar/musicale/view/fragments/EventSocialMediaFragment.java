@@ -1,5 +1,6 @@
 package com.anescobar.musicale.view.fragments;
 
+import android.accounts.NetworkErrorException;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,7 +12,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.anescobar.musicale.R;
-import com.anescobar.musicale.app.services.exceptions.NetworkNotAvailableException;
 import com.anescobar.musicale.app.services.interfaces.TwitterGuestSessionFetcherListener;
 import com.anescobar.musicale.app.services.interfaces.TwitterSearchTaskListener;
 import com.anescobar.musicale.app.services.TwitterService;
@@ -85,7 +85,7 @@ public class EventSocialMediaFragment extends BaseFragment implements TwitterGue
 
         try {
             mTwitterService.loginAsGuest(this, getActivity().getApplicationContext());
-        } catch (NetworkNotAvailableException e) {
+        } catch (NetworkErrorException e) {
             mLoadingProgressBar.setVisibility(View.GONE);
             mMessageContainer.setText(R.string.error_no_network_connectivity);
             mMessageContainer.setVisibility(View.VISIBLE);
@@ -119,7 +119,7 @@ public class EventSocialMediaFragment extends BaseFragment implements TwitterGue
             try {
                 mTwitterService.searchForTweets(this, getActivity().getApplicationContext(),
                         session, createSearchQuery(mEvent), mMaxId);
-            } catch (NetworkNotAvailableException e) {
+            } catch (NetworkErrorException e) {
                 if (mTweetsDisplayed) {
                     Toast.makeText(getActivity(), R.string.error_no_network_connectivity, Toast.LENGTH_SHORT).show();
                 } else {

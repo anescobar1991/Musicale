@@ -1,5 +1,6 @@
 package com.anescobar.musicale.view.fragments;
 
+import android.accounts.NetworkErrorException;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
@@ -21,8 +22,6 @@ import com.anescobar.musicale.app.adapters.EventsAdapter;
 import com.anescobar.musicale.app.services.LastFmServiceProvider;
 import com.anescobar.musicale.app.services.interfaces.EventFetcherListener;
 import com.anescobar.musicale.app.models.EventQueryResults;
-import com.anescobar.musicale.app.services.exceptions.LocationNotAvailableException;
-import com.anescobar.musicale.app.services.exceptions.NetworkNotAvailableException;
 import com.anescobar.musicale.view.activities.SearchActivity;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.model.LatLng;
@@ -112,7 +111,7 @@ public class EventsListViewFragment extends LocationAwareFragment implements Eve
         if (mSearchLocation.searchLatLng == null) {
             try {
                 loadEventsToView(getCurrentLatLng());
-            } catch (LocationNotAvailableException e) {
+            } catch (Exception e) {
                 Toast.makeText(getActivity(), getString(R.string.error_location_services_disabled), Toast.LENGTH_SHORT).show();
             }
         }
@@ -147,7 +146,7 @@ public class EventsListViewFragment extends LocationAwareFragment implements Eve
         try {
             mEventQueryResults.numberOfEventPagesLoaded = pageNumber;
             mLastFmServiceProvider.getEvents(pageNumber, userLocation, this, getActivity().getApplicationContext());
-        } catch (NetworkNotAvailableException e) {
+        } catch (NetworkErrorException e) {
             e.printStackTrace();
 
             if (pageNumber == 1) {

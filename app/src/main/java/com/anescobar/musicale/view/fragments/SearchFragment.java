@@ -1,6 +1,7 @@
 package com.anescobar.musicale.view.fragments;
 
 
+import android.accounts.NetworkErrorException;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.location.Address;
@@ -16,8 +17,6 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.anescobar.musicale.R;
-import com.anescobar.musicale.app.services.exceptions.LocationNotAvailableException;
-import com.anescobar.musicale.app.services.exceptions.NetworkNotAvailableException;
 import com.anescobar.musicale.app.services.interfaces.AddressesFetcherTaskListener;
 import com.anescobar.musicale.app.services.interfaces.LatLngFromAddressFetcherTaskListener;
 import com.anescobar.musicale.app.models.EventQueryResults;
@@ -127,9 +126,9 @@ public class SearchFragment extends LocationAwareFragment implements AddressesFe
             } else {
                 useCurrentLocation(view);
             }
-        } catch (NetworkNotAvailableException e) {
+        } catch (NetworkErrorException e) {
             Toast.makeText(getActivity(), R.string.error_no_network_connectivity, Toast.LENGTH_SHORT).show();
-        } catch (LocationNotAvailableException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -139,7 +138,7 @@ public class SearchFragment extends LocationAwareFragment implements AddressesFe
             mAnalyticsUtil.sendAnalyticsEvent(getString(R.string.ga_action_event), getString(R.string.ga_event_search_submitted), mSearchAreaField.getText().toString());
             try {
                 new Geocoder().getLatLngFromAddress(mSearchAreaField.getText().toString(), this, getActivity().getApplicationContext());
-            } catch (NetworkNotAvailableException e) {
+            } catch (NetworkErrorException e) {
                 e.printStackTrace();
                 Toast.makeText(getActivity(),R.string.error_no_network_connectivity, Toast.LENGTH_SHORT).show();
             }

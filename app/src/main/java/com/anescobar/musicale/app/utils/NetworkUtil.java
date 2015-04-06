@@ -5,6 +5,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
 
+import com.anescobar.musicale.BuildConfig;
+
 /**
  * Created by Andres Escobar on 7/14/14.
  * Handles all network related tasks
@@ -19,7 +21,7 @@ public class NetworkUtil {
             if (info != null) {
                 for (NetworkInfo anInfo : info) {
                     if (anInfo.getState() == NetworkInfo.State.CONNECTED) {
-                        Log.w("network_util:", "connected to network!");
+
                         networkAvailable = true;
                     }
                 }

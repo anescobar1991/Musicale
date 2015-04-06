@@ -1,5 +1,6 @@
 package com.anescobar.musicale.view.fragments;
 
+import android.accounts.NetworkErrorException;
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.Intent;
@@ -26,10 +27,9 @@ import com.anescobar.musicale.app.services.interfaces.ArtistTopTracksFetcherTask
 import com.anescobar.musicale.app.services.interfaces.ArtistUpcomingEventsFetcherTaskListener;
 import com.anescobar.musicale.app.services.interfaces.SpotifyTrackInfoTaskListener;
 import com.anescobar.musicale.app.models.ArtistDetails;
-import com.anescobar.musicale.app.services.exceptions.NetworkNotAvailableException;
 import com.anescobar.musicale.app.models.SpotifyTrack;
 
-import com.anescobar.musicale.app.services.SpotifyTrackInfoSeeker;
+import com.anescobar.musicale.app.services.SpotifyServiceProvider;
 import com.anescobar.musicale.view.activities.ArtistDetailsActivity;
 import com.anescobar.musicale.view.activities.EventDetailsActivity;
 import com.google.gson.Gson;
@@ -134,7 +134,7 @@ public class AboutArtistFragment extends BaseFragment implements ArtistInfoFetch
                 populateTopTracksContainer(mCachedArtistDetailsGetterSetter.getArtistDetails().topTracks);
             }
 
-        } catch (NetworkNotAvailableException e) {
+        } catch (NetworkErrorException e) {
             e.printStackTrace();
 
             displayErrorMessage(getString(R.string.error_no_network_connectivity));
@@ -228,7 +228,7 @@ public class AboutArtistFragment extends BaseFragment implements ArtistInfoFetch
             mArtistDetails.artist = artist;
             try {
                 mLastFmServiceProvider.getArtistTopTracks(artist.getName(), this);
-            } catch (NetworkNotAvailableException e) {
+            } catch (NetworkErrorException e) {
                 displayErrorMessage(getString(R.string.error_no_network_connectivity));
             }
 
@@ -419,8 +419,8 @@ public class AboutArtistFragment extends BaseFragment implements ArtistInfoFetch
 
     private void getSpotifyTrackInfo(String trackName, String artistName, String trackId) {
         try {
-            new SpotifyTrackInfoSeeker().getTrackInfo(artistName, trackName, this, getActivity().getApplicationContext(), trackId);
-        } catch (NetworkNotAvailableException e) {
+            new SpotifyServiceProvider().getTrackInfo(artistName, trackName, this, getActivity().getApplicationContext(), trackId);
+        } catch (NetworkErrorException e) {
             e.printStackTrace();
             Toast.makeText(getActivity(), getString(R.string.error_no_network_connectivity),Toast.LENGTH_SHORT).show();
         }

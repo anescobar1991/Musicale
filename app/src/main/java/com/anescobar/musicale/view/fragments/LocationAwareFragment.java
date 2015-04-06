@@ -4,7 +4,6 @@ package com.anescobar.musicale.view.fragments;
 import android.location.Location;
 import android.os.Bundle;
 
-import com.anescobar.musicale.app.services.exceptions.LocationNotAvailableException;
 import com.anescobar.musicale.app.models.SearchLocation;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -57,13 +56,13 @@ public abstract class LocationAwareFragment extends BaseFragment implements Goog
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {}
 
-    protected LatLng getCurrentLatLng() throws LocationNotAvailableException {
+    protected LatLng getCurrentLatLng() throws Exception {
         Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 
         if (lastLocation != null) {
             mSearchLocation.searchLatLng = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
         } else {
-            throw new LocationNotAvailableException("LastLocation not available");
+            throw new Exception("LastLocation not available");
         }
 
         return mSearchLocation.searchLatLng;

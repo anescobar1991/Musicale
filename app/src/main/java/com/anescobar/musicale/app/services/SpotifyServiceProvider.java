@@ -1,14 +1,14 @@
 package com.anescobar.musicale.app.services;
 
+import android.accounts.NetworkErrorException;
 import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
 
+import com.anescobar.musicale.BuildConfig;
 import com.anescobar.musicale.app.services.interfaces.SpotifyTrackInfoTaskListener;
-import com.anescobar.musicale.app.services.exceptions.NetworkNotAvailableException;
 import com.anescobar.musicale.app.utils.NetworkUtil;
 import com.anescobar.musicale.app.models.SpotifyTrack;
-import com.crashlytics.android.Crashlytics;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -28,16 +28,16 @@ import java.net.URLEncoder;
  * Created by Andres Escobar on 11/16/14.
  * Class to get spotify track info details from spotify web api service
  */
-public class SpotifyTrackInfoSeeker {
+public class SpotifyServiceProvider {
     private NetworkUtil mNetworkUtil = new NetworkUtil();
     private static final String SPOTIFY_API_URL = "https://api.spotify.com/v1/search?";
-    private static final String LOG_TAG = "SpotifyTrackInfoSeeker";
+    private static final String LOG_TAG = "SpotifyServiceProvider";
 
-    public SpotifyTrackInfoSeeker() {
+    public SpotifyServiceProvider() {
     }
 
     public void getTrackInfo(String artistName, String trackName,
-                             final SpotifyTrackInfoTaskListener listener, final Context context, final String trackId) throws NetworkNotAvailableException {
+                             final SpotifyTrackInfoTaskListener listener, final Context context, final String trackId) throws NetworkErrorException {
 
         if (mNetworkUtil.isNetworkAvailable(context)) {
             listener.onSpotifyTrackInfoFetcherTaskAboutToStart(trackId);
@@ -67,7 +67,9 @@ public class SpotifyTrackInfoSeeker {
                     mainHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            Log.d(LOG_TAG, request.toString());
+                            if (BuildConfig.DEBUG) {
+                                Log.d(LOG_TAG, request.toString());
+                            }
                         }
                     });
                 }
@@ -77,7 +79,9 @@ public class SpotifyTrackInfoSeeker {
                     mainHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            Log.d(LOG_TAG, response.toString());
+                            if (BuildConfig.DEBUG) {
+                                Log.d(LOG_TAG, response.toString());
+                            }
                             try {
                                 //TODO convert to GSON
                                 JSONObject jObject = new JSONObject(streamToString(response.body().byteStream()));
@@ -96,15 +100,16 @@ public class SpotifyTrackInfoSeeker {
                                 //return Spotify Track model to calling class using callback
                                 listener.onSpotifyTrackInfoFetcherTaskCompleted(track);
                             } catch (JSONException | IOException e) {
-                                e.printStackTrace();
-                                Crashlytics.logException(e);
+                                if (BuildConfig.DEBUG) {
+                                    Log.d(LOG_TAG, e.getLocalizedMessage());
+                                }
                             }
                         }
                     });
                 }
             });
         } else {
-            throw new NetworkNotAvailableException("Not connected to network...");
+            throw new NetworkErrorException("Not connected to network...");
         }
     }
 

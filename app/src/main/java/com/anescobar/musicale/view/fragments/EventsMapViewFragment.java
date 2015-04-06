@@ -1,5 +1,6 @@
 package com.anescobar.musicale.view.fragments;
 
+import android.accounts.NetworkErrorException;
 import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
@@ -17,10 +18,8 @@ import android.widget.Toast;
 
 import com.anescobar.musicale.R;
 import com.anescobar.musicale.app.services.LastFmServiceProvider;
-import com.anescobar.musicale.app.services.exceptions.LocationNotAvailableException;
 import com.anescobar.musicale.view.activities.EventDetailsActivity;
 import com.anescobar.musicale.app.services.interfaces.EventFetcherListener;
-import com.anescobar.musicale.app.services.exceptions.NetworkNotAvailableException;
 import com.anescobar.musicale.app.models.EventQueryResults;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -90,7 +89,7 @@ public class EventsMapViewFragment extends LocationAwareFragment implements Goog
         if (mSearchLocation.searchLatLng == null) {
             try {
                 setUpMap(getCurrentLatLng());
-            } catch (LocationNotAvailableException e) {
+            } catch (Exception e) {
                 Toast.makeText(getActivity(),R.string.error_location_services_disabled, Toast.LENGTH_SHORT).show();
             }
         } else {
@@ -114,7 +113,7 @@ public class EventsMapViewFragment extends LocationAwareFragment implements Goog
     public void getEventsFromServer(Integer pageNumber, LatLng searchAreaLatLng) {
         try {
             mLastFmServiceProvider.getEvents(pageNumber, searchAreaLatLng, this, getActivity());
-        } catch (NetworkNotAvailableException e) {
+        } catch (NetworkErrorException e) {
             Toast.makeText(getActivity(), getString(R.string.error_no_network_connectivity), Toast.LENGTH_SHORT).show();
         }
     }
@@ -133,6 +132,7 @@ public class EventsMapViewFragment extends LocationAwareFragment implements Goog
         mapSettings.setMyLocationButtonEnabled(false);
         mapSettings.setTiltGesturesEnabled(false);
         mapSettings.setRotateGesturesEnabled(false);
+        mapSettings.setMyLocationButtonEnabled(true);
 
         if (mEventQueryResults.events.isEmpty()) {
             getEventsFromServer(1, searchAreaLatLng);
@@ -279,4 +279,5 @@ public class EventsMapViewFragment extends LocationAwareFragment implements Goog
         intent.putExtra("EVENT", serializedEvent);
         getActivity().startActivity(intent, activityOptions.toBundle());
     }
+
 }

@@ -1,10 +1,10 @@
 package com.anescobar.musicale.app.services;
 
+import android.accounts.NetworkErrorException;
 import android.content.Context;
 import android.location.Address;
 import android.os.AsyncTask;
 
-import com.anescobar.musicale.app.services.exceptions.NetworkNotAvailableException;
 import com.anescobar.musicale.app.services.interfaces.AddressesFetcherTaskListener;
 import com.anescobar.musicale.app.services.interfaces.LatLngFromAddressFetcherTaskListener;
 import com.anescobar.musicale.app.utils.NetworkUtil;
@@ -27,19 +27,19 @@ public class Geocoder {
     public Geocoder() {
     }
 
-    public void getAddresses(LatLng latLng, AddressesFetcherTaskListener listener, Context context) throws NetworkNotAvailableException {
+    public void getAddresses(LatLng latLng, AddressesFetcherTaskListener listener, Context context) throws NetworkErrorException {
         if (mNetworkUtil.isNetworkAvailable(context)) {
             new GetAddressesTask(listener, context).execute(latLng);
         } else {
-            throw new NetworkNotAvailableException("Not connected to network...");
+            throw new NetworkErrorException("Not connected to network...");
         }
     }
 
-    public void getLatLngFromAddress(String locationQuery, LatLngFromAddressFetcherTaskListener listener, Context context) throws NetworkNotAvailableException {
+    public void getLatLngFromAddress(String locationQuery, LatLngFromAddressFetcherTaskListener listener, Context context) throws NetworkErrorException {
         if (mNetworkUtil.isNetworkAvailable(context)) {
             new GetLatLngFromAddressTask(listener, context).execute(locationQuery);
         } else {
-            throw new NetworkNotAvailableException("Not connected to network...");
+            throw new NetworkErrorException("Not connected to network...");
         }
     }
 

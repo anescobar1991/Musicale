@@ -24,6 +24,9 @@ gen/
 .gradle/
 build/
 
+#private api keys
+app/src/main/res/values/api_keys.xml
+
 # Local configuration file (sdk path, etc)
 local.properties
 

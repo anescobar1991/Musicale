@@ -33,6 +33,7 @@ public abstract class BaseActivity extends ActionBarActivity {
     protected void addFragmentToActivity(int container, Fragment fragment, String fragmentTag) {
         mFragmentManager.beginTransaction()
                 .replace(container, fragment, fragmentTag)
+                .addToBackStack(null)
                 .commit();
     }
 

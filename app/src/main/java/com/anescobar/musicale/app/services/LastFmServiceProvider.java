@@ -1,14 +1,15 @@
 package com.anescobar.musicale.app.services;
 
+import android.accounts.NetworkErrorException;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.anescobar.musicale.BuildConfig;
 import com.anescobar.musicale.R;
 import com.anescobar.musicale.app.services.interfaces.ArtistInfoFetcherTaskListener;
 import com.anescobar.musicale.app.services.interfaces.ArtistTopTracksFetcherTaskListener;
 import com.anescobar.musicale.app.services.interfaces.ArtistUpcomingEventsFetcherTaskListener;
-import com.anescobar.musicale.app.services.exceptions.NetworkNotAvailableException;
 import com.anescobar.musicale.app.services.interfaces.EventFetcherListener;
 import com.anescobar.musicale.app.services.interfaces.VenueEventsFetcherListener;
 import com.anescobar.musicale.app.utils.NetworkUtil;
@@ -44,44 +45,44 @@ public class LastFmServiceProvider {
     }
 
     //publicly accessible method which is called to get Events back from backend
-    public void getEvents(Integer pageNumber, LatLng location, EventFetcherListener eventFetcherListener, Context context) throws NetworkNotAvailableException {
+    public void getEvents(Integer pageNumber, LatLng location, EventFetcherListener eventFetcherListener, Context context) throws NetworkErrorException {
         if (mNetworkUtil.isNetworkAvailable(context)) {
             new EventsFetcherTask(location, eventFetcherListener).execute(pageNumber);
         } else {
-            throw new NetworkNotAvailableException("Not connected to network...");
+            throw new NetworkErrorException("Not connected to network...");
         }
     }
 
     //publicly accessible method which is called to get upcoming events at venue
-    public void getUpcomingEventsAtVenue(String venueId, VenueEventsFetcherListener venueEventsFetcherListener, Context context) throws NetworkNotAvailableException {
+    public void getUpcomingEventsAtVenue(String venueId, VenueEventsFetcherListener venueEventsFetcherListener, Context context) throws NetworkErrorException {
         if (mNetworkUtil.isNetworkAvailable(context)) {
             new VenueEventsFetcherTask(venueEventsFetcherListener).execute(venueId);
         } else {
-            throw new NetworkNotAvailableException("Not connected to network...");
+            throw new NetworkErrorException("Not connected to network...");
         }
     }
 
-    public void getArtistInfo(String artist, ArtistInfoFetcherTaskListener listener) throws NetworkNotAvailableException {
+    public void getArtistInfo(String artist, ArtistInfoFetcherTaskListener listener) throws NetworkErrorException {
         if (mNetworkUtil.isNetworkAvailable(mContext)) {
             new ArtistInfoFetcherTask(listener).execute(artist);
         } else {
-            throw new NetworkNotAvailableException("Not connected to network...");
+            throw new NetworkErrorException("Not connected to network...");
         }
     }
 
-    public void getArtistUpcomingEvents(String artist, ArtistUpcomingEventsFetcherTaskListener listener) throws NetworkNotAvailableException {
+    public void getArtistUpcomingEvents(String artist, ArtistUpcomingEventsFetcherTaskListener listener) throws NetworkErrorException {
         if (mNetworkUtil.isNetworkAvailable(mContext)) {
             new ArtistUpcomingEventsFetcherTask(listener).execute(artist);
         } else {
-            throw new NetworkNotAvailableException("Not connected to network...");
+            throw new NetworkErrorException("Not connected to network...");
         }
     }
 
-    public void getArtistTopTracks(String artist, ArtistTopTracksFetcherTaskListener listener) throws NetworkNotAvailableException{
+    public void getArtistTopTracks(String artist, ArtistTopTracksFetcherTaskListener listener) throws NetworkErrorException{
         if (mNetworkUtil.isNetworkAvailable(mContext)) {
             new ArtistTopTracksFetcherListener(listener).execute(artist);
         } else {
-            throw new NetworkNotAvailableException("Not connected to network...");
+            throw new NetworkErrorException("Not connected to network...");
         }
     }
 
@@ -108,8 +109,11 @@ public class LastFmServiceProvider {
 
         @Override
         protected void onPostExecute(Artist artist) {
-            Result response = Caller.getInstance().getLastResult();
-            Log.w("artist_info_seeker_res", response.toString());
+            if (BuildConfig.DEBUG) {
+                Result response = Caller.getInstance().getLastResult();
+
+                Log.w("artist_info_seeker_res", response.toString());
+            }
 
             mListener.onArtistInfoFetcherTaskCompleted(artist);
         }
@@ -138,8 +142,11 @@ public class LastFmServiceProvider {
 
         @Override
         protected void onPostExecute(PaginatedResult<Event> events) {
-            Result response = Caller.getInstance().getLastResult();
-            Log.w("events_finder_response", response.toString());
+            if (BuildConfig.DEBUG) {
+                Result response = Caller.getInstance().getLastResult();
+
+                Log.w("events_finder_response", response.toString());
+            }
 
             mListener.onArtistUpcomingEventsFetcherTaskCompleted(events);
         }
@@ -164,8 +171,11 @@ public class LastFmServiceProvider {
 
         @Override
         protected void onPostExecute(Collection<Track> tracks) {
-            Result response = Caller.getInstance().getLastResult();
-            Log.w("top_tracks_response", response.toString());
+            if (BuildConfig.DEBUG) {
+                Result response = Caller.getInstance().getLastResult();
+
+                Log.w("top_tracks_response", response.toString());
+            }
 
             mListener.onArtistTopTrackFetcherTaskCompleted(tracks);
         }
@@ -227,8 +237,11 @@ public class LastFmServiceProvider {
 
         @Override
         protected void onPostExecute(PaginatedResult<Event> events) {
-            Result response = Caller.getInstance().getLastResult();
-            Log.w("events_finder_response", response.toString());
+            if (BuildConfig.DEBUG) {
+                Result response = Caller.getInstance().getLastResult();
+
+                Log.w("events_finder_response", response.toString());
+            }
 
             mListener.onEventFetcherTaskCompleted(events);
         }
@@ -258,8 +271,10 @@ public class LastFmServiceProvider {
 
         @Override
         protected void onPostExecute(Collection<Event> events) {
-            Result response = Caller.getInstance().getLastResult();
-            Log.w("events_finder_response", response.toString());
+            if (BuildConfig.DEBUG) {
+                Result response = Caller.getInstance().getLastResult();
+                Log.w("events_finder_response", response.toString());
+            }
 
             mListener.onVenueEventsFetcherTaskCompleted(events);
         }
