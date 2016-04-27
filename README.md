@@ -1,5 +1,6 @@
 Musicale
 ========
+NOTE: This application is no longer maintained due to LastFM dropping support of their API endpoints that I was using.
 
 Musicale is my foray into Android development and design. It is a music app that leverages the LastFm api to find music events and display social media posts about them. It is still under construction and is intended for my own personal use and exploration into Android development and design.
 
